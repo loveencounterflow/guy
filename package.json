@@ -1,0 +1,33 @@
+{
+  "name": "guy",
+  "version": "0.1.0",
+  "description": "a build tool",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loveencounterflow/guy.git"
+  },
+  "keywords": [
+    "build",
+    "tool"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loveencounterflow/guy/issues"
+  },
+  "homepage": "https://github.com/loveencounterflow/guy",
+  "dependencies": {
+    "coffeenode-trm": "^0.1.17",
+    "docopt": "^0.4.0",
+    "glob": "^4.0.4",
+    "gitteh": "~0.17.2",
+    "coffeenode-text": "~0.1.5",
+    "async": "~0.9.0",
+    "npm": "~1.4.21",
+    "request": "~2.38.0"
+  }
+}
