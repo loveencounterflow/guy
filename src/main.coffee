@@ -226,6 +226,13 @@ docopt                    = ( require 'docopt' ).docopt
     whisper 'not found'
   else
     urge 'npm version:', npm_info[ 'dist-tags' ]?[ 'latest' ] ? null
+    debug 1 * new Date()
+    debug new Date 1402427194639
+    debug new Date 1406068890198
+    # https://registry.npmjs.org/-/all/since?stale=update_after&startkey=1406068890198
+    # https://registry.npmjs.org/-/all/since?stale=update_after&startkey=1405987200000
+    debug new Date '2014-07-22'
+    debug 1 * new Date '2014-07-22'
 
 ############################################################################################################
 ->
