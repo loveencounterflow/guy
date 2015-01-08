@@ -21,13 +21,13 @@
   },
   "homepage": "https://github.com/loveencounterflow/guy",
   "dependencies": {
+    "async": "^0.9.0",
+    "coffeenode-text": "^0.1.5",
     "coffeenode-trm": "^0.1.17",
     "docopt": "^0.4.0",
+    "gitteh": "^0.17.2",
     "glob": "^4.0.4",
-    "gitteh": "~0.17.2",
-    "coffeenode-text": "~0.1.5",
-    "async": "~0.9.0",
-    "npm": "~1.4.21",
-    "request": "~2.38.0"
+    "npm": "^1.4.21",
+    "request": "^2.38.0"
   }
 }
