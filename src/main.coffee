@@ -53,7 +53,8 @@ require                   'pipedreams/lib/plugin-tabulate'
     send package_json
 
 #-----------------------------------------------------------------------------------------------------------
-@$compile_package_info = ( S ) ->
+@$compile_nfo = ( S ) ->
+  ### `nfo`: package info object ###
   return $ ( package_json, send ) =>
     Z = {}
     Z[ 'path' ]           = package_json[ σ_module_path ]
@@ -64,32 +65,59 @@ require                   'pipedreams/lib/plugin-tabulate'
 
 #-----------------------------------------------------------------------------------------------------------
 @$read_npm = ( S ) ->
-  return $async ( package_info, send, end ) =>
+  return $async ( nfo, send, end ) =>
     #.......................................................................................................
-    if package_info?
-      package_name  = package_info[ 'name' ]
+    if nfo?
+      package_name  = nfo[ 'name' ]
       url           = "http://registry.npmjs.org/#{package_name}"
       step ( resume ) =>
         npm_info = yield @_request url, resume
         debug package_name
-        package_info[ 'npm-latest-version'  ] = npm_info[ 'dist-tags' ]?[ 'latest' ] ? null
-        package_info[ 'npm-all-versions'    ] = Object.keys npm_info[ 'versions' ] ? {}
-        send.done package_info
+        nfo[ 'npm-latest-version'  ] = npm_info[ 'dist-tags' ]?[ 'latest' ] ? null
+        nfo[ 'npm-all-versions'    ] = Object.keys npm_info[ 'versions' ] ? {}
+        send.done nfo
     #.......................................................................................................
     if end?
       end()
 
 #-----------------------------------------------------------------------------------------------------------
 @$as_table = ( S ) ->
+  # column_count = 2
+  # if ( console_width = process.stdout.columns )
+  #   width = console_width - column_count * 4 - 1
+  # else
+  #   width = 108
   table_settings =
+    headings:       [ 'name', 'local', 'npm', ]
     alignment:      'left'
-    width:          50
-    widths:         [ 25, 12, ]
+    # keys:           [ 'name', 'local-version', ]
+    # width:          width
+    widths:         [ 30, 12, ]
     # alignments:     [ null, null, 'left', ]
   #.........................................................................................................
   $cast = =>
-    return $ ( row, send ) =>
-      send row
+    return $ ( nfo, send ) =>
+      local_version               = nfo[ 'local-version' ]
+      local_version_is_published  = no
+      #.....................................................................................................
+      if ( npm_versions = nfo[ 'npm-all-versions' ] )?
+        name_display = nfo[ 'name' ]
+        for npm_version in npm_versions
+          if local_version is npm_version
+            local_version_is_published = yes
+            send [ name_display, local_version, npm_version, ]
+          else
+            send [ name_display, '— ··· —', npm_version, ]
+          name_display = '  — ··· —'
+        unless local_version_is_published
+          send [ name_display, local_version, '-/-', ]
+      #.....................................................................................................
+      else
+        send [ nfo[ 'name' ], local_version, '-/-', ]
+      #.....................................................................................................
+      for name, version of nfo[ 'dependencies' ]
+        ### TAINT ###
+        send [ name, version, '', ]
   #.........................................................................................................
   $colorize = =>
     return $ ( row, send ) =>
@@ -119,8 +147,9 @@ require                   'pipedreams/lib/plugin-tabulate'
   #.........................................................................................................
   input
     .pipe @$read_package_json     S
-    .pipe @$compile_package_info  S
+    .pipe @$compile_nfo           S
     .pipe @$read_npm              S
+    .pipe D.$show()
     .pipe @$as_table              S
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
