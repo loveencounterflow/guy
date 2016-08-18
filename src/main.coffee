@@ -61,6 +61,8 @@ require                   'pipedreams/lib/plugin-tabulate'
     Z[ 'name' ]           = package_json[ 'name' ]
     Z[ 'local-version' ]  = package_json[ 'version' ]
     Z[ 'dependencies' ]   = package_json[ 'dependencies' ]
+    for key, value of package_json[ 'devDependencies' ] ? {}
+      Z[ 'dependencies' ][ key ] = value
     send Z
 
 #-----------------------------------------------------------------------------------------------------------
@@ -152,9 +154,12 @@ require                   'pipedreams/lib/plugin-tabulate'
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
   package_paths = [
+    '/home/flow/io/guy-test'
+    '/home/flow/io/ncr'
+    '/home/flow/io/cnd'
     '/home/flow/io/mingkwai-ncr'
     '/home/flow/io/interskiplist'
-    '/home/flow/io/pipedreams'
+    # '/home/flow/io/pipedreams'
     ]
   for package_path in package_paths
     D.send  input, package_path
