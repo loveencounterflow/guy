@@ -72,7 +72,6 @@ require                   'pipedreams/lib/plugin-tabulate'
       url           = "http://registry.npmjs.org/#{package_name}"
       step ( resume ) =>
         npm_info = yield @_request url, resume
-        debug package_name
         nfo[ 'npm-latest-version'  ] = npm_info[ 'dist-tags' ]?[ 'latest' ] ? null
         nfo[ 'npm-all-versions'    ] = Object.keys npm_info[ 'versions' ] ? {}
         send.done nfo
@@ -142,20 +141,23 @@ require                   'pipedreams/lib/plugin-tabulate'
 #-----------------------------------------------------------------------------------------------------------
 @f = ( handler ) ->
   S     = @_new_state()
-  debug '9921', S
   input = D.new_stream()
   #.........................................................................................................
   input
     .pipe @$read_package_json     S
     .pipe @$compile_nfo           S
     .pipe @$read_npm              S
-    .pipe D.$show()
+    # .pipe D.$show()
     .pipe @$as_table              S
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
-  package_path = '/home/flow/io/mingkwai-ncr'
-  package_path = '/home/flow/io/interskiplist'
-  D.send  input, package_path
+  package_paths = [
+    '/home/flow/io/mingkwai-ncr'
+    '/home/flow/io/interskiplist'
+    '/home/flow/io/pipedreams'
+    ]
+  for package_path in package_paths
+    D.send  input, package_path
   D.end   input
   #.........................................................................................................
   return null
