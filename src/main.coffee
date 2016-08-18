@@ -20,6 +20,7 @@ _request                  = require 'request'
 { step, }                 = require 'coffeenode-suspend'
 D                         = require 'pipedreams'
 { $, $async, }            = D
+require                   'pipedreams/lib/plugin-tabulate'
 #...........................................................................................................
 σ_module_path             = Symbol.for 'module-path'
 
@@ -78,6 +79,35 @@ D                         = require 'pipedreams'
     if end?
       end()
 
+#-----------------------------------------------------------------------------------------------------------
+@$as_table = ( S ) ->
+  table_settings =
+    alignment:      'left'
+    width:          50
+    widths:         [ 25, 12, ]
+    # alignments:     [ null, null, 'left', ]
+  #.........................................................................................................
+  $cast = =>
+    return $ ( row, send ) =>
+      send row
+  #.........................................................................................................
+  $colorize = =>
+    return $ ( row, send ) =>
+      # row[ 'date' ] = CND.yellow  row[ 'date' ]
+      # row[ 'size' ] = CND.steel   row[ 'size' ]
+      # row[ 'name' ] = CND.lime    row[ 'name' ]
+      send row
+  #.........................................................................................................
+  $show = =>
+    return $ ( row ) => echo row
+  #.........................................................................................................
+  return D.new_stream pipeline: [
+    $cast()
+    $colorize()
+    ( D.$tabulate table_settings )
+    $show()
+    ]
+
 
 #===========================================================================================================
 #
@@ -91,7 +121,7 @@ D                         = require 'pipedreams'
     .pipe @$read_package_json     S
     .pipe @$compile_package_info  S
     .pipe @$read_npm              S
-    .pipe D.$show()
+    .pipe @$as_table              S
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
   package_path = '/home/flow/io/mingkwai-ncr'
