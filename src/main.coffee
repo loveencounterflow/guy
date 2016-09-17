@@ -21,6 +21,8 @@ _request                  = require 'request'
 D                         = require 'pipedreams'
 { $, $async, }            = D
 require                   'pipedreams/lib/plugin-tabulate'
+moment                    = require 'moment'
+SEMVER                    = require 'semver'
 #...........................................................................................................
 σ_module_path             = Symbol.for 'module-path'
 
@@ -31,9 +33,13 @@ require                   'pipedreams/lib/plugin-tabulate'
 @_request = ( url, handler ) ->
   _request url, ( error, response, body ) =>
     return handler error if error?
-    unless ( status = response.statusCode ) is 200
-      return handler new Error "#{url}\n#{status} -- #{response.statusMessage}"
-    handler null, JSON.parse body
+    switch status = response.statusCode
+      when 404
+        handler null, {}
+      when 200
+        handler null, JSON.parse body
+      else
+        return handler new Error "#{url}\n#{status} -- #{response.statusMessage}"
   #.........................................................................................................
   return null
 
@@ -41,6 +47,26 @@ require                   'pipedreams/lib/plugin-tabulate'
 @_new_state = ( settings ) ->
   ### TAINT use multimix for options handling ###
   return Object.assign {}, ( require '../options' )
+
+#-----------------------------------------------------------------------------------------------------------
+@_find_max_semvers = ( semvers ) ->
+  ### choose whether you want all max major versions ###
+  #.........................................................................................................
+  max_all_semver  = null
+  max_v0_semver   = null
+  # v0_matcher      = '^0.x' # OK but not so clear; see https://github.com/npm/node-semver#caret-ranges-123-025-004
+  v0_matcher      = '>=0.0.0 <1.0.0'
+  is_semver       = ( x ) -> ( SEMVER.valid x )?
+  is_v0           = ( semver ) -> SEMVER.satisfies semver, v0_matcher
+  for semver in semvers
+    continue unless is_semver semver
+    if max_all_semver? then max_all_semver = semver if SEMVER.gt semver, max_all_semver
+    else                    max_all_semver = semver
+    if is_v0 semver
+      if max_v0_semver? then  max_v0_semver = semver if SEMVER.gt semver, max_v0_semver
+      else                    max_v0_semver = semver
+  #.........................................................................................................
+  return [ max_v0_semver, max_all_semver, ]
 
 
 #===========================================================================================================
@@ -53,33 +79,56 @@ require                   'pipedreams/lib/plugin-tabulate'
     send package_json
 
 #-----------------------------------------------------------------------------------------------------------
-@$compile_nfo = ( S ) ->
-  ### `nfo`: package info object ###
+@$compile_pkgnfo = ( S ) ->
+  ### `pkgnfo`: package info object ###
   return $ ( package_json, send ) =>
-    Z = {}
-    Z[ 'path' ]           = package_json[ σ_module_path ]
-    Z[ 'name' ]           = package_json[ 'name' ]
-    Z[ 'local-version' ]  = package_json[ 'version' ]
-    Z[ 'dependencies' ]   = package_json[ 'dependencies' ]
-    for key, value of package_json[ 'devDependencies' ] ? {}
-      Z[ 'dependencies' ][ key ] = value
-    send Z
+    pkgnfo = {}
+    pkgnfo[ 'path' ]                = package_json[ σ_module_path ]
+    pkgnfo[ 'name' ]                = package_json[ 'name' ]
+    pkgnfo[ 'local' ]               = { version: package_json[ 'version' ], }
+    pkgnfo[ 'dependencies' ]        = package_json[ 'dependencies' ]
+    #.......................................................................................................
+    if package_json[ 'devDependencies' ]?
+      for dependency_name, semver_term of package_json[ 'devDependencies' ]
+        pkgnfo[ 'dependencies' ][ dependency_name ] = semver_term
+    #.......................................................................................................
+    send pkgnfo
 
 #-----------------------------------------------------------------------------------------------------------
 @$read_npm = ( S ) ->
-  return $async ( nfo, send, end ) =>
+  return $async ( pkgnfo, send, end ) =>
     #.......................................................................................................
-    if nfo?
-      package_name  = nfo[ 'name' ]
-      url           = "http://registry.npmjs.org/#{package_name}"
+    if pkgnfo?
+      pkgnfo[ 'npm' ]                       = {}
+      pkgnfo[ 'npm' ][ 'date-by-versions' ] = date_by_versions = {}
+      package_name                          = pkgnfo[ 'name' ]
+      url                                   = "http://registry.npmjs.org/#{package_name}"
+      #.....................................................................................................
       step ( resume ) =>
         npm_info = yield @_request url, resume
-        nfo[ 'npm-latest-version'  ] = npm_info[ 'dist-tags' ]?[ 'latest' ] ? null
-        nfo[ 'npm-all-versions'    ] = Object.keys npm_info[ 'versions' ] ? {}
-        send.done nfo
+        if npm_info[ 'time' ]?
+          for npm_version, date_txt of npm_info[ 'time' ]
+            ### choose local or universal time ###
+            date_by_versions[ npm_version ] = moment date_txt
+            # date_by_versions[ npm_version ] = moment.utc date_txt
+        send.done pkgnfo
+        return null
     #.......................................................................................................
     if end?
       end()
+    #.......................................................................................................
+    return null
+
+#-----------------------------------------------------------------------------------------------------------
+@$identify_interesting_versions = ( S ) ->
+  return $ ( pkgnfo ) =>
+    pkgnfo[ 'interesting-versions' ] = target = []
+    target.push 'created'
+    target.push 'modified'
+    for version in @_find_max_semvers Object.keys pkgnfo[ 'npm' ][ 'date-by-versions' ]
+      target.push version
+    #.......................................................................................................
+    return null
 
 #-----------------------------------------------------------------------------------------------------------
 @$as_table = ( S ) ->
@@ -89,36 +138,39 @@ require                   'pipedreams/lib/plugin-tabulate'
   # else
   #   width = 108
   table_settings =
-    headings:       [ 'name', 'local', 'npm', ]
+    headings:       [ 'name', 'local', 'npm', 'date', ]
     alignment:      'left'
     # keys:           [ 'name', 'local-version', ]
     # width:          width
-    widths:         [ 30, 12, ]
+    widths:         [ 30, 12, 12, 25, ]
     # alignments:     [ null, null, 'left', ]
   #.........................................................................................................
   $cast = =>
-    return $ ( nfo, send ) =>
-      local_version               = nfo[ 'local-version' ]
-      local_version_is_published  = no
+    return $ ( pkgnfo, send ) =>
+      local_version     = pkgnfo[ 'local' ][ 'version'          ]
+      date_by_versions  = pkgnfo[ 'npm'   ][ 'date-by-versions' ]
+      name_display      = pkgnfo[ 'name' ]
       #.....................................................................................................
-      if ( npm_versions = nfo[ 'npm-all-versions' ] )?
-        name_display = nfo[ 'name' ]
-        for npm_version in npm_versions
-          if local_version is npm_version
-            local_version_is_published = yes
-            send [ name_display, local_version, npm_version, ]
-          else
-            send [ name_display, '— ··· —', npm_version, ]
-          name_display = '  — ··· —'
-        unless local_version_is_published
-          send [ name_display, local_version, '-/-', ]
+      for npm_version, date of date_by_versions
+        continue unless npm_version in pkgnfo[ 'interesting-versions' ]
+        ### choose time format ###
+        # date_txt = ( date.format 'YY-MM-DD HH:mm' ) + " (#{date.fromNow()})"
+        date_txt = ( date.format 'YYYY MM DD' ) + " (#{date.fromNow()})"
+        if local_version is npm_version
+          send [ name_display, local_version, npm_version, date_txt, ]
+        else
+          send [ name_display, '— ··· —', npm_version, date_txt, ]
+        name_display = '  — ··· —'
+      # #.....................................................................................................
+      # unless local_version of date_by_versions
+      #   send [ name_display, local_version, '-/-', '???', ]
       #.....................................................................................................
-      else
-        send [ nfo[ 'name' ], local_version, '-/-', ]
+      # else
+      send [ pkgnfo[ 'name' ], local_version, '-/-', '-/-', ]
       #.....................................................................................................
-      for name, version of nfo[ 'dependencies' ]
+      for name, version of pkgnfo[ 'dependencies' ]
         ### TAINT ###
-        send [ name, version, '', ]
+        send [ name, version, '', 'N/A', ]
   #.........................................................................................................
   $colorize = =>
     return $ ( row, send ) =>
@@ -146,24 +198,31 @@ require                   'pipedreams/lib/plugin-tabulate'
   input = D.new_stream()
   #.........................................................................................................
   input
-    .pipe @$read_package_json     S
-    .pipe @$compile_nfo           S
-    .pipe @$read_npm              S
-    # .pipe D.$show()
-    .pipe @$as_table              S
+    .pipe @$read_package_json               S
+    .pipe @$compile_pkgnfo                  S
+    .pipe @$read_npm                        S
+    .pipe @$identify_interesting_versions   S
+    .pipe @$as_table                        S
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
   package_paths = [
-    '/home/flow/io/guy-test'
-    '/home/flow/io/ncr'
+    # '/home/flow/io/guy-test'
+    # '/home/flow/io/guy'
     '/home/flow/io/cnd'
-    '/home/flow/io/mingkwai-ncr'
-    '/home/flow/io/interskiplist'
+    # '/home/flow/io/multimix'
+    # '/home/flow/io/ncr'
     # '/home/flow/io/pipedreams'
+    # '/home/flow/io/interskiplist'
+    # '/home/flow/io/mingkwai-ncr'
+    # '/home/flow/io/mingkwai-rack'
+    # '/home/flow/io/mingkwai-typesetter'
+    # '/home/flow/io/mingkwai-typesetter-jizura'
+    # '/home/flow/io/hollerith'
+    # '/home/flow/io/jizura-db-feeder'
     ]
   for package_path in package_paths
-    D.send  input, package_path
-  D.end   input
+    D.send input, package_path
+  D.end input
   #.........................................................................................................
   return null
 
