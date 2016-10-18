@@ -206,22 +206,24 @@ SEMVER                    = require 'semver'
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
   package_paths = [
-    # '/home/flow/io/guy-test'
-    # '/home/flow/io/guy'
-    '/home/flow/io/cnd'
-    # '/home/flow/io/multimix'
-    # '/home/flow/io/ncr'
-    # '/home/flow/io/pipedreams'
-    # '/home/flow/io/interskiplist'
-    # '/home/flow/io/mingkwai-ncr'
-    # '/home/flow/io/mingkwai-rack'
-    # '/home/flow/io/mingkwai-typesetter'
-    # '/home/flow/io/mingkwai-typesetter-jizura'
-    # '/home/flow/io/hollerith'
-    # '/home/flow/io/jizura-db-feeder'
+    # 'guy-test'
+    # 'guy'
+    'cnd'
+    'kleinbild'
+    # 'multimix'
+    # 'ncr'
+    # 'pipedreams'
+    # 'interskiplist'
+    # 'mingkwai-ncr'
+    # 'mingkwai-rack'
+    # 'mingkwai-typesetter'
+    # 'mingkwai-typesetter-jizura'
+    # 'hollerith'
+    # 'jizura-db-feeder'
     ]
   for package_path in package_paths
-    D.send input, package_path
+    package_locator = PATH.resolve __dirname, '../..', package_path
+    D.send input, package_locator
   D.end input
   #.........................................................................................................
   return null
