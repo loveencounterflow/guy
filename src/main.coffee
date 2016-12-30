@@ -17,6 +17,7 @@ urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
 #...........................................................................................................
 _request                  = require 'request'
+_read_latest_version      = require 'latest-version'
 { step, }                 = require 'coffeenode-suspend'
 D                         = require 'pipedreams'
 { $, $async, }            = D
@@ -68,6 +69,12 @@ SEMVER                    = require 'semver'
   #.........................................................................................................
   return [ max_v0_semver, max_all_semver, ]
 
+#-----------------------------------------------------------------------------------------------------------
+@read_latest_version = ( package_name, handler ) ->
+  ### TAINT error handling? ###
+  ( _read_latest_version package_name ).then ( version ) => handler null, version
+  return null
+
 
 #===========================================================================================================
 # TRANFORMS
@@ -96,6 +103,7 @@ SEMVER                    = require 'semver'
 
 #-----------------------------------------------------------------------------------------------------------
 @$read_npm = ( S ) ->
+  version_cache = {}
   return $async ( pkgnfo, send, end ) =>
     #.......................................................................................................
     if pkgnfo?
@@ -106,11 +114,21 @@ SEMVER                    = require 'semver'
       #.....................................................................................................
       step ( resume ) =>
         npm_info = yield @_request url, resume
+        # debug '33372', npm_info[ 'time' ]
         if npm_info[ 'time' ]?
           for npm_version, date_txt of npm_info[ 'time' ]
             ### choose local or universal time ###
             date_by_versions[ npm_version ] = moment date_txt
             # date_by_versions[ npm_version ] = moment.utc date_txt
+        for dependency_name, version of pkgnfo[ 'dependencies' ]
+          unless ( latest_version = version_cache[ dependency_name ] )?
+            latest_version                    = yield @read_latest_version dependency_name, resume
+            version_cache[ dependency_name ]  = latest_version
+          # debug '88721', package_name, dependency_name, version, latest_version
+          ### TAINT shouldn't modify struture, just add data ###
+          ### TAINT naming: version, latest_version? ###
+          ### TAINT what is called 'version' here is really a version range like '^3.4.5' ###
+          pkgnfo[ 'dependencies' ][ dependency_name ] = { version, latest_version, }
         send.done pkgnfo
         return null
     #.......................................................................................................
@@ -138,46 +156,63 @@ SEMVER                    = require 'semver'
   # else
   #   width = 108
   table_settings =
-    headings:       [ 'name', 'local', 'npm', 'date', ]
+    headings:       [ 'package', 'dependency', 'local', 'npm', 'date', ]
     alignment:      'left'
-    # keys:           [ 'name', 'local-version', ]
-    # width:          width
-    widths:         [ 30, 12, 12, 25, ]
+    widths:         [ 30, 30, 12, 12, 25, ]
     # alignments:     [ null, null, 'left', ]
   #.........................................................................................................
   $cast = =>
     return $ ( pkgnfo, send ) =>
+      # debug '99928', pkgnfo
       local_version     = pkgnfo[ 'local' ][ 'version'          ]
       date_by_versions  = pkgnfo[ 'npm'   ][ 'date-by-versions' ]
+      package_name      = pkgnfo[ 'name' ]
       name_display      = pkgnfo[ 'name' ]
+      line_count        = 0
       #.....................................................................................................
       for npm_version, date of date_by_versions
         continue unless npm_version in pkgnfo[ 'interesting-versions' ]
-        ### choose time format ###
-        # date_txt = ( date.format 'YY-MM-DD HH:mm' ) + " (#{date.fromNow()})"
-        date_txt = ( date.format 'YYYY MM DD' ) + " (#{date.fromNow()})"
-        if local_version is npm_version
-          send [ name_display, local_version, npm_version, date_txt, ]
-        else
-          send [ name_display, '— ··· —', npm_version, date_txt, ]
-        name_display = '  — ··· —'
-      # #.....................................................................................................
-      # unless local_version of date_by_versions
-      #   send [ name_display, local_version, '-/-', '???', ]
+        line_count += +1
+        date_txt    = ( date.format 'YYYY MM DD' ) + " (#{date.fromNow()})"
+        send [ package_name, '', local_version, npm_version, date_txt, ]
+      if line_count < 1
+        send [ package_name, '', local_version, '-/-', '-/-', ]
       #.....................................................................................................
-      # else
-      send [ pkgnfo[ 'name' ], local_version, '-/-', '-/-', ]
-      #.....................................................................................................
-      for name, version of pkgnfo[ 'dependencies' ]
-        ### TAINT ###
-        send [ name, version, '', 'N/A', ]
+      for name, { version, latest_version, } of pkgnfo[ 'dependencies' ]
+        send [ package_name, name, version, latest_version, '', ]
   #.........................................................................................................
   $colorize = =>
+    prv_package_name = null
     return $ ( row, send ) =>
       # row[ 'date' ] = CND.yellow  row[ 'date' ]
       # row[ 'size' ] = CND.steel   row[ 'size' ]
       # row[ 'name' ] = CND.lime    row[ 'name' ]
-      send row
+      [ package_name, dependency_name, version, latest_version, date, ] = row
+      if prv_package_name isnt package_name
+        send [ '────────────────────', '────────────────────', '──────', '──────', '──────', ] if package_name?
+        prv_package_name = package_name
+      color = null
+      if dependency_name? and dependency_name.length > 0
+        if version? and version.length > 0
+          if latest_version? and latest_version.length > 0
+            # clean_version = SEMVER.clean version
+            clean_version = version.replace /[^.0-9]/g, ''
+            # debug '88873',  [ version, latest_version, clean_version]
+            try
+              diff = SEMVER.diff clean_version, latest_version
+            catch error
+              diff ?= 'N/A'
+            diff ?= 'ok'
+            color = CND.grey
+            switch diff
+              when 'major'  then color = CND.red
+              when 'minor'  then color = CND.lime
+              when 'patch'  then color = CND.yellow
+            # debug '55222', [ version, latest_version, color diff, ]
+      if color?
+        send [ package_name, dependency_name, version, ( color latest_version ), date, ]
+      else
+        send row
   #.........................................................................................................
   $show = =>
     return $ ( row ) => echo row
@@ -206,23 +241,26 @@ SEMVER                    = require 'semver'
     .pipe $ 'finish', -> handler()
   #.........................................................................................................
   package_paths = [
-    # 'guy-test'
-    # 'guy'
-    'cnd'
-    'kleinbild'
-    # 'multimix'
-    # 'ncr'
-    # 'pipedreams'
-    # 'interskiplist'
-    # 'mingkwai-ncr'
-    # 'mingkwai-rack'
-    # 'mingkwai-typesetter'
-    # 'mingkwai-typesetter-jizura'
-    # 'hollerith'
-    # 'jizura-db-feeder'
+    # 'io/guy-test'
+    # 'io/guy'
+    # 'io/cnd'
+    # 'io/kleinbild'
+    'io/jizura-datasources'
+    # 'io-b/coffeenode-chr'
+    # 'io/multimix'
+    # 'io/ncr'
+    # 'io/pipedreams'
+    # 'io/interskiplist'
+    # 'io/mingkwai-ncr'
+    # 'io/mingkwai-rack'
+    # 'io/mingkwai-typesetter'
+    # 'io/mingkwai-typesetter-jizura'
+    'io/hollerith'
+    'io/hollerith-codec'
+    # 'io/jizura-db-feeder'
     ]
   for package_path in package_paths
-    package_locator = PATH.resolve __dirname, '../..', package_path
+    package_locator = PATH.resolve __dirname, '../../..', package_path
     D.send input, package_locator
   D.end input
   #.........................................................................................................

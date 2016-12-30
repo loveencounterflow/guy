@@ -29,8 +29,9 @@
     "cnd": "^4.1.2",
     "coffeenode-suspend": "^0.1.11",
     "glob": "^7.0.5",
+    "latest-version": "^2.0.0",
     "moment": "^2.15.0",
-    "pipedreams": "^4.2.3",
+    "pipedreams": "^6.3.2",
     "request": "^2.74.0",
     "semver": "^5.3.0"
   },
