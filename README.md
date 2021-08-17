@@ -45,13 +45,13 @@
 
 * implemented using [`abbr/deasync`](https://github.com/abbr/deasync)
 
-* **`guy.nowait.for_callbackable ( fn_with_callback )`**—given an asynchronous function `afc` that accepts a
-  NodeJS-style callback (as in `afc v1, v2, ..., ( error, result ) -> ...`), returns a synchronous function
-  `sf` that can be used without a callback (as in `result = sf v1, v2, ...`).
+* **`guy.nowait.for_callbackable: ( fn_with_callback ) ->`**—given an asynchronous function `afc` that
+  accepts a NodeJS-style callback (as in `afc v1, v2, ..., ( error, result ) -> ...`), returns a synchronous
+  function `sf` that can be used without a callback (as in `result = sf v1, v2, ...`).
 
-* **`guy.nowait.for_awaitable ( fn_with_promise )`**—given an asynchronous function `afp` that can be used
-  with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be used
-  without `await` (as in `result = sf v1, v2, ...`).
+* **`guy.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
+  used with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be
+  used without `await` (as in `result = sf v1, v2, ...`).
 
 
 
