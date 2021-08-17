@@ -18,6 +18,9 @@
 ## Structure
 
 * Only Peer-Dependencies (except `cnd`, `intertype`)
+* Sub-libraries accessible as `guy.${library_name}`
+* Most sub-libraries implemented using `guy.props.def_oneoff()`, therefore dependencies (which are declared
+  peer dependencies) will only be `require()`d when needed.
 
 ## Modules
 
