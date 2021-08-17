@@ -1,21 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [A Guy of Many Trades](#a-guy-of-many-trades)
+  - [De-Asyncify JS Async Functions](#de-asyncify-js-async-functions)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-- [guy](#guy)
-
-> **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 
-guy
-===
 
-build tool
+# A Guy of Many Trades
 
-https://github.com/alanshaw/david
 
-http://davidwalsh.name/declarative-build-configurations
+## De-Asyncify JS Async Functions
 
-https://github.com/alberthier/git-webui
+Using [`abbr/deasync`](https://github.com/abbr/deasync)
 
-https://github.com/inikulin/dmn
+
 
 
