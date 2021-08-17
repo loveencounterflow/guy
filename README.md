@@ -43,7 +43,7 @@
 
 ### `guy.nowait`: De-Asyncify JS Async Functions
 
-* implemented using [`abbr/deasync`](https://github.com/abbr/deasync)
+**Peer Dependencies**: [`abbr/deasync`](https://github.com/abbr/deasync)
 
 * **`guy.nowait.for_callbackable: ( fn_with_callback ) ->`**—given an asynchronous function `afc` that
   accepts a NodeJS-style callback (as in `afc v1, v2, ..., ( error, result ) -> ...`), returns a synchronous
