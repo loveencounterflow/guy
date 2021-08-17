@@ -12,10 +12,10 @@ warn                      = CND.get_logger 'warn',      badge
 help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
+types                     = new ( require 'intertype' ).Intertype()
 { isa
   validate
-  type_of }               = @types
-Multimix                  = require 'multimix'
+  type_of }               = types.export()
 
 
 #===========================================================================================================
@@ -23,7 +23,7 @@ Multimix                  = require 'multimix'
 #-----------------------------------------------------------------------------------------------------------
 
 #===========================================================================================================
-class @Guy extends Multimix
+class @Guy
 
   #---------------------------------------------------------------------------------------------------------
   # @extend   object_with_class_properties
