@@ -24,5 +24,11 @@
   "dependencies": {
     "cnd": "9.2.2",
     "intertype": "7.6.7"
+  },
+  "devDependencies": {
+    "deasync": "^0.1.22"
+  },
+  "peerDependencies": {
+    "deasync": "^0.1.22"
   }
 }
