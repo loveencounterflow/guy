@@ -1,4 +1,7 @@
 
+'use strict'
+
+
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
@@ -17,57 +20,42 @@ types                     = new ( require 'intertype' ).Intertype()
   validate
   type_of }               = types.export()
 
+#---------------------------------------------------------------------------------------------------------
+def                       = Object.defineProperty
+
+#---------------------------------------------------------------------------------------------------------
+def_oneoff                = ( object, name, cfg, method ) ->
+  get = ->
+    R = method()
+    delete cfg.get
+    def object, name,
+      configurable: ( cfg.configurable  ? true )
+      enumerable:   ( cfg.enumerable    ? true )
+      value:        R
+    return R
+  def object, name, { enumerable: true, configurable: true, get, }
+  return null
+
 
 #===========================================================================================================
-#
-#-----------------------------------------------------------------------------------------------------------
-
-#===========================================================================================================
-class @Guy
-
-  #---------------------------------------------------------------------------------------------------------
-  # @extend   object_with_class_properties
-  # @include require './cataloguing'
-  # @include require './sizing'
-  # @include require './declaring'
-
-  #---------------------------------------------------------------------------------------------------------
-  # filenames = FS.readdirSync __dirname
-  # for filename in filenames
-  #   continue unless filename.endsWith '.js'
-  #   continue if filename.startsWith '_'
-  #   continue if filename is 'main.js'
-  #   continue if filename is 'types.js'
-  #   path = './' + filename
-  #   @include require path
+class Guy
 
   #---------------------------------------------------------------------------------------------------------
   # constructor: ( target = null ) ->
   constructor: ( @settings = null ) ->
-    super()
-  #   @specs            = {}
-  #   @isa              = Multimix.get_keymethod_proxy @, isa
-  #   @isa_list_of      = Multimix.get_keymethod_proxy @, isa_list_of
-  #   @cast             = Multimix.get_keymethod_proxy @, cast
-  #   @validate         = Multimix.get_keymethod_proxy @, validate
-  #   @validate_list_of = Multimix.get_keymethod_proxy @, validate_list_of
-  #   declarations.declare_types.apply @
-  #   @export target if target?
-
-############################################################################################################
-module.exports  = L = new Guy()
-L.Guy           = Guy
-
-
-#===========================================================================================================
-#
-#-----------------------------------------------------------------------------------------------------------
-@main = ->
+    @props = { def, def_oneoff, }
+    @async =
+      defer: setImmediate
+      after: ( dts, f ) -> setTimeout  f, dts * 1000
+    #.......................................................................................................
+    # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
+    def_oneoff @, 'nowait', { enumerable: true, }, -> require './nowait'
+    return undefined
 
 
 ############################################################################################################
-if require.main is module then do =>
-  @main()
+# if require.main is module then do =>
+module.exports = new Guy()
 
 
 
