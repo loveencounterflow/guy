@@ -20,11 +20,11 @@ types                     = new ( require 'intertype' ).Intertype()
   validate
   type_of }               = types.export()
 
-#---------------------------------------------------------------------------------------------------------
-def                       = Object.defineProperty
+#-----------------------------------------------------------------------------------------------------------
+def = Object.defineProperty
 
-#---------------------------------------------------------------------------------------------------------
-def_oneoff                = ( object, name, cfg, method ) ->
+#-----------------------------------------------------------------------------------------------------------
+def_oneoff = ( object, name, cfg, method ) ->
   get = ->
     R = method()
     delete cfg.get
@@ -45,8 +45,9 @@ class Guy
   constructor: ( @settings = null ) ->
     @props = { def, def_oneoff, }
     @async =
-      defer: setImmediate
-      after: ( dts, f ) -> setTimeout  f, dts * 1000
+      defer:  setImmediate
+      after:  ( dts, f ) -> setTimeout  f, dts * 1000
+      sleep:  ( dts ) -> new Promise ( done ) => setTimeout done, dts * 1000
     #.......................................................................................................
     # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
     def_oneoff @, 'nowait', { enumerable: true, }, -> require './nowait'
