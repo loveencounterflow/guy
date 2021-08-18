@@ -6,8 +6,8 @@
     "../src/nowait.coffee"
   ],
   "names": [],
-  "mappings": "AACA;EAAA;AAAA,MAAA,kBAAA;;;EAIA,IAAC,CAAA,gBAAD,GAAwB,OAAA,CAAQ,SAAR,EAJxB;;;EAOA,IAAC,CAAA,aAAD,GAAiB,QAAA,CAAE,eAAF,CAAA;WAAuB,IAAC,CAAA,gBAAD,CAAkB,KAAA,CAAA,GAAE,CAAF,CAAA,GAAA;AAC1D,UAAA,KAAA,EAAA,OAAA,EAAA,GAAA,EAAA;8BADkE;AAChE;QAAI,MAAA,GAAS,CAAA,MAAM,eAAA,CAAgB,GAAA,CAAhB,CAAN,EAAb;OAAwC,cAAA;QAAM;AAAW,eAAO,OAAA,CAAQ,KAAR,EAAxB;;MACxC,OAAA,CAAQ,IAAR,EAAc,MAAd;AACA,aAAO;IAHiD,CAAlB;EAAvB;AAPjB",
+  "mappings": "AACA;EAAA;AAAA,MAAA,kBAAA;;;EAIA,IAAC,CAAA,gBAAD,GAAoB,OAAA,CAAQ,SAAR,EAJpB;;;EAOA,IAAC,CAAA,aAAD,GAAiB,QAAA,CAAE,eAAF,CAAA;WAAuB,IAAC,CAAA,gBAAD,CAAkB,KAAA,CAAA,GAAE,CAAF,CAAA,GAAA;AAC1D,UAAA,KAAA,EAAA,OAAA,EAAA,GAAA,EAAA;8BADkE;AAChE;QAAI,MAAA,GAAS,CAAA,MAAM,eAAA,CAAgB,GAAA,CAAhB,CAAN,EAAb;OAAwC,cAAA;QAAM;AAAW,eAAO,OAAA,CAAQ,KAAR,EAAxB;;MACxC,OAAA,CAAQ,IAAR,EAAc,MAAd;AACA,aAAO;IAHiD,CAAlB;EAAvB;AAPjB",
   "sourcesContent": [
-    "\n'use strict'\n\n\n############################################################################################################\n@for_callbackable     = require 'deasync'\n\n#-----------------------------------------------------------------------------------------------------------\n@for_awaitable = ( fn_with_promise ) -> @for_callbackable ( P..., handler ) =>\n  try result = await fn_with_promise P... catch error then return handler error\n  handler null, result\n  return null\n"
+    "\n'use strict'\n\n\n############################################################################################################\n@for_callbackable = require 'deasync'\n\n#-----------------------------------------------------------------------------------------------------------\n@for_awaitable = ( fn_with_promise ) -> @for_callbackable ( P..., handler ) =>\n  try result = await fn_with_promise P... catch error then return handler error\n  handler null, result\n  return null\n"
   ]
 }
