@@ -12,6 +12,7 @@
   - [`guy.props`: Define Properties](#guyprops-define-properties)
   - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
+- [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -52,6 +53,23 @@
 * **`guy.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
   used with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be
   used without `await` (as in `result = sf v1, v2, ...`).
+
+## To Do
+
+* **[–]** adopt `icql-dba/errors#Dba_error`:
+
+  ```coffee
+  class @Dba_error extends Error
+    constructor: ( ref, message ) ->
+      super()
+      @message  = "#{ref} (#{@constructor.name}) #{message}"
+      @ref      = ref
+      return undefined
+  ```
+  * **[–]** might want to integrate code from https://github.com/creemama/utiljs/blob/master/packages/utiljs-errors/lib/RethrownError.js
+    to enable re-throwing of errors w/out losing stack trace info.
+  * also see https://github.com/joyent/node-verror
+
 
 
 
