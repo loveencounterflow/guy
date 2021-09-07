@@ -52,8 +52,9 @@ class Configurator
     are free to declare types in `create_types()` that are parametrized from consumer-provided or default
     configuration properties. Freeze `cfg` b/c we won't support live `cfg` changes (can still use `lets` 
     tho where called for) ###
-    @cfg    = freeze { @constructor.C.defaults.constructor_cfg..., cfg..., }
-    @types  = @constructor.create_types @
+    { props, }  = require '..'
+    @cfg        = freeze { @constructor.C.defaults.constructor_cfg..., cfg..., }
+    props.def @, 'types', { enumerable: false, value: ( @constructor.create_types @ ), }
     return undefined
 
 # Sample usage
