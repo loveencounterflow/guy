@@ -19,6 +19,8 @@ types                     = new ( require 'intertype' ).Intertype()
 { isa
   validate
   type_of }               = types.export()
+{ lets
+  freeze }                = require 'letsfreezethat'
 
 #-----------------------------------------------------------------------------------------------------------
 def = Object.defineProperty
@@ -50,8 +52,9 @@ class Guy
       sleep:  ( dts ) -> new Promise ( done ) => setTimeout done, dts * 1000
     #.......................................................................................................
     # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
-    def_oneoff @, 'nowait',       { enumerable: true, }, -> require './nowait'
-    def_oneoff @, 'Configurator', { enumerable: true, }, -> require './configurator'
+    def_oneoff @, 'nowait', { enumerable: true, }, -> require './nowait'
+    def_oneoff @, 'cfg',    { enumerable: true, }, -> require './configurator'
+    def_oneoff @, 'lft',    { enumerable: true, }, -> require 'letsfreezethat'
     return undefined
 
 
