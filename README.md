@@ -14,6 +14,7 @@
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
 - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
   - [Usage Examples](#usage-examples)
+- [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -74,10 +75,19 @@
     to `configure_with_types()`; this will avoid (most of) the overhead of per-instance computations and use
     the same `types` object for all instances (which should be good enough for most cases). ###
 
+
 ### Usage Examples
 
 **TBD**
 
+
+## `guy.lft`: Freezing Objects
+
+`guy.left.freeze()` and `guy.lft.lets()` provide access to the epynomous methods in
+[`letsfreezethat`](https://github.com/loveencounterflow/letsfreezethat). `freeze()` is basically
+`Object.freeze()` for nested objects, while `d = lets d, ( d ) -> mutate d` provides a handy way to mutate
+and re-assign a copy of a frozen object. See [the
+documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 ## To Do
 
