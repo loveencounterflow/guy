@@ -62,18 +62,26 @@
 * **`guy.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
   `self`, an optional `cfg` object and an optional Intertype-like `types` instance,
 
-  * derive effective `cfg` from defaults (where `self.constructor.C.defaults.constructor_cfg` is set) and
+  * set `clasz` to `self.constructor` for conciseness;
+  * derive effective `cfg` from defaults (where `clasz.C.defaults.constructor_cfg` is set) and
     argument `cfg`;
   * make `cfg` a frozen instance property.
   * Procure `types` where not given and
   * make it a non-enumerable instance property.
-  * Now call class method `self.constructor.declare_types()` with `self`;
+  * Now call class method `clasz.declare_types()` with `self`;
   * in `declare_types()`, clients are encouraged to declare type `constructor_cfg` and validate `self.cfg`;
   * further, other types may be declared as appropriate; since those types have access to `self.cfg`, their
     definition may depend on those parameters.
+  * The return value of `clasz.declare_types()` is discarded; clients that want to provide their own must
+    pass it as third argument to `configure_with_types()`.
   * It is always possible to declare or import `types` on the client's module level and pass in that object
     to `configure_with_types()`; this will avoid (most of) the overhead of per-instance computations and use
-    the same `types` object for all instances (which should be good enough for most cases). ###
+    the same `types` object for all instances (which should be good enough for most cases).
+  * One thing to avoid though is to declare types on the module level, then pass that types object to
+    `configure_with_types()` to add custom types at instantiation time. Doing so would share the same
+    `types` object between instances *and* modify it for each new instance, which is almost never what you
+    want. Either declare one constant types object for all instances or else build a new bespoke types
+    object for each instance from scratch.
 
 
 ### Usage Examples
