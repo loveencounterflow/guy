@@ -14,6 +14,7 @@
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
 - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
   - [Usage Examples](#usage-examples)
+    - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
 - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
 - [To Do](#to-do)
 
@@ -86,7 +87,29 @@
 
 ### Usage Examples
 
-**TBD**
+#### Most Minimal (Bordering Useless)
+
+It is allowable to call `configure_with_types()` with an instance of whatever class.
+`guy.cfg.configure_with_types()` will look for properties `clasz.C.defaults`, `clasz.declare_types()` (and a
+`types` object as third argument to `configure_with_types()`) and provide defaults where missing:
+
+```coffee
+class Ex
+  constructor: ( cfg ) ->
+    guy.cfg.configure_with_types @, cfg
+#.........................................................................................................
+ex1 = new Ex()
+ex2 = new Ex { foo: 42, }
+#.........................................................................................................
+log ex1                         # Ex { cfg: {} }
+log ex1.cfg                     # {}
+log ex2                         # Ex { cfg: { foo: 42 } }
+log ex2.cfg                     # { foo: 42 }
+log ex1.types is ex2.types      # false
+log type_of ex1.types.validate  # function
+```
+
+
 
 
 ## `guy.lft`: Freezing Objects
