@@ -15,6 +15,7 @@
 - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
   - [Usage Examples](#usage-examples)
     - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
+    - [More Typical](#more-typical)
 - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
 - [To Do](#to-do)
 
@@ -109,7 +110,38 @@ log ex1.types is ex2.types      # false
 log type_of ex1.types.validate  # function
 ```
 
+#### More Typical
 
+```coffee
+class Ex
+
+  @C: guy.lft.freeze
+    foo:      'foo-constant'
+    bar:      'bar-constant'
+    defaults:
+      constructor_cfg:
+        foo:      'foo-default'
+        bar:      'bar-default'
+
+  @declare_types: ( self ) ->
+    self.types.declare 'constructor_cfg', tests:
+      "@isa.object x":                    ( x ) -> @isa.object x
+      "x.foo in [ 'foo-default', 42, ]":  ( x ) -> x.foo in [ 'foo-default', 42, ]
+      "x.bar is 'bar-default'":           ( x ) -> x.bar is 'bar-default'
+    self.types.validate.constructor_cfg self.cfg
+    return null
+
+  constructor: ( cfg ) ->
+    guy.cfg.configure_with_types @, cfg
+    return undefined
+
+#.......................................................................................................
+ex = new Ex { foo: 42, }
+log ex                          # Ex { cfg: { foo: 42, bar: 'bar-default' } }
+log ex.cfg                      # { foo: 42, bar: 'bar-default' }
+log ex.constructor.C            # { foo: 'foo-constant', bar: 'bar-constant', defaults: { constructor_cfg: { foo: 'foo-default', bar: 'bar-default' } } }
+log ex.constructor.C?.defaults  # { constructor_cfg: { foo: 'foo-default', bar: 'bar-default' } }
+```
 
 
 ## `guy.lft`: Freezing Objects
