@@ -12,6 +12,8 @@
   - [`guy.props`: Define Properties](#guyprops-define-properties)
   - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
+- [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
+  - [Usage Examples](#usage-examples)
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -53,6 +55,29 @@
 * **`guy.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
   used with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be
   used without `await` (as in `result = sf v1, v2, ...`).
+
+## `guy.cfg`: Instance Configuration Helper
+
+* **`guy.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
+  `self`, an optional `cfg` object and an optional Intertype-like `types` instance,
+
+  * derive effective `cfg` from defaults (where `self.constructor.C.defaults.constructor_cfg` is set) and
+    argument `cfg`;
+  * make `cfg` a frozen instance property.
+  * Procure `types` where not given and
+  * make it a non-enumerable instance property.
+  * Now call class method `self.constructor.declare_types()` with `self`;
+  * in `declare_types()`, clients are encouraged to declare type `constructor_cfg` and validate `self.cfg`;
+  * further, other types may be declared as appropriate; since those types have access to `self.cfg`, their
+    definition may depend on those parameters.
+  * It is always possible to declare or import `types` on the client's module level and pass in that object
+    to `configure_with_types()`; this will avoid (most of) the overhead of per-instance computations and use
+    the same `types` object for all instances (which should be good enough for most cases). ###
+
+### Usage Examples
+
+**TBD**
+
 
 ## To Do
 
