@@ -167,7 +167,8 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * **[–]** might want to integrate code from https://github.com/creemama/utiljs/blob/master/packages/utiljs-errors/lib/RethrownError.js
     to enable re-throwing of errors w/out losing stack trace info.
   * also see https://github.com/joyent/node-verror
-
+* **[–]** while `test @[ "nowait with async steampipes" ]` works in isolation, running the test suite hangs
+  indefinitely.
 
 
 
