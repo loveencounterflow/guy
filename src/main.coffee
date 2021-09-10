@@ -28,7 +28,7 @@ def = Object.defineProperty
 #-----------------------------------------------------------------------------------------------------------
 def_oneoff = ( object, name, cfg, method ) ->
   get = ->
-    R = method()
+    R = method.apply object
     delete cfg.get
     def object, name,
       configurable: ( cfg.configurable  ? true )
