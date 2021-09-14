@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/obj.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA,aAAA;;EAKA,IAAC,CAAA,kBAAD,GAAsB,QAAA,CAAE,CAAF,EAAK,QAAL,EAAA,GAAe,IAAf,CAAA;AACtB,QAAA,CAAA,EAAA,CAAA,EAAA,GAAA,EAAA,GAAA,EAAA,GAAA,EAAA;IAAE,CAAA,GAAI,CAAA;AACJ;IAAA,KAAA,qCAAA;;MACE,CAAC,CAAE,GAAF,CAAD,GAAc,CAAE,KAAA,GAAQ,CAAC,CAAE,GAAF,CAAX,CAAA,KAAwB,MAA3B,GAA0C,QAA1C,GAAwD;IADrE;AAEA,WAAO;EAJa,EALtB;;;EAYA,IAAC,CAAA,iBAAD,GAAqB,QAAA,CAAE,CAAF,CAAA;AACrB,QAAA,CAAA,EAAA,CAAA,EAAA;IAAE,CAAA,GAAU,CAAA;IACV,KAAA,MAAA;;MAAA,CAAC,CAAE,CAAF,CAAD,eAAY,IAAI;IAAhB;AACA,WAAO;EAHY,EAZrB;;;EAkBA,IAAC,CAAA,YAAD,GAAgB,QAAA,CAAE,CAAF,CAAA;AAChB,QAAA,CAAA,EAAA,CAAA,EAAA;IAAE,CAAA,GAAU,CAAA;IACV,KAAA,MAAA;;UAA+B;QAA/B,CAAC,CAAE,CAAF,CAAD,GAAU;;IAAV;AACA,WAAO;EAHO;AAlBhB",
+  "sourcesContent": [
+    "\n'use strict'\n\n\n\n#-----------------------------------------------------------------------------------------------------------\n@pick_with_fallback = ( d, fallback, keys... ) ->\n  R = {}\n  for key in keys.flat Infinity\n    R[ key ] = if ( value = d[ key ] ) is undefined then fallback else value\n  return R\n\n#-----------------------------------------------------------------------------------------------------------\n@nullify_undefined = ( d ) ->\n  R       = {}\n  R[ k ]  = ( v ? null ) for k, v of d\n  return R\n\n#-----------------------------------------------------------------------------------------------------------\n@omit_nullish = ( d ) ->\n  R       = {}\n  R[ k ]  = v for k, v of d when v?\n  return R\n\n"
+  ]
+}
