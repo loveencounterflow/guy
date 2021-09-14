@@ -17,6 +17,7 @@
     - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
     - [More Typical](#more-typical)
 - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
+- [`guy.obj`: Common Operations on Objects](#guyobj-common-operations-on-objects)
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -151,6 +152,19 @@ log ex.constructor.C?.defaults  # { constructor_cfg: { foo: 'foo-default', bar: 
 `Object.freeze()` for nested objects, while `d = lets d, ( d ) -> mutate d` provides a handy way to mutate
 and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
+
+## `guy.obj`: Common Operations on Objects
+
+* **`guy.obj.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and
+  some `keys`, return an object that whose `keys` are the ones passed in, and whose values are either the
+  same as found in `d`, or `fallback` in case a key is missing in `d` or set to `undefined`. If `d[ key ]`
+  is `null`, it will be replaced by `fallback`. When no keys are given, an empty object will be returned.
+
+* **`guy.obj.nullify_undefined = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined`
+  values are replaced with `null`. In case `d` is `null` or `undefined`, an empty object will be returned.
+
+* **`guy.obj.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
+  `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
 
 ## To Do
 
