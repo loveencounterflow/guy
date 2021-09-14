@@ -55,6 +55,7 @@ class Guy
     def_oneoff @, 'nowait', { enumerable: true, }, -> require './nowait'
     def_oneoff @, 'cfg',    { enumerable: true, }, -> require './cfg'
     def_oneoff @, 'lft',    { enumerable: true, }, -> require 'letsfreezethat'
+    def_oneoff @, 'obj',    { enumerable: true, }, -> require './obj'
     return undefined
 
 
