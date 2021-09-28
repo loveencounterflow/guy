@@ -93,7 +93,9 @@
 **Peer Dependencies**: [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook)
 
 * **`guy.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
-  [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details.
+  [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details. **Note**
+  When installing this peer dependency, make sure to do so with the last CommonJS version added, as in `npm
+  install exit-hook@2.2.1`.
 
 ### Usage Examples
 
