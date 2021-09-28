@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/process.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA,aAAA;;EAGA,IAAC,CAAA,OAAD,GAAW,OAAA,CAAQ,WAAR;AAHX",
+  "sourcesContent": [
+    "\n'use strict'\n\n#-----------------------------------------------------------------------------------------------------------\n@on_exit = require 'exit-hook'\n\n"
+  ]
+}
