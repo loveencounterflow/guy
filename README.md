@@ -13,6 +13,7 @@
   - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
 - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
+  - [`guy.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
   - [Usage Examples](#usage-examples)
     - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
     - [More Typical](#more-typical)
@@ -63,7 +64,8 @@
 ## `guy.cfg`: Instance Configuration Helper
 
 * **`guy.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
-  `self`, an optional `cfg` object and an optional Intertype-like `types` instance,
+  `self`, an optional `cfg` object and an optional
+  [Intertype](https://github.com/loveencounterflow/intertype)-like `types` instance,
 
   * set `clasz` to `self.constructor` for conciseness;
   * derive effective `cfg` from defaults (where `clasz.C.defaults.constructor_cfg` is set) and
@@ -86,6 +88,12 @@
     want. Either declare one constant types object for all instances or else build a new bespoke types
     object for each instance from scratch.
 
+### `guy.process`: Process-Related Utilities
+
+**Peer Dependencies**: [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook)
+
+* **`guy.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
+  [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details.
 
 ### Usage Examples
 
