@@ -57,6 +57,7 @@ class Guy
     def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
     def_oneoff @, 'obj',      { enumerable: true, }, -> require './obj'
     def_oneoff @, 'process',  { enumerable: true, }, -> require './process'
+    def_oneoff @, 'fs',       { enumerable: true, }, -> require './fs'
     return undefined
 
 
