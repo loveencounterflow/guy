@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/fs.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA;AAAA,MAAA,GAAA,EAAA,OAAA,EAAA,KAAA,EAAA,QAAA;;;EAGA,KAAA,GAA4B,IAAI,CAAE,OAAA,CAAQ,WAAR,CAAF,CAAuB,CAAC,SAA5B,CAAA;;EAC5B,CAAA,CAAE,GAAF,EACE,QADF,EAEE,OAFF,CAAA,GAE4B,KAAK,CAAC,MAAN,CAAA,CAF5B,EAJA;;;EAUA,IAAC,CAAA,UAAD,GAAc,SAAA,CAAE,IAAF,CAAA;AACd,QAAA,GAAA,EAAA,IAAA,EAAA,SAAA;;;IAEE,QAAQ,CAAC,aAAT,CAAuB,IAAvB;IACA,GAAA,GACE;MAAA,SAAA,EAAoB,CAAA,GAAI,IAAxB;MACA,gBAAA,EAAoB,IADpB;IAAA;IAEF,SAAA,GAAY,IAAI,CAAE,OAAA,CAAQ,qCAAR,CAAF,CAAJ,CAAsD,IAAtD,EAA4D,GAA5D;AACZ,WAAkC,CAAE,IAAA,GAAO,SAAS,CAAC,IAAV,CAAA,CAAT,CAAA,KAAiC,KAAnE;MAAA,MAAM,IAAI,CAAC,QAAL,CAAc,OAAd;IAAN;AACA,WAAO;EATK;AAVd",
+  "sourcesContent": [
+    "\n'use strict'\n\n############################################################################################################\ntypes                     = new ( require 'intertype' ).Intertype()\n{ isa\n  validate\n  type_of }               = types.export()\n\n\n#-----------------------------------------------------------------------------------------------------------\n@walk_lines = ( path ) ->\n  ### TAINT make newline, buffersize configurable ###\n  ### thx to https://github.com/nacholibre/node-readlines ###\n  validate.nonempty_text path\n  cfg =\n    readChunk:          4 * 1024 # chunk_size, byte_count\n    newLineCharacter:   '\\n'      # nl\n  readlines = new ( require '../dependencies/n-readlines-patched' ) path, cfg\n  yield line.toString 'utf-8' while ( line = readlines.next() ) isnt false\n  return null\n\n\n\n"
+  ]
+}
