@@ -193,6 +193,14 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * also see https://github.com/joyent/node-verror
 * **[–]** while `test @[ "nowait with async steampipes" ]` works in isolation, running the test suite hangs
   indefinitely.
-
-
+* **[+]** <del>see whether [`n-readlines`]() may be replaced by a simpler, faster implementation as it does
+  contain some infelicitous loops in
+  [`_searchInBuffer`](https://github.com/nacholibre/node-readlines/blob/master/readlines.js#L33) that can
+  probably be replaced by
+  [`buffer.indexOf()`](https://nodejs.org/api/buffer.html#buffer_buf_indexof_value_byteoffset_encoding).
+  Also, there's a similar implementation in
+  [`intertext-splitlines`](https://github.com/loveencounterflow/intertext-splitlines).</del>
+  <ins>[Benchmarks](https://github.com/loveencounterflow/hengist/blob/master/dev/guy/src/readlines.benchmarks.coffee)
+  show that patched version with suitable chunk size performs OK; using patched version to avoid deprecation
+  warning.</ins>
 
