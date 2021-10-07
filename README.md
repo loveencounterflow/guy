@@ -203,4 +203,4 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   <ins>[Benchmarks](https://github.com/loveencounterflow/hengist/blob/master/dev/guy/src/readlines.benchmarks.coffee)
   show that patched version with suitable chunk size performs OK; using patched version to avoid deprecation
   warning.</ins>
-
+* **[–]** `guy.fs.walk_lines()`: allow to configure; make `trimEnd()` the default
