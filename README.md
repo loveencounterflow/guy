@@ -36,6 +36,9 @@
 
 * **`guy.props.def: ( target, name, cfg ) ->`** is just another name for `Object.defineProperty()`.
 
+* **`guy.props.hide: ( object, name, value ) ->`** is a shortcut to define a non-enumerable property as in
+  `Object.defineProperty object, name, { enumerable: false, value, }`.
+
 * **`guy.props.def_oneoff: ()`**
 
 
