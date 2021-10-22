@@ -23,7 +23,9 @@ types                     = new ( require 'intertype' ).Intertype()
   freeze }                = require 'letsfreezethat'
 
 #-----------------------------------------------------------------------------------------------------------
-def = Object.defineProperty
+def   = Object.defineProperty
+hide  = ( object, name, value ) -> Object.defineProperty object, name, { enumerable: false, value, }
+
 
 #-----------------------------------------------------------------------------------------------------------
 def_oneoff = ( object, name, cfg, method ) ->
@@ -45,7 +47,7 @@ class Guy
   #---------------------------------------------------------------------------------------------------------
   # constructor: ( target = null ) ->
   constructor: ( @settings = null ) ->
-    @props = { def, def_oneoff, }
+    @props = { def, hide, def_oneoff, }
     @async =
       defer:  setImmediate
       after:  ( dts, f ) -> setTimeout  f, dts * 1000
