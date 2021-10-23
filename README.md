@@ -19,6 +19,7 @@
     - [More Typical](#more-typical)
 - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
 - [`guy.obj`: Common Operations on Objects](#guyobj-common-operations-on-objects)
+- [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
 - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -178,6 +179,24 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 * **`guy.obj.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
   `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
+
+## `guy.fs`: File-Related Stuff
+
+* **`guy.fs.walk_lines = ( path ) ->`**—Given a `path`, return a *synchronous* iterator over file
+  lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
+  I'm aware of, yet.
+
+* **`guy.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
+  the referenced file; optionally, when the iterator is exhausted (all lines have been read), restart from
+  the beginning. `cfg` may be an object with the keys:
+  * **`loop_count`**—(cardinal; default: `1`) controls how many times to loop over the file. Set to
+    `+Infinity` to allow for an unlimited number of laps.
+  * **`line_count`**—(cardinal; default: `+Infinity`) controls the maximum number of lines that will be
+    yielded.
+  * The iteration will finish as soon as the one or the other limit has been reached.
+  * By default, `guy.fs.walk_circular_lines()` will act like `guy.fs.walk_lines`.
+  * The iterator will not yield anything when either `loop_count` or `line_count` are set to `0`.
+
 
 ## To Do
 
