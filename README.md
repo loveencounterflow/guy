@@ -182,9 +182,10 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 ## `guy.fs`: File-Related Stuff
 
-* **`guy.fs.walk_lines = ( path ) ->`**—Given a `path`, return a *synchronous* iterator over file
+* **`guy.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
-  I'm aware of, yet.
+  I'm aware of, yet. The optional `cfg` argument may be an object with a single property `decode`; when set
+  to `false`, `walk_lines()` will iterate over buffers instead of strings.
 
 * **`guy.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
   the referenced file; optionally, when the iterator is exhausted (all lines have been read), restart from
