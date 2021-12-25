@@ -227,3 +227,22 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   show that patched version with suitable chunk size performs OK; using patched version to avoid deprecation
   warning.</ins>
 * **[–]** `guy.fs.walk_lines()`: allow to configure; make `trimEnd()` the default
+
+* implement easy way to collect, rediect `process.stdout`, `process.stderr`:
+
+  ```coffee
+  original_stderr_write = process.stderr.write.bind process.stderr
+  collector = []
+  process.stderr.write = ( x ) ->
+    echo '^3453^', type_of x
+    # FS.writeSync output_fd, x
+    collector.push x
+    original_stderr_write '^1234^ '
+    original_stderr_write x
+  echo "(echo) helo world"
+  info "(info) helo world"
+  info "whatever goes on here"
+  warn CND.reverse "is collected"
+  for x in collector
+    process.stdout.write '^collector@4565^' + x
+  ```
