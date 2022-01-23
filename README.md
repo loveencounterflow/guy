@@ -55,6 +55,10 @@
 
 ### `guy.nowait`: De-Asyncify JS Async Functions
 
+**Note** Due to ongoing issues when compiling the `deasync` module that this functionality
+is implemented in, `guy-nowait`has been removed from this release.
+
+<del>
 **Peer Dependencies**: [`abbr/deasync`](https://github.com/abbr/deasync)
 
 * **`guy.nowait.for_callbackable: ( fn_with_callback ) ->`**—given an asynchronous function `afc` that
@@ -64,6 +68,8 @@
 * **`guy.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
   used with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be
   used without `await` (as in `result = sf v1, v2, ...`).
+</del>
+
 
 ## `guy.cfg`: Instance Configuration Helper
 
@@ -197,6 +203,11 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * The iteration will finish as soon as the one or the other limit has been reached.
   * By default, `guy.fs.walk_circular_lines()` will act like `guy.fs.walk_lines`.
   * The iterator will not yield anything when either `loop_count` or `line_count` are set to `0`.
+
+* **`guy.fs.get_content_hash = ( path, cfg ) ->`**—Given a `path`, return the
+  hexadecimal `sha1` hash digest for its contents. On Linux, this uses `sha1sum`, and `shasum` on all 
+  other systems.
+
 
 
 ## To Do
