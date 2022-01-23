@@ -7,7 +7,7 @@ types                     = new ( require 'intertype' ).Intertype()
   validate
   type_of }               = types.export()
 misfit                    = Symbol 'misfit'
-
+platform                  = ( require 'os' ).platform()
 
 #-----------------------------------------------------------------------------------------------------------
 types.declare 'guy_walk_lines_cfg', tests:
@@ -25,8 +25,6 @@ types.declare 'guy_walk_circular_lines_cfg', tests:
 types.declare 'guy_get_content_hash_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "@isa.cardinal x.length":                                           ( x ) -> @isa.cardinal x.length
-  "x.command must be allowed value":                                  ( x ) ->
-    return x.command in [ 'sha1sum', 'sha512sum', 'sha256sum', 'sha224sum', 'md5sum', ]
 
 #-----------------------------------------------------------------------------------------------------------
 defaults =
@@ -37,7 +35,6 @@ defaults =
     loop_count:     1
     line_count:     +Infinity
   guy_get_content_hash_cfg:
-    command:        'sha1sum'
     length:         17
 
 #-----------------------------------------------------------------------------------------------------------
@@ -84,15 +81,19 @@ defaults =
   validate.nonempty_text path
   validate.guy_get_content_hash_cfg ( cfg = { defaults.guy_get_content_hash_cfg..., cfg..., } )
   CP        = require 'child_process'
-  result    = CP.spawnSync cfg.command, [ '-b', path, ]
+  command   = if platform is 'linux' then 'sha1sum' else 'shasum'
+  result    = CP.spawnSync command, [ '-b', path, ]
   if result.status isnt 0
-    throw new Error "^guy.fs.get_content_hash@1^ " + result.stderr.toString 'utf-8'
+    if result.stderr?
+      throw new Error "^guy.fs.get_content_hash@1^ " + result.stderr.toString 'utf-8'
+    else
+      throw new Error "^guy.fs.get_content_hash@1^ " + ( require 'util' ).inspect result.error
   R = result
   R = R.stdout.toString 'utf-8'
   R = R.replace /\s.*$/, ''
   R = R[ ... cfg.length ]
   unless R.length is cfg.length
-    throw new Error "^guy.fs.get_content_hash@1^ unable to generate hash of length #{cfg.length} using #{cfg.command}"
+    throw new Error "^guy.fs.get_content_hash@1^ unable to generate hash of length #{cfg.length} using #{command}"
   return R
 
 
