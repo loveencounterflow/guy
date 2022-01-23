@@ -54,7 +54,7 @@ class Guy
       sleep:  ( dts ) -> new Promise ( done ) => setTimeout done, dts * 1000
     #.......................................................................................................
     # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
-    def_oneoff @, 'nowait',   { enumerable: true, }, -> require './nowait'
+    # def_oneoff @, 'nowait',   { enumerable: true, }, -> require './nowait'
     def_oneoff @, 'cfg',      { enumerable: true, }, -> require './cfg'
     def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
     def_oneoff @, 'obj',      { enumerable: true, }, -> require './obj'
