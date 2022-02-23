@@ -60,6 +60,7 @@ class Guy
     def_oneoff @, 'obj',      { enumerable: true, }, -> require './obj'
     def_oneoff @, 'process',  { enumerable: true, }, -> require './process'
     def_oneoff @, 'fs',       { enumerable: true, }, -> require './fs'
+    def_oneoff @, 'str',      { enumerable: true, }, -> require './str'
     return undefined
 
 
