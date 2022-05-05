@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/async.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA;EAEA,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAAuC,WAAA,CAAY,CAAZ,EAAkB,GAAA,GAAM,IAAxB;EAAvC;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAAuC,UAAA,CAAY,CAAZ,EAAkB,GAAA,GAAM,IAAxB;EAAvC;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,CAAA,GAAA;WAAe,IAAI,OAAJ,CAAY,CAAE,IAAF,CAAA,GAAA;aAAY,UAAA,CAAY,IAAZ,EAAkB,GAAA,GAAM,IAAxB;IAAZ,CAAZ;EAAf;;EACV,IAAC,CAAA,KAAD,GAAU,KAAA,CAAE,IAAI,QAAA,CAAA,CAAA,EAAA,CAAN,CAAA,GAAA;IAAe,MAAM,IAAC,CAAA,KAAD,CAAO,CAAP;AAAU,WAAO,CAAA,MAAM,CAAA,CAAA,CAAN;EAAtC;AALV",
+  "sourcesContent": [
+    "\n'use strict'\n\n@every  = ( dts, f  ) =>                         setInterval f,    dts * 1000\n@after  = ( dts, f  ) =>                         setTimeout  f,    dts * 1000\n@sleep  = ( dts     ) => new Promise ( done ) => setTimeout  done, dts * 1000\n@defer  = ( f = ->  ) => await @sleep 0; return await f()\n"
+  ]
+}
