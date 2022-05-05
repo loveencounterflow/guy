@@ -48,13 +48,10 @@ class Guy
   # constructor: ( target = null ) ->
   constructor: ( @settings = null ) ->
     @props = { def, hide, def_oneoff, }
-    @async =
-      defer:  setImmediate
-      after:  ( dts, f ) -> setTimeout  f, dts * 1000
-      sleep:  ( dts ) -> new Promise ( done ) => setTimeout done, dts * 1000
     #.......................................................................................................
     # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
     # def_oneoff @, 'nowait',   { enumerable: true, }, -> require './nowait'
+    def_oneoff @, 'async',    { enumerable: true, }, -> require './async'
     def_oneoff @, 'cfg',      { enumerable: true, }, -> require './cfg'
     def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
     def_oneoff @, 'obj',      { enumerable: true, }, -> require './obj'
