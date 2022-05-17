@@ -268,3 +268,7 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   for x in collector
     process.stdout.write '^collector@4565^' + x
   ```
+
+* **[–]** take over tabulation (as in `hengist/src/helpers`)
+
+
