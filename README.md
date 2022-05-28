@@ -270,5 +270,6 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   ```
 
 * **[–]** take over tabulation (as in `hengist/src/helpers`)
-
+* **[–]** could the `SQL` string annotation / tagged literal function be syntactically extended to allow
+  simpler interpolation of escaped names? Could we instantiate it with a dictionary of values?
 
