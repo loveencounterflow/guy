@@ -1,7 +1,8 @@
 
 'use strict'
 
-
+#-----------------------------------------------------------------------------------------------------------
+@_misfit = misfit = Symbol 'misfit'
 
 #-----------------------------------------------------------------------------------------------------------
 @_pick_with_fallback = ( d, fallback, keys... ) ->
@@ -31,4 +32,33 @@
   R       = {}
   R[ k ]  = v for k, v of d when v?
   return R
+
+
+#===========================================================================================================
+class @Strict_proprietor
+
+  #---------------------------------------------------------------------------------------------------------
+  constructor: ->
+    ### thx to https://stackoverflow.com/a/40714458/7568091 ###
+    self = @
+    #.......................................................................................................
+    @has = new Proxy {},
+      get: ( _, key ) =>
+        return self[ key ] isnt undefined
+    #.......................................................................................................
+    return new Proxy @,
+      #.....................................................................................................
+      get: ( target, key ) =>
+        if ( R = target[ key ] ) is undefined
+          throw new Error "^guy.obj.Strict_proprietor@1^ #{@constructor.name} instance does not have property #{rpr key}"
+        return R
+      # set: ( target, key, value ) =>
+      #   target[key] = value
+      #   return true
+
+    #.......................................................................................................
+    get: ( key, fallback = misfit ) =>
+      try return self[ key ] catch error
+        return fallback unless fallback is misfit
+      throw error
 
