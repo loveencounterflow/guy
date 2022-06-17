@@ -1,13 +1,13 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   cnd: 9.2.2
-  intertype: 7.6.7
+  intertype: 7.7.1
   letsfreezethat: ^3.1.0
 
 dependencies:
   cnd: 9.2.2
-  intertype: 7.6.7
+  intertype: 7.7.1
   letsfreezethat: 3.1.0
 
 packages:
@@ -19,8 +19,8 @@ packages:
       jsx-number-format: 0.1.4
     dev: false
 
-  /intertype/7.6.7:
-    resolution: {integrity: sha512-vBgYabqxX3fLa9f0Z3QeXgYszadAGdAHXdLcdQc5ZxZSG5CmbJCdYcudZLYtgmNo8epQag8zzyg7wwx+OD5J8g==}
+  /intertype/7.7.1:
+    resolution: {integrity: sha512-GgGJYdbHaZ5AM4TvxzXSfkgFwAIEl6w3yIFiDY15uc85W41YfSRL0vNuO68tjNQ3gNIJ+U+xOYA8cw9NN8j0JQ==}
     dependencies:
       multimix: 5.0.0
     dev: false

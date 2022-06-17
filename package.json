@@ -23,7 +23,7 @@
   "homepage": "https://github.com/loveencounterflow/guy",
   "dependencies": {
     "cnd": "9.2.2",
-    "intertype": "7.6.7",
+    "intertype": "7.7.1",
     "letsfreezethat": "^3.1.0"
   }
 }
