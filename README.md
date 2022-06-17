@@ -45,13 +45,24 @@
 
 ### `guy.async`: Asynchronous Helpers
 
-* **`guy.async.defer: ( f ) ->`**—equivalent to `setImmediate f`
+These 'five letter' methods are convenience methods in the sense that they are very thin shims over the
+somewhat less convenient JavaScript methods. For many people, the most strightforward way to understand what
+these methods do will be to read the very simple definitions:
 
-* **`guy.async.after: ( dts, f ) ->`**—equivalent to `setTimeout f, dts * 1000`. Observe that Δt must be
-  given in seconds (not milliseconds).
+* `every: ( dts, f ) ->                         setInterval f,    dts * 1000`
+* `after: ( dts, f ) ->                         setTimeout  f,    dts * 1000`
+* `cease: ( toutid ) -> clearTimeout toutid`
+* `sleep: ( dts    ) -> new Promise ( done ) => setTimeout  done, dts * 1000`
+* `defer: ( f = -> ) -> await sleep 0; return await f()`
 
-* **`guy.async.sleep: ( dts ) ->`**—`await sleep 1` will resume after one second.
-
+In each case, `dts` denotes an interval (delta time) measured in *seconds* (not milliseconds) and `f`
+denotes a function. `every()` and `after()` return so-called timeout IDs (`toutid`s), i.e. values that are
+recognized by `cease()` (`clearTimeout()`, `clearInterval()`) to stop a one-off or repetetive timed function
+call. `sleep()` returns a promise that should be awaited as in `await sleep 3`, which will allow another
+task on the event loop to return and resume execution no sooner than after 3000 milliseconds have elapsed.
+Finally, there is `defer()`, which should also be `await`ed. It is a special use-case of `sleep()` where the
+timeout is set to zero, so the remaining effect is that other tasks on the event loop get a chance to run.
+It accepts an optional function argument whose (synchronous or asynchronous) result will be returned.
 
 ### `guy.nowait`: De-Asyncify JS Async Functions
 
@@ -257,3 +268,8 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   for x in collector
     process.stdout.write '^collector@4565^' + x
   ```
+
+* **[–]** take over tabulation (as in `hengist/src/helpers`)
+* **[–]** could the `SQL` string annotation / tagged literal function be syntactically extended to allow
+  simpler interpolation of escaped names? Could we instantiate it with a dictionary of values?
+
