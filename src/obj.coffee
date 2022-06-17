@@ -49,11 +49,13 @@ class @Strict_proprietor
     #.......................................................................................................
     @has = new Proxy {},
       get: ( _, key ) =>
+        return undefined if key is Symbol.toStringTag
         return self[ key ] isnt undefined
     #.......................................................................................................
     return new Proxy @,
       #.....................................................................................................
       get: ( target, key ) =>
+        return undefined if key is Symbol.toStringTag
         if ( R = target[ key ] ) is undefined
           throw new Error "^guy.obj.Strict_proprietor@1^ #{@constructor.name} instance does not have property #{rpr key}"
         return R
