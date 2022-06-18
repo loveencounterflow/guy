@@ -49,11 +49,18 @@ class @Strict_proprietor
   constructor: ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     self = @
+    has_target = ( key ) =>
+      return true if key is Symbol.toStringTag
+      return self[ key ] isnt undefined
     #.......................................................................................................
-    hide @, 'has', new Proxy has_target,
-      get: ( _, key ) =>
-        return undefined if key is Symbol.toStringTag
-        return self[ key ] isnt undefined
+    unless @has?
+      hide @, 'has', new Proxy has_target, get: ( _, key ) => has_target key
+    #.......................................................................................................
+    unless @get?
+      hide @, 'get', ( key, fallback = misfit ) =>
+        try return self[ key ] catch error
+          return fallback unless fallback is misfit
+        throw error
     #.......................................................................................................
     return new Proxy @,
       #.....................................................................................................
@@ -66,9 +73,4 @@ class @Strict_proprietor
       #   target[key] = value
       #   return true
 
-    #.......................................................................................................
-    get: ( key, fallback = misfit ) =>
-      try return self[ key ] catch error
-        return fallback unless fallback is misfit
-      throw error
 
