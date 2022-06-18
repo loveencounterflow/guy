@@ -60,7 +60,7 @@ rpr                       = CND.rpr
 
 
 #===========================================================================================================
-class @Strict_proprietor
+class @Strict_owner
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ->
@@ -84,7 +84,7 @@ class @Strict_proprietor
       get: ( target, key ) =>
         return undefined if key is Symbol.toStringTag
         if ( R = target[ key ] ) is undefined
-          throw new Error "^guy.props.Strict_proprietor@1^ #{@constructor.name} instance does not have property #{rpr key}"
+          throw new Error "^guy.props.Strict_owner@1^ #{@constructor.name} instance does not have property #{rpr key}"
         return R
       # set: ( target, key, value ) =>
       #   target[key] = value
