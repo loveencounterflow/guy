@@ -9,7 +9,8 @@
 
 - [Structure](#structure)
 - [Modules](#modules)
-  - [`guy.props`: Define Properties](#guyprops-define-properties)
+  - [`guy.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
+    - [Class for Strict Ownership](#class-for-strict-ownership)
   - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
   - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
 - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
@@ -18,7 +19,6 @@
     - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
     - [More Typical](#more-typical)
 - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
-- [`guy.obj`: Common Operations on Objects](#guyobj-common-operations-on-objects)
 - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
 - [To Do](#to-do)
 
@@ -33,7 +33,7 @@
 
 ## Modules
 
-### `guy.props`: Define Properties
+### `guy.props`: Common Operations on Object Properties
 
 * **`guy.props.def: ( target, name, cfg ) ->`** is just another name for `Object.defineProperty()`.
 
@@ -42,6 +42,38 @@
 
 * **`guy.props.def_oneoff: ()`**
 
+* **`guy.props.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and
+  some `keys`, return an object that whose `keys` are the ones passed in, and whose values are either the
+  same as found in `d`, or `fallback` in case a key is missing in `d` or set to `undefined`. If `d[ key ]`
+  is `null`, it will be replaced by `fallback`. When no keys are given, an empty object will be returned.
+
+* **`guy.props.nullify_undefined = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined`
+  values are replaced with `null`. In case `d` is `null` or `undefined`, an empty object will be returned.
+
+* **`guy.props.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
+  `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
+
+#### Class for Strict Ownership
+
+JavaScript is famously forgiving when it comes to accessing non-existing object properties. However this
+lenience is also conducive to silent failure. `Strict_owner` is an ES6 class that aims to provide users with
+a convenient mechanism to produce object that throw an error when a non-existing property is being accessed.
+
+When you extend your class with `GUY.props.Strict_owner`, instance of your class will now throw an error
+when a non-existing property is accessed. In addition (and if you don't override those properties), your
+instances will have two special members `x.has()` and `x.get()` to test for membership and to retrieve
+values in a 'safe' way:
+
+* `x.has key` will return `true` if `x` has the attribute identified by `key` and `false` otherwise. In
+  addition, `has()` is a proxy that treats all property accesses like it treats function calls, so one can
+  say `x.has.foobar` and `x.has[ 'foobar' ]` instead of `x.has 'foobar'`.
+
+* `x.get key, fallback` will return `x[ key ]` when `key` names an existing property; otherwise, it will
+  return `fallback`. The `fallback` argument is optional; if it is omitted, `x.get key` works exactly like
+  `x[ key ]` (i.e. it will throw an error when `key` is not found on `x`).
+
+**Note** Membership is tested by comparing values against `undefined`, so setting a property explicitly to
+`undefined` will work much the same as `delete`.
 
 ### `guy.async`: Asynchronous Helpers
 
@@ -184,18 +216,6 @@ log ex.constructor.C?.defaults  # { constructor_cfg: { foo: 'foo-default', bar: 
 and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
-## `guy.obj`: Common Operations on Objects
-
-* **`guy.obj.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and
-  some `keys`, return an object that whose `keys` are the ones passed in, and whose values are either the
-  same as found in `d`, or `fallback` in case a key is missing in `d` or set to `undefined`. If `d[ key ]`
-  is `null`, it will be replaced by `fallback`. When no keys are given, an empty object will be returned.
-
-* **`guy.obj.nullify_undefined = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined`
-  values are replaced with `null`. In case `d` is `null` or `undefined`, an empty object will be returned.
-
-* **`guy.obj.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
-  `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
 
 ## `guy.fs`: File-Related Stuff
 
