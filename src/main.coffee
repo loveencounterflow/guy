@@ -21,24 +21,9 @@ types                     = new ( require 'intertype' ).Intertype()
   type_of }               = types.export()
 { lets
   freeze }                = require 'letsfreezethat'
-
-#-----------------------------------------------------------------------------------------------------------
-def   = Object.defineProperty
-hide  = ( object, name, value ) -> Object.defineProperty object, name, { enumerable: false, value, }
-
-
-#-----------------------------------------------------------------------------------------------------------
-def_oneoff = ( object, name, cfg, method ) ->
-  get = ->
-    R = method.apply object
-    delete cfg.get
-    def object, name,
-      configurable: ( cfg.configurable  ? true )
-      enumerable:   ( cfg.enumerable    ? true )
-      value:        R
-    return R
-  def object, name, { enumerable: true, configurable: true, get, }
-  return null
+{ def
+  hide
+  def_oneoff }            = require './props'
 
 
 #===========================================================================================================
