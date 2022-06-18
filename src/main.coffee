@@ -21,9 +21,7 @@ types                     = new ( require 'intertype' ).Intertype()
   type_of }               = types.export()
 { lets
   freeze }                = require 'letsfreezethat'
-{ def
-  hide
-  def_oneoff }            = require './props'
+props                     = require './props'
 
 
 #===========================================================================================================
@@ -32,18 +30,19 @@ class Guy
   #---------------------------------------------------------------------------------------------------------
   # constructor: ( target = null ) ->
   constructor: ( @settings = null ) ->
-    @props = { def, hide, def_oneoff, }
     #.......................................................................................................
-    # def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
-    # def_oneoff @, 'nowait',   { enumerable: true, }, -> require './nowait'
-    def_oneoff @, 'async',    { enumerable: true, }, -> require './async'
-    def_oneoff @, 'cfg',      { enumerable: true, }, -> require './cfg'
-    def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
-    def_oneoff @, 'obj',      { enumerable: true, }, -> require './obj'
-    def_oneoff @, 'process',  { enumerable: true, }, -> require './process'
-    def_oneoff @, 'fs',       { enumerable: true, }, -> require './fs'
-    def_oneoff @, 'str',      { enumerable: true, }, -> require './str'
+    # props.def_oneoff @, 'foo', { enumerable: true, }, -> require 'intertype'
+    # props.def_oneoff @, 'nowait',   { enumerable: true, }, -> require './nowait'
+    props.def_oneoff @, 'async',    { enumerable: true, }, -> require './async'
+    props.def_oneoff @, 'cfg',      { enumerable: true, }, -> require './cfg'
+    props.def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
+    props.def_oneoff @, 'process',  { enumerable: true, }, -> require './process'
+    props.def_oneoff @, 'fs',       { enumerable: true, }, -> require './fs'
+    props.def_oneoff @, 'str',      { enumerable: true, }, -> require './str'
     return undefined
+
+  #---------------------------------------------------------------------------------------------------------
+  props: props
 
 
 ############################################################################################################
