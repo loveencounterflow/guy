@@ -4,6 +4,9 @@
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
+{ def
+  hide
+  def_oneoff }            = require './props'
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -47,7 +50,7 @@ class @Strict_proprietor
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     self = @
     #.......................................................................................................
-    @has = new Proxy {},
+    hide @, 'has', new Proxy has_target,
       get: ( _, key ) =>
         return undefined if key is Symbol.toStringTag
         return self[ key ] isnt undefined
