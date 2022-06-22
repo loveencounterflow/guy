@@ -60,23 +60,11 @@ rpr                       = CND.rpr
 class @Strict_owner
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ->
+  constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
-    self = @
-    has_target = ( key ) =>
-      return true if key is Symbol.toStringTag
-      return self[ key ] isnt undefined
+    cfg   = { target: @, cfg..., }
     #.......................................................................................................
-    unless @has?
-      hide @, 'has', new Proxy has_target, get: ( _, key ) => has_target key
-    #.......................................................................................................
-    unless @get?
-      hide @, 'get', ( key, fallback = misfit ) =>
-        try return self[ key ] catch error
-          return fallback unless fallback is misfit
-        throw error
-    #.......................................................................................................
-    return new Proxy @,
+    R = new Proxy cfg.target,
       #.....................................................................................................
       get: ( target, key ) =>
         return undefined if key is Symbol.toStringTag
@@ -86,5 +74,19 @@ class @Strict_owner
       # set: ( target, key, value ) =>
       #   target[key] = value
       #   return true
-
+    #.......................................................................................................
+    has_target = ( key ) =>
+      return true if key is Symbol.toStringTag
+      return cfg.target[ key ] isnt undefined
+    #.......................................................................................................
+    unless cfg.target.has?
+      hide cfg.target, 'has', new Proxy has_target, get: ( _, key ) => has_target key
+    #.......................................................................................................
+    unless cfg.target.get?
+      hide cfg.target, 'get', ( key, fallback = misfit ) =>
+        try return cfg.target[ key ] catch error
+          return fallback unless fallback is misfit
+        throw error
+    #.......................................................................................................
+    return R
 

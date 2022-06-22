@@ -75,6 +75,14 @@ values in a 'safe' way:
 **Note** Membership is tested by comparing values against `undefined`, so setting a property explicitly to
 `undefined` will work much the same as `delete`.
 
+**Note** Most often one will want to define a class that extends `Strict_owner`, however, it is also
+possible to pass in an arbitrary object—including a function—as property `target` to the constructor, e.g.
+
+```coffee
+f = ( x ) -> x * 2
+x = new GUY.props.Strict_owner { target: f, }
+```
+
 ### `guy.async`: Asynchronous Helpers
 
 These 'five letter' methods are convenience methods in the sense that they are very thin shims over the
