@@ -1,28 +1,31 @@
 
 
-# A Guy of Many Trades
+# 🛠 A Guy of Many Trades 🛠
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Structure](#structure)
-- [Modules](#modules)
-  - [`guy.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
-    - [Class for Strict Ownership](#class-for-strict-ownership)
-  - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
-  - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
-- [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
-  - [`guy.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
-  - [Usage Examples](#usage-examples)
-    - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
-    - [More Typical](#more-typical)
-- [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
-- [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
-- [To Do](#to-do)
+- [🛠 A Guy of Many Trades 🛠](#%F0%9F%9B%A0-a-guy-of-many-trades-%F0%9F%9B%A0)
+  - [Structure](#structure)
+  - [Modules](#modules)
+    - [`guy.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
+      - [Class for Strict Ownership](#class-for-strict-ownership)
+    - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
+    - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
+  - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
+    - [`guy.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
+    - [Usage Examples](#usage-examples)
+      - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
+      - [More Typical](#more-typical)
+  - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
+  - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
+  - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# 🛠 A Guy of Many Trades 🛠
 
 ## Structure
 
