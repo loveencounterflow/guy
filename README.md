@@ -14,13 +14,13 @@
       - [Class for Strict Ownership](#class-for-strict-ownership)
     - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
     - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
-  - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
     - [`guy.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
-    - [Usage Examples](#usage-examples)
-      - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
-      - [More Typical](#more-typical)
-  - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
-  - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
+    - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
+      - [Usage Examples](#usage-examples)
+        - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
+        - [More Typical](#more-typical)
+    - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
+    - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
   - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -125,7 +125,16 @@ is implemented in, `guy-nowait`has been removed from this release.
 </del>
 
 
-## `guy.cfg`: Instance Configuration Helper
+### `guy.process`: Process-Related Utilities
+
+**Peer Dependencies**: [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook)
+
+* **`guy.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
+  [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details. **Note**
+  When installing this peer dependency, make sure to do so with the last CommonJS version added, as in `npm
+  install exit-hook@2.2.1`.
+
+### `guy.cfg`: Instance Configuration Helper
 
 * **`guy.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
   `self`, an optional `cfg` object and an optional
@@ -152,18 +161,9 @@ is implemented in, `guy-nowait`has been removed from this release.
     want. Either declare one constant types object for all instances or else build a new bespoke types
     object for each instance from scratch.
 
-### `guy.process`: Process-Related Utilities
+#### Usage Examples
 
-**Peer Dependencies**: [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook)
-
-* **`guy.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
-  [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details. **Note**
-  When installing this peer dependency, make sure to do so with the last CommonJS version added, as in `npm
-  install exit-hook@2.2.1`.
-
-### Usage Examples
-
-#### Most Minimal (Bordering Useless)
+##### Most Minimal (Bordering Useless)
 
 It is allowable to call `configure_with_types()` with an instance of whatever class.
 `guy.cfg.configure_with_types()` will look for properties `clasz.C.defaults`, `clasz.declare_types()` (and a
@@ -185,7 +185,7 @@ log ex1.types is ex2.types      # false
 log type_of ex1.types.validate  # function
 ```
 
-#### More Typical
+##### More Typical
 
 ```coffee
 class Ex
@@ -219,7 +219,7 @@ log ex.constructor.C?.defaults  # { constructor_cfg: { foo: 'foo-default', bar: 
 ```
 
 
-## `guy.lft`: Freezing Objects
+### `guy.lft`: Freezing Objects
 
 `guy.left.freeze()` and `guy.lft.lets()` provide access to the epynomous methods in
 [`letsfreezethat`](https://github.com/loveencounterflow/letsfreezethat). `freeze()` is basically
@@ -228,7 +228,7 @@ and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 
-## `guy.fs`: File-Related Stuff
+### `guy.fs`: File-Related Stuff
 
 * **`guy.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
