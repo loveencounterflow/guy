@@ -25,5 +25,13 @@
     "cnd": "9.2.2",
     "intertype": "7.7.1",
     "letsfreezethat": "^3.1.0"
+  },
+  "devDependencies": {
+    "acorn-loose": "^8.3.0",
+    "astring": "^1.8.3"
+  },
+  "peerDependencies": {
+    "acorn-loose": "^8.3.0",
+    "astring": "^1.8.3"
   }
 }
