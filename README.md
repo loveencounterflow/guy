@@ -21,6 +21,7 @@
         - [More Typical](#more-typical)
     - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
     - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
+    - [`guy.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
   - [To Do](#to-do)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -250,6 +251,15 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   hexadecimal `sha1` hash digest for its contents. On Linux, this uses `sha1sum`, and `shasum` on all 
   other systems.
 
+### `guy.src`: JS Source Code Analysis
+
+* **`@PARSER = require 'acorn-loose'`**
+* **`@ASTRING = require 'astring'`**
+* **`@parse = ( cfg ) =>`**
+* **`@get_first_return_clause_node = ( callable ) =>`**
+* **`@_get_first_return_clause_node = ( ast ) =>`**
+* **`@get_first_return_clause_text = ( callable ) =>`**—Given a callable `f` (a function-like object),
+  return the re-generated source text for the first return statement found by `PARSER.parse f.toString()`.
 
 
 ## To Do
