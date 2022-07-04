@@ -4,6 +4,7 @@
 # @PARSER                   = require 'acorn-loose'
 @STRICT_PARSER            = require 'acorn'
 @LOOSE_PARSER             = require 'acorn-loose'
+@AST_WALKER               = require 'acorn-walk'
 @ASTRING                  = require 'astring'
 types                     = new ( require 'intertype' ).Intertype()
 types.defaults            = {}
@@ -54,23 +55,11 @@ types.defaults.guy_src_parse_cfg =
 @_generate = ( P... ) => @ASTRING.generate P...
 
 #-----------------------------------------------------------------------------------------------------------
-@get_first_return_clause_node = ( callable ) =>
-  types.validate.callable callable
-  @_get_first_return_clause_node @parse function: callable
+@slug_node_from_simple_function = ( cfg ) =>
+  ast = @parse cfg
 
 #-----------------------------------------------------------------------------------------------------------
-@_get_first_return_clause_node = ( ast ) =>
-  return @_get_first_return_clause_node ast.body if types.isa.object ast
-  for node in ast
-    if node.type is 'ReturnStatement'
-      return node
-    else
-      return R if ( R = @_get_first_return_clause_node node )?
-  return null
-
-#-----------------------------------------------------------------------------------------------------------
-@get_first_return_clause_text = ( callable ) =>
-  @_generate @get_first_return_clause_node callable
+@slug_from_simple_function = ( cfg ) => @_generate @slug_node_from_simple_function cfg
 
   # debug parser.parse ( ( x ) -> @isa.foo x ).toString(), { ecmaVersion: '2022', }
   # urge generate { type: 'Program', start: 0, end: 49, body: [ { type: 'FunctionDeclaration', start: 0, end: 49, id: { type: 'Identifier', start: 8, end: 8, name: '✖' }, params: [ { type: 'Identifier', start: 9, end: 10, name: 'x' } ], generator: false, expression: false, async: false, body: { type: 'BlockStatement', start: 12, end: 49, body: [ { type: 'ReturnStatement', start: 20, end: 43, argument: { type: 'CallExpression', start: 27, end: 42, callee: { type: 'MemberExpression', start: 27, end: 39, object: { type: 'MemberExpression', start: 27, end: 35, object: { type: 'ThisExpression', start: 27, end: 31 }, property: { type: 'Identifier', start: 32, end: 35, name: 'isa' }, computed: false, optional: false }, property: { type: 'Identifier', start: 36, end: 39, name: 'foo' }, computed: false, optional: false }, arguments: [ { type: 'Identifier', start: 40, end: 41, name: 'x' } ], optional: false } } ] } } ], sourceType: 'script' }
