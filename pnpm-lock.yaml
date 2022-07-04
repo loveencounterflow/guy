@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  acorn: ^8.7.1
   acorn-loose: ^8.3.0
   astring: ^1.8.3
   cnd: 9.2.2
@@ -8,6 +9,7 @@ specifiers:
   letsfreezethat: ^3.1.0
 
 dependencies:
+  acorn: 8.7.1
   cnd: 9.2.2
   intertype: 7.7.1
   letsfreezethat: 3.1.0
@@ -29,7 +31,6 @@ packages:
     resolution: {integrity: sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-    dev: true
 
   /astring/1.8.3:
     resolution: {integrity: sha512-sRpyiNrx2dEYIMmUXprS8nlpRg2Drs8m9ElX9vVEXaCB4XEAJhKfs7IcX0IwShjuOAjLR6wzIrgoptz1n19i1A==}
