@@ -23,6 +23,7 @@
     - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`guy.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
   - [To Do](#to-do)
+  - [Is Done](#is-done)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -255,19 +256,17 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 > This submodule needs peer-dependencies, install them with
 >
-> `npm install acorn acorn-loose astring`
+> `npm install acorn acorn-loose acorn-walk astring`
 >
 > or
 >
-> `pnpm add acorn acorn-loose astring`
+> `pnpm add acorn acorn-loose acorn-walk astring`
 
 
 * **`@STRICT_PARSER = require 'acorn'`**
 * **`@LOOSE_PARSER = require 'acorn-loose'`**
+* **`@AST_WALKER = require 'acorn-walk'`**
 * **`@ASTRING = require 'astring'`**
-
-* **`@get_first_return_clause_node = ( callable ) =>`**
-* **`@_get_first_return_clause_node = ( ast ) =>`**
 
 * **`@parse = ( cfg ) =>`**—Given either a JS source `text` or a `function`, return an
   [ESTree-compliant](https://github.com/estree/estree) AST. Should an error occur and `fallback` is set to
@@ -277,9 +276,12 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   unnamed function declarations that are not part of assignment, while the 'loose' parser happily (and
   correctly parses those). For this reason, the default setting is `use: 'strict,loose'`.
 
-* **`@get_first_return_clause_text = ( callable ) =>`**—Given a callable `f` (a function-like object),
+<!-- * **`@get_first_return_clause_text = ( callable ) =>`**—Given a callable `f` (a function-like object),
   return the re-generated source text for the first return statement found by `PARSER.parse f.toString()`.
+ -->
 
+* **`slug_node_from_simple_function = ( cfg ) =>`**—
+* **`slug_from_simple_function = ( cfg ) =>`**—
 
 ## To Do
 
@@ -341,7 +343,8 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * **[–]** return based on how many `ReturnStatement`s are found:
     * if function has no return: `undefined`
     * if function has single `return`: `argument` property of the `ReturnStatement` node
-    * if function has several `return`s: first `BlockStatement` (i.e. the function body) (???)
+    * if function has several `return`s: <del>first</del><ins>last</ins> `BlockStatement` (i.e. the function
+      body) (???)
 * **[–]** move `GUY.src._generate()` to public API
 
 ## Is Done
