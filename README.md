@@ -253,11 +253,30 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 ### `guy.src`: JS Source Code Analysis
 
-* **`@PARSER = require 'acorn-loose'`**
+> This submodule needs peer-dependencies, install them with
+>
+> `npm install acorn acorn-loose astring`
+>
+> or
+>
+> `pnpm add acorn acorn-loose astring`
+
+
+* **`@STRICT_PARSER = require 'acorn'`**
+* **`@LOOSE_PARSER = require 'acorn-loose'`**
 * **`@ASTRING = require 'astring'`**
-* **`@parse = ( cfg ) =>`**
+
 * **`@get_first_return_clause_node = ( callable ) =>`**
 * **`@_get_first_return_clause_node = ( ast ) =>`**
+
+* **`@parse = ( cfg ) =>`**—Given either a JS source `text` or a `function`, return an
+  [ESTree-compliant](https://github.com/estree/estree) AST. Should an error occur and `fallback` is set to
+  any value, that value will be returned; otherwise, the error will be thrown. The `use` parameter controls
+  which parser is used and can take on the values `'strict'`, `'strict,loose'`, and `'loose'`. For many
+  settings `'strict,loose'` will probably the right setting since the strict parser will balk already on
+  unnamed function declarations that are not part of assignment, while the 'loose' parser happily (and
+  correctly parses those). For this reason, the default setting is `use: 'strict,loose'`.
+
 * **`@get_first_return_clause_text = ( callable ) =>`**—Given a callable `f` (a function-like object),
   return the re-generated source text for the first return statement found by `PARSER.parse f.toString()`.
 
@@ -313,4 +332,26 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 * **[–]** take over tabulation (as in `hengist/src/helpers`)
 * **[–]** could the `SQL` string annotation / tagged literal function be syntactically extended to allow
   simpler interpolation of escaped names? Could we instantiate it with a dictionary of values?
+<!-- * **[–]** `GUY.src.parse()`: rename `cfg.function` to sth more generic like `js` (?) -->
+* **[–]** `GUY.src.get_first_return_clause_text()`:
+  * **[–]** change input format to standard `cfg`-based to make compatible with call conventions for
+    `GUY.src.parse()`
+  * **[–]** use `fallback` argument to decide whether to return value or throw error in case of parsing
+    failure (same for `parse()`)
+  * **[–]** return based on how many `ReturnStatement`s are found:
+    * if function has no return: `undefined`
+    * if function has single `return`: `argument` property of the `ReturnStatement` node
+    * if function has several `return`s: first `BlockStatement` (i.e. the function body) (???)
+* **[–]** move `GUY.src._generate()` to public API
+
+## Is Done
+
+* **[+]** make choice between parsers configurable:
+  * only `acorn`
+  * first `acorn`, upon parse error `acorn-loose`
+  * only `acorn-loose`
+* **[–]** `parse()`: use `fallback` argument to decide whether to return value or throw error in case of
+  parsing failure
+
+
 
