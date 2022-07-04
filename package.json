@@ -22,17 +22,20 @@
   },
   "homepage": "https://github.com/loveencounterflow/guy",
   "dependencies": {
-    "acorn": "^8.7.1",
     "cnd": "9.2.2",
     "intertype": "7.7.1",
     "letsfreezethat": "^3.1.0"
   },
   "devDependencies": {
+    "acorn": "^8.7.1",
     "acorn-loose": "^8.3.0",
+    "acorn-walk": "^8.2.0",
     "astring": "^1.8.3"
   },
   "peerDependencies": {
+    "acorn": "^8.7.1",
     "acorn-loose": "^8.3.0",
+    "acorn-walk": "^8.2.0",
     "astring": "^1.8.3"
   }
 }
