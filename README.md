@@ -265,7 +265,7 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 * **`@STRICT_PARSER = require 'acorn'`**
 * **`@LOOSE_PARSER = require 'acorn-loose'`**
-* **`@AST_WALKER = require 'acorn-walk'`**
+* **`@AST_walk = require 'acorn-walk'`**
 * **`@ASTRING = require 'astring'`**
 
 * **`@parse = ( cfg ) =>`**—Given either a JS source `text` or a `function`, return an

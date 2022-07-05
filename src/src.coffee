@@ -4,7 +4,7 @@
 # @PARSER                   = require 'acorn-loose'
 @STRICT_PARSER            = require 'acorn'
 @LOOSE_PARSER             = require 'acorn-loose'
-@AST_WALKER               = require 'acorn-walk'
+@AST_walk                 = require 'acorn-walk'
 @ASTRING                  = require 'astring'
 types                     = new ( require 'intertype' ).Intertype()
 types.defaults            = {}
@@ -56,15 +56,36 @@ types.defaults.guy_src_parse_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @slug_node_from_simple_function = ( cfg ) =>
-  ast = @parse cfg
+  collector =
+    rtn:    []
+    blk:    []
+  ast       = @parse cfg
+  @AST_walk.simple ast,
+    ReturnStatement:      ( node ) -> collector.rtn.push node
+    BlockStatement:       ( node ) -> collector.blk.push node
+  R = null
+  if collector.rtn.length is 1 then return collector.rtn.at 0
+  if collector.blk.length >  0 then return collector.blk.at -1
+  debug '^24243^', cfg
+  return cfg.fallback unless cfg.fallback is misfit
+  throw new Error "^guy.props.src@1^ unable to parse input"
 
 #-----------------------------------------------------------------------------------------------------------
-@slug_from_simple_function = ( cfg ) => @_generate @slug_node_from_simple_function cfg
-
-  # debug parser.parse ( ( x ) -> @isa.foo x ).toString(), { ecmaVersion: '2022', }
-  # urge generate { type: 'Program', start: 0, end: 49, body: [ { type: 'FunctionDeclaration', start: 0, end: 49, id: { type: 'Identifier', start: 8, end: 8, name: '✖' }, params: [ { type: 'Identifier', start: 9, end: 10, name: 'x' } ], generator: false, expression: false, async: false, body: { type: 'BlockStatement', start: 12, end: 49, body: [ { type: 'ReturnStatement', start: 20, end: 43, argument: { type: 'CallExpression', start: 27, end: 42, callee: { type: 'MemberExpression', start: 27, end: 39, object: { type: 'MemberExpression', start: 27, end: 35, object: { type: 'ThisExpression', start: 27, end: 31 }, property: { type: 'Identifier', start: 32, end: 35, name: 'isa' }, computed: false, optional: false }, property: { type: 'Identifier', start: 36, end: 39, name: 'foo' }, computed: false, optional: false }, arguments: [ { type: 'Identifier', start: 40, end: 41, name: 'x' } ], optional: false } } ] } } ], sourceType: 'script' }
-  # urge generate { type: 'BlockStatement', start: 12, end: 49, body: [ { type: 'ReturnStatement', start: 20, end: 43, argument: { type: 'CallExpression', start: 27, end: 42, callee: { type: 'MemberExpression', start: 27, end: 39, object: { type: 'MemberExpression', start: 27, end: 35, object: { type: 'ThisExpression', start: 27, end: 31 }, property: { type: 'Identifier', start: 32, end: 35, name: 'isa' }, computed: false, optional: false }, property: { type: 'Identifier', start: 36, end: 39, name: 'foo' }, computed: false, optional: false }, arguments: [ { type: 'Identifier', start: 40, end: 41, name: 'x' } ], optional: false } } ] }
-  # urge generate { type: 'ReturnStatement', start: 20, end: 43, argument: { type: 'CallExpression', start: 27, end: 42, callee: { type: 'MemberExpression', start: 27, end: 39, object: { type: 'MemberExpression', start: 27, end: 35, object: { type: 'ThisExpression', start: 27, end: 31 }, property: { type: 'Identifier', start: 32, end: 35, name: 'isa' }, computed: false, optional: false }, property: { type: 'Identifier', start: 36, end: 39, name: 'foo' }, computed: false, optional: false }, arguments: [ { type: 'Identifier', start: 40, end: 41, name: 'x' } ], optional: false } }
+@slug_from_simple_function = ( cfg ) =>
+  ast = @slug_node_from_simple_function cfg
+  switch ast.type
+    when 'ReturnStatement'
+      R = GUY.src._generate ast
+      R = R.trim().replace /\s*\n\s*/g, ' '
+      R = R.replace /^return\s*/, ''
+      R = R.replace /;$/, ''
+    when 'BlockStatement'
+      R = GUY.src._generate ast
+      R = R.trim().replace /\s*\n\s*/g, ' '
+      R = R.replace /^\{\s*(.*?)\s*\}$/, '$1'
+    else
+      throw new Error "^guy.props.src@1^ unable to parse input"
+  return R
 
 
 
