@@ -66,7 +66,6 @@ types.defaults.guy_src_parse_cfg =
   R = null
   if collector.rtn.length is 1 then return collector.rtn.at 0
   if collector.blk.length >  0 then return collector.blk.at -1
-  debug '^24243^', cfg
   return cfg.fallback unless cfg.fallback is misfit
   throw new Error "^guy.props.src@1^ unable to parse input"
 
