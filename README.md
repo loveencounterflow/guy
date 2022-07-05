@@ -283,6 +283,43 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 * **`slug_node_from_simple_function = ( cfg ) =>`**—
 * **`slug_from_simple_function = ( cfg ) =>`**—
 
+Examples:
+
+* `GUY.src.slug_from_simple_function { function: ( -> ), }`:
+
+  `''`
+
+* `GUY.src.slug_from_simple_function { function: ( ( x ) -> 42 ), }`:
+
+  `'42'`
+
+* `GUY.src.slug_from_simple_function { function: ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) ), }`:
+
+  `'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'`
+
+* `GUY.src.slug_from_simple_function { function: ( ```function ( x ) { 42; }``` ), }`:
+
+  `'42;'`
+
+* `GUY.src.slug_from_simple_function { function: ( ```function ( x ) { return 42; }``` ), }`:
+
+  `'42'`
+
+* `GUY.src.slug_from_simple_function { function: ( ( x ) -> if x? then true else false ), }`:
+
+  `'if (x != null) { return true; } else { return false; }'`
+
+* `GUY.src.slug_from_simple_function { function: ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) ), }`:
+
+  `'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'`
+
+* `GUY.src.slug_from_simple_function { function: f3, }`:
+
+  `'if (x > 0) { return true; } if (x < 0) { return false; } return null;'`
+
+
+
+
 ## To Do
 
 * **[–]** adopt `icql-dba/errors#Dba_error`:
@@ -346,6 +383,8 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
     * if function has several `return`s: <del>first</del><ins>last</ins> `BlockStatement` (i.e. the function
       body) (???)
 * **[–]** move `GUY.src._generate()` to public API
+* **[–]** what should be the correct output for `GUY.src.slug_from_simple_function { function: ( -> ), }`?
+  Currently it is the empty string which is not ideal
 
 ## Is Done
 
