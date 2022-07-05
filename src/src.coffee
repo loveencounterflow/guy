@@ -74,12 +74,12 @@ types.defaults.guy_src_parse_cfg =
   ast = @slug_node_from_simple_function cfg
   switch ast.type
     when 'ReturnStatement'
-      R = GUY.src._generate ast
+      R = @_generate ast
       R = R.trim().replace /\s*\n\s*/g, ' '
       R = R.replace /^return\s*/, ''
       R = R.replace /;$/, ''
     when 'BlockStatement'
-      R = GUY.src._generate ast
+      R = @_generate ast
       R = R.trim().replace /\s*\n\s*/g, ' '
       R = R.replace /^\{\s*(.*?)\s*\}$/, '$1'
     else
