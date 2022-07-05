@@ -28,28 +28,27 @@ types.defaults.guy_src_parse_cfg =
   function:     null
   fallback:     misfit
   use:          'strict,loose'
-  ecmaVersion:  'latest'
 
 #-----------------------------------------------------------------------------------------------------------
 types.defaults.guy_src_acorn_cfg =
   ecmaVersion:                  'latest'
-  sourceType:                   undefined
-  onInsertedSemicolon:          undefined
-  onTrailingComma:              undefined
-  allowReserved:                undefined
-  allowReturnOutsideFunction:   undefined
-  allowImportExportEverywhere:  undefined
-  allowAwaitOutsideFunction:    undefined
-  allowSuperOutsideMethod:      undefined
-  allowHashBang:                undefined
-  locations:                    undefined
-  onToken:                      undefined
-  onComment:                    undefined
-  ranges:                       undefined
-  program:                      undefined
-  sourceFile:                   undefined
-  directSourceFile:             undefined
-  preserveParens:               undefined
+  # # sourceType:                   'script'
+  # onInsertedSemicolon:          undefined
+  # onTrailingComma:              undefined
+  # allowReserved:                undefined
+  # allowReturnOutsideFunction:   undefined
+  # allowImportExportEverywhere:  undefined
+  # allowAwaitOutsideFunction:    undefined
+  # allowSuperOutsideMethod:      undefined
+  # allowHashBang:                undefined
+  # locations:                    undefined
+  # onToken:                      undefined
+  # onComment:                    undefined
+  # ranges:                       undefined
+  # program:                      undefined
+  # sourceFile:                   undefined
+  # directSourceFile:             undefined
+  # preserveParens:               undefined
 
 #-----------------------------------------------------------------------------------------------------------
 @parse = ( cfg ) =>
@@ -62,7 +61,7 @@ types.defaults.guy_src_acorn_cfg =
   { use
     fallback  }   = cfg
   acorn_cfg       = { types.defaults.guy_src_acorn_cfg..., }
-  acorn_cfg[ k ]  = cfg[ k ] for k of types.defaults.guy_src_acorn_cfg when cfg[ k ] isnt undefined
+  acorn_cfg[ k ]  = cfg[ k ] for k of cfg unless k in types.defaults.guy_src_parse_cfg
   try
     switch use
       when 'strict'       then return @STRICT_PARSER.parse  text, acorn_cfg
