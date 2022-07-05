@@ -280,8 +280,18 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   return the re-generated source text for the first return statement found by `PARSER.parse f.toString()`.
  -->
 
-* **`slug_node_from_simple_function = ( cfg ) =>`**—
-* **`slug_from_simple_function = ( cfg ) =>`**—
+* **`slug_node_from_simple_function = ( cfg ) =>`**—Same as `slug_from_simple_function()`, below, but
+  returns an AST node representing the result. You can manipulate the node if you want it and then pass it
+  to `GUY.src._generate()` to get it rendered as JS, but the result will slightly differ from what
+  `slug_from_simple_function()` would return for the same input because that function does some
+  post-processing on the source text to make it even terser.
+
+* **`slug_from_simple_function = ( cfg ) =>`**—Given the same `cfg` object one would use for
+  `GUY.src.parse()`, return a 'slug' (i.e. a condensed form) of its source text. This slug is defined to be
+    * if function has no return: `undefined`
+    * if function has single `return`: `argument` property of the `ReturnStatement` node
+    * if function has several `return`s: <del>first</del><ins>last</ins> `BlockStatement` (i.e. the function
+      body) (???)
 
 Examples:
 
