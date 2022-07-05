@@ -285,38 +285,31 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 Examples:
 
-* `GUY.src.slug_from_simple_function { function: ( -> ), }`:
+```
+█ ( -> )
+''
 
-  `''`
+█ ( ( x ) -> 42 )
+'42'
 
-* `GUY.src.slug_from_simple_function { function: ( ( x ) -> 42 ), }`:
+█ ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) )
+'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'
 
-  `'42'`
+█ ( `function ( x ) { 42; }` )
+'42;'
 
-* `GUY.src.slug_from_simple_function { function: ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) ), }`:
+█ ( `function ( x ) { return 42; }` )
+'42'
 
-  `'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'`
+█ ( ( x ) -> if x? then true else false )
+'if (x != null) { return true; } else { return false; }'
 
-* `GUY.src.slug_from_simple_function { function: ( ```function ( x ) { 42; }``` ), }`:
+█ ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) )
+'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'
 
-  `'42;'`
-
-* `GUY.src.slug_from_simple_function { function: ( ```function ( x ) { return 42; }``` ), }`:
-
-  `'42'`
-
-* `GUY.src.slug_from_simple_function { function: ( ( x ) -> if x? then true else false ), }`:
-
-  `'if (x != null) { return true; } else { return false; }'`
-
-* `GUY.src.slug_from_simple_function { function: ( ( x ) -> ( not x? ) or ( @isa.object x ) or ( @isa.nonempty.text x ) ), }`:
-
-  `'x == null || this.isa.object(x) || this.isa.nonempty.text(x)'`
-
-* `GUY.src.slug_from_simple_function { function: f3, }`:
-
-  `'if (x > 0) { return true; } if (x < 0) { return false; } return null;'`
-
+█ f3
+'if (x > 0) { return true; } if (x < 0) { return false; } return null;'
+```
 
 
 
