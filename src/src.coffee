@@ -31,22 +31,45 @@ types.defaults.guy_src_parse_cfg =
   ecmaVersion:  'latest'
 
 #-----------------------------------------------------------------------------------------------------------
+types.defaults.guy_src_acorn_cfg =
+  ecmaVersion:                  'latest'
+  sourceType:                   undefined
+  onInsertedSemicolon:          undefined
+  onTrailingComma:              undefined
+  allowReserved:                undefined
+  allowReturnOutsideFunction:   undefined
+  allowImportExportEverywhere:  undefined
+  allowAwaitOutsideFunction:    undefined
+  allowSuperOutsideMethod:      undefined
+  allowHashBang:                undefined
+  locations:                    undefined
+  onToken:                      undefined
+  onComment:                    undefined
+  ranges:                       undefined
+  program:                      undefined
+  sourceFile:                   undefined
+  directSourceFile:             undefined
+  preserveParens:               undefined
+
+#-----------------------------------------------------------------------------------------------------------
 @parse = ( cfg ) =>
   types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
-  text          = if cfg.function? then cfg.function.toString() else cfg.text
+  return @_parse cfg
+
+#-----------------------------------------------------------------------------------------------------------
+@_parse = ( cfg ) =>
+  text            = if cfg.function? then cfg.function.toString() else cfg.text
   { use
-    fallback  } = cfg
-  delete cfg.fallback
-  delete cfg.function
-  delete cfg.text
-  delete cfg.use
+    fallback  }   = cfg
+  acorn_cfg       = { types.defaults.guy_src_acorn_cfg..., }
+  acorn_cfg[ k ]  = cfg[ k ] for k of types.defaults.guy_src_acorn_cfg when cfg[ k ] isnt undefined
   try
     switch use
-      when 'strict'       then return @STRICT_PARSER.parse  text, cfg
-      when 'loose'        then return @LOOSE_PARSER.parse   text, cfg
+      when 'strict'       then return @STRICT_PARSER.parse  text, acorn_cfg
+      when 'loose'        then return @LOOSE_PARSER.parse   text, acorn_cfg
       when 'strict,loose'
-        try return @STRICT_PARSER.parse text, cfg catch _
-        return @LOOSE_PARSER.parse text, cfg
+        try return @STRICT_PARSER.parse text, acorn_cfg catch _
+        return @LOOSE_PARSER.parse text, acorn_cfg
   catch error
     throw error if fallback is misfit
   return fallback
@@ -56,34 +79,37 @@ types.defaults.guy_src_parse_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @slug_node_from_simple_function = ( cfg ) =>
+  types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
+  return @_slug_node_from_simple_function cfg
+
+#-----------------------------------------------------------------------------------------------------------
+@_slug_node_from_simple_function = ( cfg ) =>
   collector =
     rtn:    []
     blk:    []
-  ast       = @parse cfg
+  ast       = @_parse cfg
+  return cfg.fallback if ( ast isnt misfit ) and ( ast is cfg.fallback )
   @AST_walk.simple ast,
     ReturnStatement:      ( node ) -> collector.rtn.push node
     BlockStatement:       ( node ) -> collector.blk.push node
   R = null
-  if collector.rtn.length is 1 then return collector.rtn.at 0
-  if collector.blk.length >  0 then return collector.blk.at -1
-  return cfg.fallback unless cfg.fallback is misfit
-  throw new Error "^guy.props.src@1^ unable to parse input"
+  return collector.rtn.at 0   if collector.rtn.length is 1
+  return collector.blk.at -1  if collector.blk.length >  0
+  return ast
 
 #-----------------------------------------------------------------------------------------------------------
 @slug_from_simple_function = ( cfg ) =>
-  ast = @slug_node_from_simple_function cfg
+  types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
+  ast = @_slug_node_from_simple_function cfg
+  return cfg.fallback if ( ast isnt misfit ) and ( ast is cfg.fallback )
+  R = @_generate ast
+  R = R.trim().replace /\s*\n\s*/g, ' '
   switch ast.type
     when 'ReturnStatement'
-      R = @_generate ast
-      R = R.trim().replace /\s*\n\s*/g, ' '
       R = R.replace /^return\s*/, ''
       R = R.replace /;$/, ''
     when 'BlockStatement'
-      R = @_generate ast
-      R = R.trim().replace /\s*\n\s*/g, ' '
       R = R.replace /^\{\s*(.*?)\s*\}$/, '$1'
-    else
-      throw new Error "^guy.props.src@1^ unable to parse input"
   return R
 
 
