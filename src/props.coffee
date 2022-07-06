@@ -4,6 +4,8 @@
 ############################################################################################################
 CND                       = require 'cnd'
 rpr                       = CND.rpr
+props                     = @
+no_such_value             = Symbol 'no_such_value'
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -68,25 +70,21 @@ class @Strict_owner
       #.....................................................................................................
       get: ( target, key ) =>
         return undefined if key is Symbol.toStringTag
-        if ( R = target[ key ] ) is undefined
+        if ( value = props.get target, key, no_such_value ) is no_such_value
           throw new Error "^guy.props.Strict_owner@1^ #{@constructor.name} instance does not have property #{rpr key}"
-        return R
-      # set: ( target, key, value ) =>
-      #   target[key] = value
-      #   return true
-    #.......................................................................................................
-    has_target = ( key ) =>
-      return true if key is Symbol.toStringTag
-      return cfg.target[ key ] isnt undefined
-    #.......................................................................................................
-    unless cfg.target.has?
-      hide cfg.target, 'has', new Proxy has_target, get: ( _, key ) => has_target key
-    #.......................................................................................................
-    unless cfg.target.get?
-      hide cfg.target, 'get', ( key, fallback = misfit ) =>
-        try return cfg.target[ key ] catch error
-          return fallback unless fallback is misfit
-        throw error
+        return value
     #.......................................................................................................
     return R
+
+#-----------------------------------------------------------------------------------------------------------
+@has = ( target, key ) =>
+  ### safe version of `Reflect.has()` that never throws an error ###
+  try return Reflect.has target, key catch error then return false
+
+#-----------------------------------------------------------------------------------------------------------
+@get = ( target, key, fallback = misfit ) =>
+  return target[ key ] if @has target, key
+  return fallback unless fallback is misfit
+  throw new Error "^guy.props.get@1^ no such property #{rpr key}"
+
 

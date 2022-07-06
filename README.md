@@ -10,18 +10,18 @@
 - [🛠 A Guy of Many Trades 🛠](#%F0%9F%9B%A0-a-guy-of-many-trades-%F0%9F%9B%A0)
   - [Structure](#structure)
   - [Modules](#modules)
-    - [`guy.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
+    - [`GUY.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
       - [Class for Strict Ownership](#class-for-strict-ownership)
-    - [`guy.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
-    - [`guy.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
-    - [`guy.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
-    - [`guy.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
+    - [`GUY.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
+    - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
+    - [`GUY.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
+    - [`GUY.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
       - [Usage Examples](#usage-examples)
         - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
         - [More Typical](#more-typical)
-    - [`guy.lft`: Freezing Objects](#guylft-freezing-objects)
-    - [`guy.fs`: File-Related Stuff](#guyfs-file-related-stuff)
-    - [`guy.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
+    - [`GUY.lft`: Freezing Objects](#guylft-freezing-objects)
+    - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
+    - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -32,31 +32,56 @@
 ## Structure
 
 * Only Peer-Dependencies (except `cnd`, `intertype`)
-* Sub-libraries accessible as `guy.${library_name}`
-* Most sub-libraries implemented using `guy.props.def_oneoff()`, therefore dependencies (which are declared
+* Sub-libraries accessible as `GUY.${library_name}`
+* Most sub-libraries implemented using `GUY.props.def_oneoff()`, therefore dependencies (which are declared
   peer dependencies) will only be `require()`d when needed.
 
 ## Modules
 
-### `guy.props`: Common Operations on Object Properties
+### `GUY.props`: Common Operations on Object Properties
 
-* **`guy.props.def: ( target, name, cfg ) ->`** is just another name for `Object.defineProperty()`.
+* **`GUY.props.def: ( target, name, cfg ) ->`** is just another name for `Object.defineProperty()`.
 
-* **`guy.props.hide: ( object, name, value ) ->`** is a shortcut to define a non-enumerable property as in
+* **`GUY.props.hide: ( object, name, value ) ->`** is a shortcut to define a non-enumerable property as in
   `Object.defineProperty object, name, { enumerable: false, value, }`.
 
-* **`guy.props.def_oneoff: ()`**
+* **`GUY.props.def_oneoff: ()`**
 
-* **`guy.props.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and
+* **`GUY.props.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and
   some `keys`, return an object that whose `keys` are the ones passed in, and whose values are either the
   same as found in `d`, or `fallback` in case a key is missing in `d` or set to `undefined`. If `d[ key ]`
   is `null`, it will be replaced by `fallback`. When no keys are given, an empty object will be returned.
 
-* **`guy.props.nullify_undefined = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined`
+* **`GUY.props.nullify_undefined = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined`
   values are replaced with `null`. In case `d` is `null` or `undefined`, an empty object will be returned.
 
-* **`guy.props.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
+* **`GUY.props.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
   `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
+
+* **`GUY.props.has = ( x, key ) ->`**—Given any value `x`, return whether the value has a given property
+  (`key`). This is a safe version of `Reflect.has()` that never throws an error. Like direct property access
+  (using `x.key` or `x[ 'key' ]`) but unlike `Object.getOwnPropertyDescriptor()` &c, `GUY.props.has()` looks
+  into the prototype chain; like `Object.getOwnPropertyDescriptor()`, it does not trigger property getters.
+
+* **`GUY.props.get = ( x, key, fallback ) ->`**—Given any value `x`, return the value of property named in
+  `key`. If that property is missing, throw an error, but when `fallback` has been given, return `fallback`
+  instead. Using `GUY.props.get x, 'foo'` is like saying `x.foo` or `x[ 'foo' ]` except that it doesn't
+  tolerate missing property keys; using it with a fallback as in `GUY.props.get x, 'foo', undefined` is like
+  saying `x.foo` or `x[ 'foo' ]` except that it also works for `null` and `undefined`.
+
+Using `GUY.props.has()` and `GUY.props.get()` it is always possible to circumvent errors being thrown and
+instead do value-based error handling (and raise one own's errors where seen fit). One pattern to do so is
+to define a private Symbol instead of relying on `undefined` that could have been caused by all kinds of
+circumstances:
+
+```coffee
+no_such_value = Symbol 'no_such_value'
+if ( value = GUY.props.get x, key, no_such_value ) is no_such_value
+  # deal with missing value here
+else
+  # deal with present value here
+```
+
 
 #### Class for Strict Ownership
 
@@ -65,20 +90,7 @@ lenience is also conducive to silent failure. `Strict_owner` is an ES6 class tha
 a convenient mechanism to produce object that throw an error when a non-existing property is being accessed.
 
 When you extend your class with `GUY.props.Strict_owner`, instance of your class will now throw an error
-when a non-existing property is accessed. In addition (and if you don't override those properties), your
-instances will have two special members `x.has()` and `x.get()` to test for membership and to retrieve
-values in a 'safe' way:
-
-* `x.has key` will return `true` if `x` has the attribute identified by `key` and `false` otherwise. In
-  addition, `has()` is a proxy that treats all property accesses like it treats function calls, so one can
-  say `x.has.foobar` and `x.has[ 'foobar' ]` instead of `x.has 'foobar'`.
-
-* `x.get key, fallback` will return `x[ key ]` when `key` names an existing property; otherwise, it will
-  return `fallback`. The `fallback` argument is optional; if it is omitted, `x.get key` works exactly like
-  `x[ key ]` (i.e. it will throw an error when `key` is not found on `x`).
-
-**Note** Membership is tested by comparing values against `undefined`, so setting a property explicitly to
-`undefined` will work much the same as `delete`.
+when a non-existing property is accessed.
 
 **Note** Most often one will want to define a class that extends `Strict_owner`, however, it is also
 possible to pass in an arbitrary object—including a function—as property `target` to the constructor, e.g.
@@ -88,7 +100,13 @@ f = ( x ) -> x * 2
 x = new GUY.props.Strict_owner { target: f, }
 ```
 
-### `guy.async`: Asynchronous Helpers
+**Note** As of Guy v6, special methods `get()` and `set()` have been removed from `Strict_owner`. They have
+been replaced with a much cleaner and more correct implementation as `GUY.props.get()` and
+`GUY.props.has()`. These methods are more versatile, too, since they can be used with *any* JS value
+(including the always-problematic `null` and `undefined`).
+
+
+### `GUY.async`: Asynchronous Helpers
 
 These 'five letter' methods are convenience methods in the sense that they are very thin shims over the
 somewhat less convenient JavaScript methods. For many people, the most strightforward way to understand what
@@ -109,7 +127,7 @@ Finally, there is `defer()`, which should also be `await`ed. It is a special use
 timeout is set to zero, so the remaining effect is that other tasks on the event loop get a chance to run.
 It accepts an optional function argument whose (synchronous or asynchronous) result will be returned.
 
-### `guy.nowait`: De-Asyncify JS Async Functions
+### `GUY.nowait`: De-Asyncify JS Async Functions
 
 **Note** Due to ongoing issues when compiling the `deasync` module that this functionality
 is implemented in, `guy-nowait`has been removed from this release.
@@ -117,28 +135,28 @@ is implemented in, `guy-nowait`has been removed from this release.
 <del>
 **Peer Dependencies**: [`abbr/deasync`](https://github.com/abbr/deasync)
 
-* **`guy.nowait.for_callbackable: ( fn_with_callback ) ->`**—given an asynchronous function `afc` that
+* **`GUY.nowait.for_callbackable: ( fn_with_callback ) ->`**—given an asynchronous function `afc` that
   accepts a NodeJS-style callback (as in `afc v1, v2, ..., ( error, result ) -> ...`), returns a synchronous
   function `sf` that can be used without a callback (as in `result = sf v1, v2, ...`).
 
-* **`guy.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
+* **`GUY.nowait.for_awaitable: ( fn_with_promise ) ->`**—given an asynchronous function `afp` that can be
   used with `await` (as in `result = await afp v1, v2, ...`) returns a synchronous function `f` that can be
   used without `await` (as in `result = sf v1, v2, ...`).
 </del>
 
 
-### `guy.process`: Process-Related Utilities
+### `GUY.process`: Process-Related Utilities
 
 **Peer Dependencies**: [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook)
 
-* **`guy.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
+* **`GUY.process.on_exit: ( fn ) => ...`**—call `fn()` before process exits. Convenience link for
   [`sindresorhus/exit-hook`](https://github.com/sindresorhus/exit-hook), which see for details. **Note**
   When installing this peer dependency, make sure to do so with the last CommonJS version added, as in `npm
   install exit-hook@2.2.1`.
 
-### `guy.cfg`: Instance Configuration Helper
+### `GUY.cfg`: Instance Configuration Helper
 
-* **`guy.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
+* **`GUY.cfg.configure_with_types: ( self, cfg = null, types = null ) => ...`**—Given a class instance
   `self`, an optional `cfg` object and an optional
   [Intertype](https://github.com/loveencounterflow/intertype)-like `types` instance,
 
@@ -168,13 +186,13 @@ is implemented in, `guy-nowait`has been removed from this release.
 ##### Most Minimal (Bordering Useless)
 
 It is allowable to call `configure_with_types()` with an instance of whatever class.
-`guy.cfg.configure_with_types()` will look for properties `clasz.C.defaults`, `clasz.declare_types()` (and a
+`GUY.cfg.configure_with_types()` will look for properties `clasz.C.defaults`, `clasz.declare_types()` (and a
 `types` object as third argument to `configure_with_types()`) and provide defaults where missing:
 
 ```coffee
 class Ex
   constructor: ( cfg ) ->
-    guy.cfg.configure_with_types @, cfg
+    GUY.cfg.configure_with_types @, cfg
 #.........................................................................................................
 ex1 = new Ex()
 ex2 = new Ex { foo: 42, }
@@ -192,7 +210,7 @@ log type_of ex1.types.validate  # function
 ```coffee
 class Ex
 
-  @C: guy.lft.freeze
+  @C: GUY.lft.freeze
     foo:      'foo-constant'
     bar:      'bar-constant'
     defaults:
@@ -209,7 +227,7 @@ class Ex
     return null
 
   constructor: ( cfg ) ->
-    guy.cfg.configure_with_types @, cfg
+    GUY.cfg.configure_with_types @, cfg
     return undefined
 
 #.......................................................................................................
@@ -221,23 +239,23 @@ log ex.constructor.C?.defaults  # { constructor_cfg: { foo: 'foo-default', bar: 
 ```
 
 
-### `guy.lft`: Freezing Objects
+### `GUY.lft`: Freezing Objects
 
-`guy.left.freeze()` and `guy.lft.lets()` provide access to the epynomous methods in
+`GUY.left.freeze()` and `GUY.lft.lets()` provide access to the epynomous methods in
 [`letsfreezethat`](https://github.com/loveencounterflow/letsfreezethat). `freeze()` is basically
 `Object.freeze()` for nested objects, while `d = lets d, ( d ) -> mutate d` provides a handy way to mutate
 and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
 
-### `guy.fs`: File-Related Stuff
+### `GUY.fs`: File-Related Stuff
 
-* **`guy.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
+* **`GUY.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
   I'm aware of, yet. The optional `cfg` argument may be an object with a single property `decode`; when set
   to `false`, `walk_lines()` will iterate over buffers instead of strings.
 
-* **`guy.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
+* **`GUY.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
   the referenced file; optionally, when the iterator is exhausted (all lines have been read), restart from
   the beginning. `cfg` may be an object with the keys:
   * **`loop_count`**—(cardinal; default: `1`) controls how many times to loop over the file. Set to
@@ -245,14 +263,14 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * **`line_count`**—(cardinal; default: `+Infinity`) controls the maximum number of lines that will be
     yielded.
   * The iteration will finish as soon as the one or the other limit has been reached.
-  * By default, `guy.fs.walk_circular_lines()` will act like `guy.fs.walk_lines`.
+  * By default, `GUY.fs.walk_circular_lines()` will act like `GUY.fs.walk_lines`.
   * The iterator will not yield anything when either `loop_count` or `line_count` are set to `0`.
 
-* **`guy.fs.get_content_hash = ( path, cfg ) ->`**—Given a `path`, return the
+* **`GUY.fs.get_content_hash = ( path, cfg ) ->`**—Given a `path`, return the
   hexadecimal `sha1` hash digest for its contents. On Linux, this uses `sha1sum`, and `shasum` on all 
   other systems.
 
-### `guy.src`: JS Source Code Analysis
+### `GUY.src`: JS Source Code Analysis
 
 > This submodule needs peer-dependencies, install them with
 >
@@ -350,7 +368,7 @@ Examples:
   <ins>[Benchmarks](https://github.com/loveencounterflow/hengist/blob/master/dev/guy/src/readlines.benchmarks.coffee)
   show that patched version with suitable chunk size performs OK; using patched version to avoid deprecation
   warning.</ins>
-* **[–]** `guy.fs.walk_lines()`: allow to configure; make `trimEnd()` the default
+* **[–]** `GUY.fs.walk_lines()`: allow to configure; make `trimEnd()` the default
 
 * implement easy way to collect, rediect `process.stdout`, `process.stderr`:
 
