@@ -72,14 +72,19 @@
 Using `GUY.props.has()` and `GUY.props.get()` it is always possible to circumvent errors being thrown and
 instead do value-based error handling (and raise one own's errors where seen fit). One pattern to do so is
 to define a private Symbol instead of relying on `undefined` that could have been caused by all kinds of
-circumstances:
+circumstances. Here's a real-life example; it was created in a context where instances of the `Strict_owner`
+class (for which see below) are prevalent (i.e. those objects will throw an error instead of returning
+`undefined` as is the standard in JS). This function will return the `length` of a value `x` where that
+attribute is present (as in strings and arrays), or else its `size` where that is present (as in sets and
+maps), else it will return `fallback` where given, or resort to throwing an error:
 
 ```coffee
-no_such_value = Symbol 'no_such_value'
-if ( value = GUY.props.get x, key, no_such_value ) is no_such_value
-  # deal with missing value here
-else
-  # deal with present value here
+notavalue = Symbol 'notavalue'
+size_of = ( x, fallback = misfit ) ->
+  return R unless ( R = GUY.props.get x, 'length',  notavalue ) is notavalue
+  return R unless ( R = GUY.props.get x, 'size',    notavalue ) is notavalue
+  return fallback unless fallback is misfit
+  throw new Error "expected an object with `x.length` or `x.size`, got a #{typeof x} with neither"
 ```
 
 
