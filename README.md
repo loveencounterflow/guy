@@ -388,6 +388,11 @@ Examples:
 * **[–]** move `GUY.src._generate()` to public API
 * **[–]** what should be the correct output for `GUY.src.slug_from_simple_function { function: ( -> ), }`?
   Currently it is the empty string which is not ideal
+* **[–]** use
+  [`Reflect.has()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect)
+  to check for property availability for `Strict_owner`s instead of using instance method; provide as
+  `GUY.props.has()`
+* **[–]** likewise, use `GUY.props.get: ( target, name, fallback = misfit ) ->` instead of instance method
 
 ## Is Done
 
