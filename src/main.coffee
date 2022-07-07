@@ -28,7 +28,6 @@ class Guy
   constructor: ( @settings = null ) ->
     #.......................................................................................................
     props.def_oneoff @, 'async',    { enumerable: true, }, -> require './async'
-    props.def_oneoff @, 'cfg',      { enumerable: true, }, -> require './cfg'
     props.def_oneoff @, 'lft',      { enumerable: true, }, -> require 'letsfreezethat'
     props.def_oneoff @, 'process',  { enumerable: true, }, -> require './process'
     props.def_oneoff @, 'fs',       { enumerable: true, }, -> require './fs'
