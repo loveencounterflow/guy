@@ -15,10 +15,6 @@
     - [`GUY.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
     - [`GUY.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
-    - [`GUY.cfg`: Instance Configuration Helper](#guycfg-instance-configuration-helper)
-      - [Usage Examples](#usage-examples)
-        - [Most Minimal (Bordering Useless)](#most-minimal-bordering-useless)
-        - [More Typical](#more-typical)
     - [`GUY.lft`: Freezing Objects](#guylft-freezing-objects)
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
@@ -86,6 +82,14 @@ size_of = ( x, fallback = misfit ) ->
   return fallback unless fallback is misfit
   throw new Error "expected an object with `x.length` or `x.size`, got a #{typeof x} with neither"
 ```
+
+* **`GUY.props.keys: () =>`**—Like `Object.keys( t )`, `Reflect.ownKeys( t )` (which is equivalent to
+  `Object.getOwnPropertyNames( target ).concat(Object.getOwnPropertySymbols( target ))`) but better
+* `GUY.props.keys()` can retrieve or skip non-enumerable keys
+* `GUY.props.keys()` can retrieve only own keys or descend into the prototype chain for any settable number
+  of steps, counted from the object or the terminal prototype
+* `GUY.props.keys()` can retrieve only only symbols or only non-symbols (i.e. string keys)
+* `GUY.props.keys()` works for all JS values, including `null` and `undefined`
 
 
 #### Class for Strict Ownership
