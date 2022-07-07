@@ -6,8 +6,8 @@
     "../src/str.coffee"
   ],
   "names": [],
-  "mappings": "AACA;EAAA,aAAA;;;;;;;;EAWA,IAAC,CAAA,GAAD,GAAO,QAAA,CAAE,KAAF,EAAA,GAAS,WAAT,CAAA;AACP,QAAA,CAAA,EAAA,UAAA,EAAA,CAAA,EAAA,GAAA,EAAA;IAAE,CAAA,GAAI,KAAK,CAAE,CAAF;IACT,KAAA,yDAAA;;MACE,CAAA,IAAK,UAAU,CAAC,QAAX,CAAA,CAAA,GAAwB,KAAK,CAAE,GAAA,GAAM,CAAR;IADpC;AAEA,WAAO;EAJF;AAXP",
+  "mappings": "AACA;EAAA,aAAA;;EAIA,IAAC,CAAA,GAAD,GAAO,QAAA,CAAE,KAAF,EAAA,GAAS,WAAT,CAAA;AACP,QAAA,CAAA,EAAA,UAAA,EAAA,CAAA,EAAA,GAAA,EAAA;IAAE,CAAA,GAAI,KAAK,CAAE,CAAF;IACT,KAAA,yDAAA;;MACE,CAAA,IAAK,UAAU,CAAC,QAAX,CAAA,CAAA,GAAwB,KAAK,CAAE,GAAA,GAAM,CAAR;IADpC;AAEA,WAAO;EAJF;AAJP",
   "sourcesContent": [
-    "\n'use strict'\n\n############################################################################################################\n# types                     = new ( require 'intertype' ).Intertype()\n# { isa\n#   validate\n#   type_of }               = types.export()\n\n\n\n#-----------------------------------------------------------------------------------------------------------\n@SQL = ( parts, expressions... ) ->\n  R = parts[ 0 ]\n  for expression, idx in expressions\n    R += expression.toString() + parts[ idx + 1 ]\n  return R\n\n\n\n\n\n\n"
+    "\n'use strict'\n\n\n#-----------------------------------------------------------------------------------------------------------\n@SQL = ( parts, expressions... ) ->\n  R = parts[ 0 ]\n  for expression, idx in expressions\n    R += expression.toString() + parts[ idx + 1 ]\n  return R\n\n\n\n\n\n\n"
   ]
 }
