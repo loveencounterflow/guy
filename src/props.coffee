@@ -6,7 +6,19 @@ CND                       = require 'cnd'
 rpr                       = CND.rpr
 props                     = @
 no_such_value             = Symbol 'no_such_value'
+H                         = require './_helpers'
+builtins                  = require './_builtins'
 
+
+#-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_props_keys_cfg', tests:
+  "@isa.object x":                                                    ( x ) -> @isa.object x
+  "@isa.boolean x.symbols":                                           ( x ) -> @isa.boolean x.symbols
+  "@isa.boolean x.builtins":                                          ( x ) -> @isa.boolean x.builtins
+#...........................................................................................................
+H.types.defaults.guy_props_keys_cfg =
+  symbols:  true
+  builtins: true
 
 #-----------------------------------------------------------------------------------------------------------
 @_misfit = misfit = Symbol 'misfit'
@@ -90,4 +102,36 @@ class @Strict_owner
   return fallback unless fallback is misfit
   throw new Error "^guy.props.get@1^ no such property #{rpr key}"
 
+#-----------------------------------------------------------------------------------------------------------
+@keys = ( owner, cfg ) ->
+  H.types.validate.guy_props_keys_cfg ( cfg = { H.types.defaults.guy_props_keys_cfg..., cfg..., } )
+  return [ ( @_walk_keys owner, cfg)..., ]
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_keys = ( owner, cfg ) ->
+  H.types.validate.guy_props_keys_cfg ( cfg = { H.types.defaults.guy_props_keys_cfg..., cfg..., } )
+  return @_walk_keys owner, cfg
+
+#-----------------------------------------------------------------------------------------------------------
+@_walk_keys = ( owner, cfg ) ->
+  seen = new Set()
+  for { key, } from @_walk_keyowners owner, cfg
+    continue if seen.has key
+    seen.add key
+    yield key
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@_walk_keyowners = ( owner, cfg ) ->
+  # urge '^3354^', owner
+  return null if ( not cfg.builtins ) and builtins.has owner
+  for key in Reflect.ownKeys owner
+    if H.types.isa.symbol key
+      yield { key, owner, } if cfg.symbols
+    else
+      yield { key, owner, }
+  #.........................................................................................................
+  if ( proto_owner = Object.getPrototypeOf owner )?
+    yield from @_walk_keyowners proto_owner, cfg
+  return null
 

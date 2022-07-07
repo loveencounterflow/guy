@@ -345,6 +345,8 @@ Examples:
   * only `acorn-loose`
 * **[–]** `parse()`: use `fallback` argument to decide whether to return value or throw error in case of
   parsing failure
+* **[–]** consider to move submodule `_builtins`, test for builtins to Intertype, backport to
+  Intertype-legacy
 
 
 
