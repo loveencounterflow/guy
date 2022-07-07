@@ -6,31 +6,30 @@
 @LOOSE_PARSER             = require 'acorn-loose'
 @AST_walk                 = require 'acorn-walk'
 @ASTRING                  = require 'astring'
-types                     = new ( require 'intertype-legacy' ).Intertype()
-types.defaults            = {}
+H                         = require './_helpers'
 misfit                    = Symbol 'misfit'
 
 
 #-----------------------------------------------------------------------------------------------------------
-types.declare 'guy_src_parse_use', tests:
+H.types.declare 'guy_src_parse_use', tests:
   "x in [ 'strict', 'loose', 'strict,loose', ]": ( x ) -> x in [ 'strict', 'loose', 'strict,loose', ]
 
 #-----------------------------------------------------------------------------------------------------------
-types.declare 'guy_src_parse_cfg', tests:
+H.types.declare 'guy_src_parse_cfg', tests:
   "@isa.object x":                          ( x ) -> @isa.object x
   "@isa_optional.text x.text":              ( x ) -> @isa_optional.text x.text
   "@isa.guy_src_parse_use x.use":           ( x ) -> @isa.guy_src_parse_use x.use
   "@isa_optional.callable x.function":      ( x ) -> @isa_optional.callable x.function
   "must have either x.text or x.function":  ( x ) ->
     return ( x.text? and not x.function? ) or ( x.function? and not x.text? )
-types.defaults.guy_src_parse_cfg =
+H.types.defaults.guy_src_parse_cfg =
   text:         null
   function:     null
   fallback:     misfit
   use:          'strict,loose'
 
 #-----------------------------------------------------------------------------------------------------------
-types.defaults.guy_src_acorn_cfg =
+H.types.defaults.guy_src_acorn_cfg =
   ecmaVersion:                  'latest'
   # # sourceType:                   'script'
   # onInsertedSemicolon:          undefined
@@ -52,7 +51,7 @@ types.defaults.guy_src_acorn_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @parse = ( cfg ) =>
-  types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
+  H.types.validate.guy_src_parse_cfg cfg = { H.types.defaults.guy_src_parse_cfg..., cfg..., }
   return @_parse cfg
 
 #-----------------------------------------------------------------------------------------------------------
@@ -60,8 +59,8 @@ types.defaults.guy_src_acorn_cfg =
   text            = if cfg.function? then cfg.function.toString() else cfg.text
   { use
     fallback  }   = cfg
-  acorn_cfg       = { types.defaults.guy_src_acorn_cfg..., }
-  acorn_cfg[ k ]  = cfg[ k ] for k of cfg unless k in types.defaults.guy_src_parse_cfg
+  acorn_cfg       = { H.types.defaults.guy_src_acorn_cfg..., }
+  acorn_cfg[ k ]  = cfg[ k ] for k of cfg unless k in H.types.defaults.guy_src_parse_cfg
   try
     switch use
       when 'strict'       then return @STRICT_PARSER.parse  text, acorn_cfg
@@ -78,7 +77,7 @@ types.defaults.guy_src_acorn_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @slug_node_from_simple_function = ( cfg ) =>
-  types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
+  H.types.validate.guy_src_parse_cfg cfg = { H.types.defaults.guy_src_parse_cfg..., cfg..., }
   return @_slug_node_from_simple_function cfg
 
 #-----------------------------------------------------------------------------------------------------------
@@ -98,7 +97,7 @@ types.defaults.guy_src_acorn_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @slug_from_simple_function = ( cfg ) =>
-  types.validate.guy_src_parse_cfg cfg = { types.defaults.guy_src_parse_cfg..., cfg..., }
+  H.types.validate.guy_src_parse_cfg cfg = { H.types.defaults.guy_src_parse_cfg..., cfg..., }
   ast = @_slug_node_from_simple_function cfg
   return cfg.fallback if ( ast isnt misfit ) and ( ast is cfg.fallback )
   R = @_generate ast
