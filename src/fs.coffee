@@ -2,7 +2,7 @@
 'use strict'
 
 ############################################################################################################
-types                     = new ( require 'intertype' ).Intertype()
+types                     = new ( require 'intertype-legacy' ).Intertype()
 { isa
   validate
   type_of }               = types.export()

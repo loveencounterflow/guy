@@ -6,7 +6,7 @@
 @LOOSE_PARSER             = require 'acorn-loose'
 @AST_walk                 = require 'acorn-walk'
 @ASTRING                  = require 'astring'
-types                     = new ( require 'intertype' ).Intertype()
+types                     = new ( require 'intertype-legacy' ).Intertype()
 types.defaults            = {}
 misfit                    = Symbol 'misfit'
 
