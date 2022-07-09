@@ -13,12 +13,18 @@ builtins                  = require './_builtins'
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_keys_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
+  "@isa_optional.cardinal x.depth":                                   ( x ) -> @isa_optional.cardinal x.depth
   "@isa.boolean x.symbols":                                           ( x ) -> @isa.boolean x.symbols
+  "@isa.boolean x.hidden":                                            ( x ) -> @isa.boolean x.hidden
   "@isa.boolean x.builtins":                                          ( x ) -> @isa.boolean x.builtins
+  "@isa.boolean x.builtins implies x.hidden":                         ( x ) ->
+    return ( not x.builtins ) or ( x.hidden )
 #...........................................................................................................
 H.types.defaults.guy_props_keys_cfg =
-  symbols:  true
-  builtins: true
+  symbols:  false
+  builtins: false
+  hidden:   false
+  depth:    null
 
 #-----------------------------------------------------------------------------------------------------------
 @_misfit = misfit = Symbol 'misfit'
@@ -104,34 +110,41 @@ class @Strict_owner
 
 #-----------------------------------------------------------------------------------------------------------
 @keys = ( owner, cfg ) ->
-  H.types.validate.guy_props_keys_cfg ( cfg = { H.types.defaults.guy_props_keys_cfg..., cfg..., } )
-  return [ ( @_walk_keys owner, cfg)..., ]
+  has_hidden  = ( cfg ? {} ).hidden?
+  cfg         = { H.types.defaults.guy_props_keys_cfg..., cfg..., }
+  cfg.hidden  = true if not has_hidden and cfg.builtins
+  H.types.validate.guy_props_keys_cfg cfg
+  return [ ( @_walk_keys owner, cfg )..., ]
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_keys = ( owner, cfg ) ->
-  H.types.validate.guy_props_keys_cfg ( cfg = { H.types.defaults.guy_props_keys_cfg..., cfg..., } )
+  has_hidden  = ( cfg ? {} ).hidden?
+  cfg         = { H.types.defaults.guy_props_keys_cfg..., cfg..., }
+  cfg.hidden  = true if not has_hidden and cfg.builtins
+  H.types.validate.guy_props_keys_cfg cfg
   return @_walk_keys owner, cfg
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keys = ( owner, cfg ) ->
   seen = new Set()
-  for { key, } from @_walk_keyowners owner, cfg
+  for { key, } from @_walk_keyowners owner, cfg, 0
     continue if seen.has key
     seen.add key
     yield key
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@_walk_keyowners = ( owner, cfg ) ->
+@_walk_keyowners = ( owner, cfg, depth ) ->
   # urge '^3354^', owner
+  return null if cfg.depth? and depth > cfg.depth
   return null if ( not cfg.builtins ) and builtins.has owner
   for key in Reflect.ownKeys owner
-    if H.types.isa.symbol key
-      yield { key, owner, } if cfg.symbols
-    else
-      yield { key, owner, }
+    continue if ( not cfg.symbols ) and ( H.types.isa.symbol key )
+    d = Object.getOwnPropertyDescriptor owner, key
+    continue if ( not cfg.hidden ) and ( not d.enumerable )
+    yield { key, owner, }
   #.........................................................................................................
   if ( proto_owner = Object.getPrototypeOf owner )?
-    yield from @_walk_keyowners proto_owner, cfg
+    yield from @_walk_keyowners proto_owner, cfg, depth + 1
   return null
 
