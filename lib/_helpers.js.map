@@ -6,8 +6,8 @@
     "../src/_helpers.coffee"
   ],
   "names": [],
-  "mappings": "AACA;EAAA,aAAA;;;;;;;;;;;;;;EAgBA,IAAC,CAAA,KAAD,GAA4B,IAAI,CAAE,OAAA,CAAQ,kBAAR,CAAF,CAA8B,CAAC,SAAnC,CAAA;;EAC5B,IAAC,CAAA,KAAK,CAAC,QAAP,GAA4B,CAAA;AAjB5B",
+  "mappings": "AACA;EAAA,aAAA;;EAIA,IAAC,CAAA,KAAD,GAA4B,IAAI,CAAE,OAAA,CAAQ,kBAAR,CAAF,CAA8B,CAAC,SAAnC,CAAA;;EAC5B,IAAC,CAAA,KAAK,CAAC,QAAP,GAA4B,CAAA;AAL5B",
   "sourcesContent": [
-    "\n'use strict'\n\n\n############################################################################################################\n# CND                       = require 'cnd'\n# rpr                       = CND.rpr\n# badge                     = 'GUY'\n# log                       = CND.get_logger 'plain',     badge\n# info                      = CND.get_logger 'info',      badge\n# whisper                   = CND.get_logger 'whisper',   badge\n# alert                     = CND.get_logger 'alert',     badge\n# debug                     = CND.get_logger 'debug',     badge\n# warn                      = CND.get_logger 'warn',      badge\n# help                      = CND.get_logger 'help',      badge\n# urge                      = CND.get_logger 'urge',      badge\n# echo                      = CND.echo.bind CND\n@types                    = new ( require 'intertype-legacy' ).Intertype()\n@types.defaults           = {}\n\n\n"
+    "\n'use strict'\n\n\n############################################################################################################\n@types                    = new ( require 'intertype-legacy' ).Intertype()\n@types.defaults           = {}\n\n\n"
   ]
 }
