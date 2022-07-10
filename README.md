@@ -11,6 +11,7 @@
   - [Structure](#structure)
   - [Modules](#modules)
     - [`GUY.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
+      - [`GUY.props.keys()`](#guypropskeys)
       - [Class for Strict Ownership](#class-for-strict-ownership)
     - [`GUY.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
@@ -83,14 +84,44 @@ size_of = ( x, fallback = misfit ) ->
   throw new Error "expected an object with `x.length` or `x.size`, got a #{typeof x} with neither"
 ```
 
+#### `GUY.props.keys()`
+
 * **`GUY.props.keys: () =>`**—Like `Object.keys( t )`, `Reflect.ownKeys( t )` (which is equivalent to
-  `Object.getOwnPropertyNames( target ).concat(Object.getOwnPropertySymbols( target ))`) but better
-* `GUY.props.keys()` can retrieve or skip non-enumerable keys
-* `GUY.props.keys()` can retrieve only own keys or descend into the prototype chain for any settable number
-  of steps, counted from the object or the terminal prototype
+  `Object.getOwnPropertyNames( target ).concat(Object.getOwnPropertySymbols( target ))`) but more versatile
+* `GUY.props.keys()` can retrieve or skip non-enumerable (a.k.a. 'hidden') keys
+* `GUY.props.keys()` can retrieve only own keys (with `{ depth: 0 }`) or descend into the prototype chain for any number
+  of steps: `{ depth: null, }` (the default, equivalent to `{ depth: Infinity, }`) will descend into the prototype chain or e.g. `{ depth: 1, }`
 * `GUY.props.keys()` can retrieve only only symbols or only non-symbols (i.e. string keys)
 * `GUY.props.keys()` works for all JS values, including `null` and `undefined`
 
+
+```coffee
+lst = [ 'x', ]
+( Object.keys lst    )
+# [ '0', ]
+
+( ( k for k of lst ) )
+# [ '0', ]
+
+( GUY.props.keys lst )
+# [ '0', ]
+
+( GUY.props.keys lst, { symbols: true, builtins: true, } )
+
+# [ '0', 'length', 'constructor', 'concat', 'copyWithin', 'fill', 'find', 'findIndex', 'lastIndexOf',
+# 'pop', 'push', 'reverse', 'shift', 'unshift', 'slice', 'sort', 'splice', 'includes', 'indexOf', 'join',
+# 'keys', 'entries', 'values', 'forEach', 'filter', 'flat', 'flatMap', 'map', 'every', 'some', 'reduce',
+# 'reduceRight', 'toLocaleString', 'toString', 'at', 'findLast', 'findLastIndex', Symbol.iterator,
+# Symbol.unscopables, '__defineGetter__', '__defineSetter__', 'hasOwnProperty', '__lookupGetter__',
+# '__lookupSetter__', 'isPrototypeOf', 'propertyIsEnumerable', 'valueOf', '__proto__' ]
+
+( GUY.props.keys Array, { symbols: true, builtins: true, } )
+
+# [ 'length', 'name', 'prototype', 'isArray', 'from', 'of', Symbol.species, 'arguments', 'caller',
+# 'constructor', 'apply', 'bind', 'call', 'toString', Symbol.hasInstance, '__defineGetter__',
+# '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf',
+# 'propertyIsEnumerable', 'valueOf', '__proto__', 'toLocaleString' ]
+```
 
 #### Class for Strict Ownership
 
@@ -336,6 +367,8 @@ Examples:
   to check for property availability for `Strict_owner`s instead of using instance method; provide as
   `GUY.props.has()`
 * **[–]** likewise, use `GUY.props.get: ( target, name, fallback = misfit ) ->` instead of instance method
+* **[–]** consider to move submodule `_builtins`, test for builtins to Intertype, backport to
+  Intertype-legacy
 
 ## Is Done
 
@@ -343,10 +376,8 @@ Examples:
   * only `acorn`
   * first `acorn`, upon parse error `acorn-loose`
   * only `acorn-loose`
-* **[–]** `parse()`: use `fallback` argument to decide whether to return value or throw error in case of
+* **[+]** `parse()`: use `fallback` argument to decide whether to return value or throw error in case of
   parsing failure
-* **[–]** consider to move submodule `_builtins`, test for builtins to Intertype, backport to
-  Intertype-legacy
 
 
 
