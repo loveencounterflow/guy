@@ -152,3 +152,17 @@ class @Strict_owner
     yield from @_walk_keyowners proto_owner, cfg, depth + 1
   return null
 
+
+#===========================================================================================================
+# TREE
+#-----------------------------------------------------------------------------------------------------------
+@_walk_tree = ( owner, cfg ) ->
+  for key from @_walk_keys owner, { allow_any: true, } ### TAINT use appropriate cfg ###
+    yield [ key, ]
+    for subkey from @_walk_tree owner[ key ], { allow_any: true, } ### TAINT use appropriate cfg ###
+      yield [ key, subkey, ].flat()
+  return null
+
+
+
+
