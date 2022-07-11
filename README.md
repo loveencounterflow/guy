@@ -93,7 +93,8 @@ size_of = ( x, fallback = misfit ) ->
 * `GUY.props.keys()` can retrieve only own keys (with `{ depth: 0 }`) or descend into the prototype chain for any number
   of steps: `{ depth: null, }` (the default, equivalent to `{ depth: Infinity, }`) will descend into the prototype chain or e.g. `{ depth: 1, }`
 * `GUY.props.keys()` can retrieve only only symbols or only non-symbols (i.e. string keys)
-* `GUY.props.keys()` works for all JS values, including `null` and `undefined`
+* `GUY.props.keys()` works for all JS values, including `null` and `undefined` when `{ allow_any: true, }`
+  is set
 
 
 ```coffee

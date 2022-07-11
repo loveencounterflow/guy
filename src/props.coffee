@@ -12,6 +12,7 @@ builtins                  = require './_builtins'
 H.types.declare 'guy_props_keys_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "@isa_optional.cardinal x.depth":                                   ( x ) -> @isa_optional.cardinal x.depth
+  "@isa.boolean x.allow_any":                                         ( x ) -> @isa.boolean x.allow_any
   "@isa.boolean x.symbols":                                           ( x ) -> @isa.boolean x.symbols
   "@isa.boolean x.hidden":                                            ( x ) -> @isa.boolean x.hidden
   "@isa.boolean x.builtins":                                          ( x ) -> @isa.boolean x.builtins
@@ -19,10 +20,11 @@ H.types.declare 'guy_props_keys_cfg', tests:
     return ( not x.builtins ) or ( x.hidden )
 #...........................................................................................................
 H.types.defaults.guy_props_keys_cfg =
-  symbols:  false
-  builtins: false
-  hidden:   false
-  depth:    null
+  allow_any:  false
+  symbols:    false
+  builtins:   false
+  hidden:     false
+  depth:      null
 
 #-----------------------------------------------------------------------------------------------------------
 @_misfit = misfit = Symbol 'misfit'
@@ -136,11 +138,15 @@ class @Strict_owner
   # urge '^3354^', owner
   return null if cfg.depth? and depth > cfg.depth
   return null if ( not cfg.builtins ) and builtins.has owner
-  for key in Reflect.ownKeys owner
-    continue if ( not cfg.symbols ) and ( H.types.isa.symbol key )
-    d = Object.getOwnPropertyDescriptor owner, key
-    continue if ( not cfg.hidden ) and ( not d.enumerable )
-    yield { key, owner, }
+  try
+    for key in Reflect.ownKeys owner
+      continue if ( not cfg.symbols ) and ( H.types.isa.symbol key )
+      d = Object.getOwnPropertyDescriptor owner, key
+      continue if ( not cfg.hidden ) and ( not d.enumerable )
+      yield { key, owner, }
+  catch error
+    return null if cfg.allow_any and ( error.message is 'Reflect.ownKeys called on non-object' )
+    throw error
   #.........................................................................................................
   if ( proto_owner = Object.getPrototypeOf owner )?
     yield from @_walk_keyowners proto_owner, cfg, depth + 1
