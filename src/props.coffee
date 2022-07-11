@@ -2,8 +2,6 @@
 'use strict'
 
 ############################################################################################################
-CND                       = require 'cnd'
-rpr                       = CND.rpr
 props                     = @
 no_such_value             = Symbol 'no_such_value'
 H                         = require './_helpers'
@@ -89,7 +87,7 @@ class @Strict_owner
       get: ( target, key ) =>
         return undefined if key is Symbol.toStringTag
         if ( value = props.get target, key, no_such_value ) is no_such_value
-          throw new Error "^guy.props.Strict_owner@1^ #{@constructor.name} instance does not have property #{rpr key}"
+          throw new Error "^guy.props.Strict_owner@1^ #{@constructor.name} instance does not have property #{H.rpr key}"
         return value
     #.......................................................................................................
     return R
@@ -106,7 +104,7 @@ class @Strict_owner
 @get = ( target, key, fallback = misfit ) =>
   return target[ key ] if @has target, key
   return fallback unless fallback is misfit
-  throw new Error "^guy.props.get@1^ no such property #{rpr key}"
+  throw new Error "^guy.props.get@1^ no such property #{H.rpr key}"
 
 #-----------------------------------------------------------------------------------------------------------
 @keys = ( owner, cfg ) ->
