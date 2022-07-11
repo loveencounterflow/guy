@@ -5,12 +5,10 @@ specifiers:
   acorn-loose: ^8.3.0
   acorn-walk: ^8.2.0
   astring: ^1.8.3
-  cnd: 9.2.2
   intertype-legacy: ^7.7.1
   letsfreezethat: ^3.1.0
 
 dependencies:
-  cnd: 9.2.2
   intertype-legacy: 7.7.1
   letsfreezethat: 3.1.0
 
@@ -45,21 +43,10 @@ packages:
     hasBin: true
     dev: true
 
-  /cnd/9.2.2:
-    resolution: {integrity: sha512-F+/H+7luk4fZkvN0+MT0I2nwn80YM/EtfMttNUFxENR50XJH4g0KgQevzeyEJ8B6t6l8Tb4Xti6QAksa8DmePA==}
-    hasBin: true
-    dependencies:
-      jsx-number-format: 0.1.4
-    dev: false
-
   /intertype-legacy/7.7.1:
     resolution: {integrity: sha512-Bj3k9bCu8vA6JLIvnCrJXOdkecgY5wtCmORclJ87uq22N53swREHT5bezSeK5TwcxgSJEDg2wEfcn4kNr9Qv8A==}
     dependencies:
       multimix: 5.0.0
-    dev: false
-
-  /jsx-number-format/0.1.4:
-    resolution: {integrity: sha512-uPc/Q90XqZoRE7Cu1OLFQB2cSrA2Dy8+okzPOtML8vbagNFDSipbndIPme+q0odBjEhL+wf3WH3Wo52was4Tsg==}
     dev: false
 
   /letsfreezethat/3.1.0:
