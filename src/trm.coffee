@@ -2,7 +2,6 @@
 'use strict'
 
 ############################################################################################################
-_inspect                  = ( require 'util' ).inspect
 H                         = require './_helpers'
 C                         = require './_temporary_colors'
 C._temoprary_compile_colors @
@@ -11,26 +10,8 @@ globalThis[ σ_guy ]      ?= {}
 globalThis[ σ_guy ].t0   ?= Date.now()
 
 #-----------------------------------------------------------------------------------------------------------
-@_trm_cfg =
-  separator: ' '
-  #.........................................................................................................
-  rpr:
-    depth:            Infinity
-    maxArrayLength:   Infinity
-    breakLength:      Infinity
-    compact:          true
-    colors:           false
-  #.........................................................................................................
-  inspect:
-    depth:            Infinity
-    maxArrayLength:   Infinity
-    breakLength:      Infinity
-    compact:          false
-    colors:           true
-
-#-----------------------------------------------------------------------------------------------------------
-@rpr      = ( P... ) => ( ( _inspect x, _trm_cfg.rpr      ) for x in P ).join @_trm_cfg.separator
-@inspect  = ( P... ) => ( ( _inspect x, _trm_cfg.inspect  ) for x in P ).join @_trm_cfg.separator
+@rpr      = H.rpr
+@inspect  = H.inspect
 
 #-----------------------------------------------------------------------------------------------------------
 @get_writer = ( target, front = '', back = '\n' ) -> ( P... ) =>
@@ -42,7 +23,7 @@ globalThis[ σ_guy ].t0   ?= Date.now()
   ### Given any number of arguments, return a text representing the arguments as seen fit for output
   commands like `log` and `echo`. ###
   R = ( ( if H.types.isa.text p then p else @rpr p ) for p in P )
-  return R.join @_trm_cfg.separator
+  return R.join H._trm_cfg.separator
 
 #-----------------------------------------------------------------------------------------------------------
 @get_loggers = ( badge = null ) =>
