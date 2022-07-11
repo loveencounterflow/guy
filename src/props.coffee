@@ -6,7 +6,7 @@ props                     = @
 no_such_value             = Symbol 'no_such_value'
 H                         = require './_helpers'
 builtins                  = require './_builtins'
-
+GUY_props                 = @
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_keys_cfg', tests:
@@ -25,6 +25,16 @@ H.types.defaults.guy_props_keys_cfg =
   builtins:   false
   hidden:     false
   depth:      null
+
+#-----------------------------------------------------------------------------------------------------------
+H.types.declare 'strict_owner_cfg', tests:
+  "@isa.object x":                                                    ( x ) -> @isa.object x
+  "x.target?":                                                        ( x ) -> x.target?
+  "@isa.boolean x.reset":                                             ( x ) -> @isa.boolean x.reset
+#...........................................................................................................
+H.types.defaults.strict_owner_cfg =
+  target:     null
+  reset:      true
 
 #-----------------------------------------------------------------------------------------------------------
 @_misfit = misfit = Symbol 'misfit'
@@ -76,21 +86,35 @@ H.types.defaults.guy_props_keys_cfg =
   return R
 
 
-#===========================================================================================================
+#-----------------------------------------------------------------------------------------------------------
 class @Strict_owner
+
+  #---------------------------------------------------------------------------------------------------------
+  @_get_strict_owner_handlers: ( instance ) ->
+    classname = instance.constructor.name
+    #.........................................................................................................
+    get = ( target, key ) =>
+      return undefined if key is Symbol.toStringTag
+      if ( value = props.get target, key, no_such_value ) is no_such_value
+        throw new Error "^guy.props.Strict_owner@1^ #{classname} instance does not have property #{H.rpr key}"
+      return value
+    #.........................................................................................................
+    set = ( target, key, value ) =>
+      if GUY_props.has target, key
+        throw new Error "^guy.props.Strict_owner@1^ #{classname} instance already has property #{H.rpr key}"
+      return Reflect.set target, key, value
+    #.........................................................................................................
+    return { get, set, }
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
-    cfg   = { target: @, cfg..., }
+    cfg = { target: @, cfg..., }
+    H.types.validate.strict_owner_cfg cfg = { H.types.defaults.strict_owner_cfg..., cfg..., }
+    { get, set, } = @constructor._get_strict_owner_handlers @
     #.......................................................................................................
-    R = new Proxy cfg.target,
-      #.....................................................................................................
-      get: ( target, key ) =>
-        return undefined if key is Symbol.toStringTag
-        if ( value = props.get target, key, no_such_value ) is no_such_value
-          throw new Error "^guy.props.Strict_owner@1^ #{@constructor.name} instance does not have property #{H.rpr key}"
-        return value
+    if cfg.reset  then  R = new Proxy cfg.target, { get,      }
+    else                R = new Proxy cfg.target, { get, set, }
     #.......................................................................................................
     return R
 
