@@ -11,7 +11,7 @@ globalThis[ σ_guy ]      ?= {}
 globalThis[ σ_guy ].t0   ?= Date.now()
 
 #-----------------------------------------------------------------------------------------------------------
-_cfg =
+@_trm_cfg =
   separator: ' '
   #.........................................................................................................
   rpr:
@@ -29,8 +29,8 @@ _cfg =
     colors:           true
 
 #-----------------------------------------------------------------------------------------------------------
-@rpr      = ( P... ) -> ( ( _inspect x, _cfg.rpr      ) for x in P ).join ' '
-@inspect  = ( P... ) -> ( ( _inspect x, _cfg.inspect  ) for x in P ).join ' '
+@rpr      = ( P... ) => ( ( _inspect x, _trm_cfg.rpr      ) for x in P ).join @_trm_cfg.separator
+@inspect  = ( P... ) => ( ( _inspect x, _trm_cfg.inspect  ) for x in P ).join @_trm_cfg.separator
 
 #-----------------------------------------------------------------------------------------------------------
 @get_writer = ( target, front = '', back = '\n' ) -> ( P... ) =>
@@ -38,14 +38,14 @@ _cfg =
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@pen = ( P... ) ->
+@pen = ( P... ) =>
   ### Given any number of arguments, return a text representing the arguments as seen fit for output
   commands like `log` and `echo`. ###
   R = ( ( if H.types.isa.text p then p else @rpr p ) for p in P )
-  return R.join _cfg.separator
+  return R.join @_trm_cfg.separator
 
 #-----------------------------------------------------------------------------------------------------------
-@get_loggers = ( badge = null ) ->
+@get_loggers = ( badge = null ) =>
   prefix  = if badge? then ( ' ' + ( @grey badge ) +  ' ' ) else ''
   R       =
     alert:    ( P... ) => @log ( @grey get_timestamp() ) + ( @blink @RED ' ⚠ '  ) + prefix + ( @RED     P...  )
@@ -61,7 +61,7 @@ _cfg =
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-get_timestamp = ->
+get_timestamp = =>
   t1  = Math.floor ( Date.now() - globalThis[ σ_guy ].t0 ) / 1000
   s   = t1 % 60
   s   = '' + s
