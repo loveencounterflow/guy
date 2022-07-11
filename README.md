@@ -19,6 +19,7 @@
     - [`GUY.lft`: Freezing Objects](#guylft-freezing-objects)
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
+      - [`GUY.trm`](#guytrm)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -295,7 +296,20 @@ Examples:
 'if (x > 0) { return true; } if (x < 0) { return false; } return null;'
 ```
 
+#### `GUY.trm`
 
+* Preview version, expect changes
+* colorize terminal output
+* two variants of `node:util.inspect()`: `GUY.trm.inspect()`, `GUY.trm.rpr()`
+* standardized loggers: `alert()`, `debug()`, `help()`, `info()`, `plain()`, `praise()`, `urge()`, `warn()`,
+  `whisper()`
+* produce with `GUY.trm.get_loggers badge` where `badge` identifies your submodule
+* includes short timestamp
+* writer `GUY.trm.log()` writes undecorated stuff to `process.stderr()`
+* writer `GUY.trm.echo()` writes undecorated stuff to `process.stdout()`
+* all writers and loggers apply `GUY.trm.rpr` to each argument independently, so `echo a, b, c` is like
+  `console.log ( rpr a ), ( rpr b ), ( rpr c )`
+* writer `GUY.trm.pen()` returns string representation as used in `GUY.trm.log()` &c
 
 ## To Do
 
@@ -369,6 +383,9 @@ Examples:
 * **[–]** likewise, use `GUY.props.get: ( target, name, fallback = misfit ) ->` instead of instance method
 * **[–]** consider to move submodule `_builtins`, test for builtins to Intertype, backport to
   Intertype-legacy
+* **[–]** consider to make `trm.log()` write to `stdout`, `err()` to `stderr`
+* **[–]** implement `trm.write()` write to `stdout` without trailing newline (but formatting like `log()`)
+* **[–]** consider to drop `trm.pen()`, use improved `GUY.trm.rpr()` instead
 
 ## Is Done
 
