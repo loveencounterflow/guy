@@ -22,7 +22,7 @@ H.types.declare 'guy_props_keys_cfg', tests:
     return ( not x.builtins ) or ( x.hidden )
 #...........................................................................................................
 H.types.defaults.guy_props_keys_cfg =
-  allow_any:  false
+  allow_any:  true
   symbols:    false
   builtins:   false
   hidden:     false
@@ -35,8 +35,9 @@ H.types.declare 'guy_props_crossmerge_cfg', tests:
   "x.values?":                                                        ( x ) -> x.values?
   "x.fallback can be anything":                                       ( x ) -> true
 #...........................................................................................................
+### TAINT code duplication ###
 H.types.defaults.guy_props_crossmerge_cfg =
-  allow_any:  false
+  allow_any:  true
   symbols:    false
   builtins:   false
   hidden:     false
@@ -54,6 +55,7 @@ H.types.declare 'guy_props_tree_cfg', tests:
 H.types.defaults.guy_props_tree_cfg =
   leaves:     true
   branches:   true
+  allow_any:    true
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_strict_owner_cfg', tests:
