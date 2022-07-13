@@ -10,6 +10,7 @@ GUY_props                 = @
 @_misfit                  = Symbol 'misfit'
 @_misfit2                 = Symbol 'misfit2'
 
+
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_keys_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
