@@ -56,6 +56,12 @@
 * **`GUY.props.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
   `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
 
+* **`GUY.props.crossmerge = ( cfg ) ->`**—Given an object `keys` and an object `values`, return a new object
+  whose keys come from the former and whose values come fom the latter. Should there be a key in `keys` that
+  is not set in `values`, an error will be thrown unless `fallback` has been set (to any value, inlcuding
+  `undefined`). This method calls `GUY.props.keys()` and will accept the `cfg` settings used there
+  (`allow_any`, `symbols`, `builtins`, `hidden`, `depth`).
+
 * **`GUY.props.has = ( x, key ) ->`**—Given any value `x`, return whether the value has a given property
   (`key`). This is a safe version of `Reflect.has()` that never throws an error. Like direct property access
   (using `x.key` or `x[ 'key' ]`) but unlike `Object.getOwnPropertyDescriptor()` &c, `GUY.props.has()` looks
