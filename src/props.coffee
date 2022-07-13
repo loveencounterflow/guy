@@ -7,6 +7,8 @@ no_such_value             = Symbol 'no_such_value'
 H                         = require './_helpers'
 builtins                  = require './_builtins'
 GUY_props                 = @
+@_misfit                  = Symbol 'misfit'
+@_misfit2                 = Symbol 'misfit2'
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_keys_cfg', tests:
@@ -27,17 +29,42 @@ H.types.defaults.guy_props_keys_cfg =
   depth:      null
 
 #-----------------------------------------------------------------------------------------------------------
-H.types.declare 'strict_owner_cfg', tests:
+H.types.declare 'guy_props_crossmerge_cfg', tests:
+  "@isa.guy_props_keys_cfg x":                                        ( x ) -> @isa.guy_props_keys_cfg x
+  "x.keys?":                                                          ( x ) -> x.keys?
+  "x.values?":                                                        ( x ) -> x.values?
+  "x.fallback can be anything":                                       ( x ) -> true
+#...........................................................................................................
+H.types.defaults.guy_props_crossmerge_cfg =
+  allow_any:  false
+  symbols:    false
+  builtins:   false
+  hidden:     false
+  depth:      null
+  keys:       null
+  values:     null
+  fallback:   @_misfit
+
+#-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_props_tree_cfg', tests:
+  "@isa.object x":                                                    ( x ) -> @isa.object x
+  "@isa.boolean x.leaves":                                            ( x ) -> @isa.boolean x.leaves
+  "@isa.boolean x.branches":                                          ( x ) -> @isa.boolean x.branches
+#...........................................................................................................
+H.types.defaults.guy_props_tree_cfg =
+  leaves:     true
+  branches:   true
+
+#-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_props_strict_owner_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "x.target?":                                                        ( x ) -> x.target?
   "@isa.boolean x.reset":                                             ( x ) -> @isa.boolean x.reset
 #...........................................................................................................
-H.types.defaults.strict_owner_cfg =
+H.types.defaults.guy_props_strict_owner_cfg =
   target:     null
   reset:      true
 
-#-----------------------------------------------------------------------------------------------------------
-@_misfit = misfit = Symbol 'misfit'
 
 #-----------------------------------------------------------------------------------------------------------
 @def  = def   = Object.defineProperty
@@ -85,6 +112,18 @@ H.types.defaults.strict_owner_cfg =
   R[ k ]  = v for k, v of d when v?
   return R
 
+#-----------------------------------------------------------------------------------------------------------
+@crossmerge = ( cfg ) ->
+  H.types.validate.guy_props_crossmerge_cfg ( cfg = { H.types.defaults.guy_props_crossmerge_cfg..., cfg..., } )
+  R       = {}
+  for key from @_walk_keys cfg.keys, cfg
+    if ( value = @get cfg.values, key, @_misfit2 ) isnt @_misfit2
+      R[ key ] = value
+      continue
+    if cfg.fallback is @_misfit
+      throw new Error "^guy.props.crossmerge@1^ missing key #{H.rpr key} in values"
+    R[ key ] = cfg.fallback
+  return R
 
 #-----------------------------------------------------------------------------------------------------------
 class @Strict_owner
@@ -110,7 +149,7 @@ class @Strict_owner
   constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     cfg = { target: @, cfg..., }
-    H.types.validate.strict_owner_cfg cfg = { H.types.defaults.strict_owner_cfg..., cfg..., }
+    H.types.validate.guy_props_strict_owner_cfg cfg = { H.types.defaults.guy_props_strict_owner_cfg..., cfg..., }
     { get, set, } = @constructor._get_strict_owner_handlers @
     #.......................................................................................................
     if cfg.reset  then  R = new Proxy cfg.target, { get,      }
@@ -127,9 +166,9 @@ class @Strict_owner
   try return Reflect.has target, key catch error then return false
 
 #-----------------------------------------------------------------------------------------------------------
-@get = ( target, key, fallback = misfit ) =>
+@get = ( target, key, fallback = @_misfit ) =>
   return target[ key ] if @has target, key
-  return fallback unless fallback is misfit
+  return fallback unless fallback is @_misfit
   throw new Error "^guy.props.get@1^ no such property #{H.rpr key}"
 
 #-----------------------------------------------------------------------------------------------------------
