@@ -175,11 +175,13 @@ class @Strict_owner
 
 #-----------------------------------------------------------------------------------------------------------
 @keys = ( owner, cfg ) ->
+@_get_keys_cfg = ( cfg ) ->
   has_hidden  = ( cfg ? {} ).hidden?
   cfg         = { H.types.defaults.guy_props_keys_cfg..., cfg..., }
   cfg.hidden  = true if not has_hidden and cfg.builtins
   H.types.validate.guy_props_keys_cfg cfg
   return [ ( @_walk_keys owner, cfg )..., ]
+  return cfg
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_keys = ( owner, cfg ) ->
