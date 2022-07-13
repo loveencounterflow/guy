@@ -48,14 +48,17 @@ H.types.defaults.guy_props_crossmerge_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_tree_cfg', tests:
-  "@isa.object x":                                                    ( x ) -> @isa.object x
-  "@isa.boolean x.leaves":                                            ( x ) -> @isa.boolean x.leaves
-  "@isa.boolean x.branches":                                          ( x ) -> @isa.boolean x.branches
+  "@isa.guy_props_keys_cfg x":                  ( x ) -> @isa.guy_props_keys_cfg x
+  "@isa_optional.function x.evaluate":          ( x ) -> @isa_optional.function x.evaluate
 #...........................................................................................................
+### TAINT code duplication ###
 H.types.defaults.guy_props_tree_cfg =
-  leaves:     true
-  branches:   true
   allow_any:    true
+  symbols:      false
+  builtins:     false
+  hidden:       false
+  depth:        null
+  evaluate:     null
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_strict_owner_cfg', tests:
@@ -225,10 +228,21 @@ class @Strict_owner
 #===========================================================================================================
 # TREE
 #-----------------------------------------------------------------------------------------------------------
+@tree = ( owner, cfg ) ->
+  H.types.validate.guy_props_tree_cfg ( cfg = { H.types.defaults.guy_props_tree_cfg..., cfg..., } )
+  return [ ( @_walk_tree owner, cfg )..., ]
+
+#-----------------------------------------------------------------------------------------------------------
 @_walk_tree = ( owner, cfg ) ->
-  for key from @_walk_keys owner, { allow_any: true, } ### TAINT use appropriate cfg ###
-    yield [ key, ]
-    for subkey from @_walk_tree owner[ key ], { allow_any: true, } ### TAINT use appropriate cfg ###
+  for { key, owner: subowner, } from @_walk_keyowners owner, cfg
+    value = subowner[ key ]
+    verdict = if cfg.evaluate? then ( cfg.evaluate { owner: subowner, key, value, } ) else 'take,descend'
+    ### TAINT use property descriptor? might have to use descriptor.get() anyway so no advantage ###
+    # if ( Object.getOwnPropertyDescriptor subowner, key ).value
+    yield [ key ] if /\btake\b/.test verdict
+    continue unless /\bdescend\b/.test verdict
+    # console.log '^345^', rpr { key, value, has_keys: ( @has_keys value, cfg ), }
+    for subkey from @_walk_tree value, cfg
       yield [ key, subkey, ].flat()
   return null
 
