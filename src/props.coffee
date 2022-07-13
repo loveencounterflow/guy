@@ -174,22 +174,18 @@ class @Strict_owner
   throw new Error "^guy.props.get@1^ no such property #{H.rpr key}"
 
 #-----------------------------------------------------------------------------------------------------------
-@keys = ( owner, cfg ) ->
 @_get_keys_cfg = ( cfg ) ->
   has_hidden  = ( cfg ? {} ).hidden?
   cfg         = { H.types.defaults.guy_props_keys_cfg..., cfg..., }
   cfg.hidden  = true if not has_hidden and cfg.builtins
   H.types.validate.guy_props_keys_cfg cfg
-  return [ ( @_walk_keys owner, cfg )..., ]
   return cfg
 
 #-----------------------------------------------------------------------------------------------------------
+@keys = ( owner, cfg ) -> [ ( @_walk_keys owner, ( @_get_keys_cfg cfg ) )..., ]
+#-----------------------------------------------------------------------------------------------------------
 @walk_keys = ( owner, cfg ) ->
-  has_hidden  = ( cfg ? {} ).hidden?
-  cfg         = { H.types.defaults.guy_props_keys_cfg..., cfg..., }
-  cfg.hidden  = true if not has_hidden and cfg.builtins
-  H.types.validate.guy_props_keys_cfg cfg
-  return @_walk_keys owner, cfg
+  return @_walk_keys owner, ( @_get_keys_cfg cfg )
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keys = ( owner, cfg ) ->
