@@ -51,6 +51,7 @@ H.types.defaults.guy_props_crossmerge_cfg =
 H.types.declare 'guy_props_tree_cfg', tests:
   "@isa.guy_props_keys_cfg x":                  ( x ) -> @isa.guy_props_keys_cfg x
   "@isa_optional.function x.evaluate":          ( x ) -> @isa_optional.function x.evaluate
+  "@isa_optional.text x.joiner":                ( x ) -> @isa_optional.text x.joiner
 #...........................................................................................................
 ### TAINT code duplication ###
 H.types.defaults.guy_props_tree_cfg =
@@ -60,6 +61,7 @@ H.types.defaults.guy_props_tree_cfg =
   hidden:       false
   depth:        null
   evaluate:     null
+  joiner:       null
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_strict_owner_cfg', tests:
@@ -231,7 +233,8 @@ class @Strict_owner
 #-----------------------------------------------------------------------------------------------------------
 @tree = ( owner, cfg ) ->
   H.types.validate.guy_props_tree_cfg ( cfg = { H.types.defaults.guy_props_tree_cfg..., cfg..., } )
-  return [ ( @_walk_tree owner, cfg )..., ]
+  return [ ( @_walk_tree owner, cfg )..., ] unless cfg.joiner?
+  return [ ( p.join cfg.joiner for p from @_walk_tree owner, cfg )..., ]
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_tree = ( owner, cfg ) ->
