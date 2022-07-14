@@ -202,16 +202,16 @@ class @Strict_owner
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keys = ( owner, cfg ) ->
   seen = new Set()
-  for { key, } from @_walk_keyowners owner, cfg, 0
+  for { key, } from @_walk_keyowners owner, cfg
     continue if seen.has key
     seen.add key
     yield key
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@_walk_keyowners = ( owner, cfg, depth ) ->
+@_walk_keyowners = ( owner, cfg, current_depth = 0 ) ->
   # urge '^3354^', owner
-  return null if cfg.depth? and depth > cfg.depth
+  return null if cfg.depth? and current_depth > cfg.depth
   return null if ( not cfg.builtins ) and builtins.has owner
   try
     for key in Reflect.ownKeys owner
@@ -224,7 +224,7 @@ class @Strict_owner
     throw error
   #.........................................................................................................
   if ( proto_owner = Object.getPrototypeOf owner )?
-    yield from @_walk_keyowners proto_owner, cfg, depth + 1
+    yield from @_walk_keyowners proto_owner, cfg, current_depth + 1
   return null
 
 
