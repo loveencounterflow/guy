@@ -150,6 +150,8 @@ for path in GUY.props.tree d
   log inspect path
 ```
 
+This will print:
+
 ```coffee
 [ 'a' ]
 [ 'a', '0' ]
@@ -162,7 +164,50 @@ for path in GUY.props.tree d
 [ 'empty' ]
 ```
 
+The default configuration for the `tree()` method is `{ allow_any: true, symbols: false, builtins: false,
+hidden: false, depth: null, evaluate: null, joiner: null, }`, with the last two settings being specific to
+`tree()`, and the first five having the same meaning as for `GUY.props.keys()`, q.v.
 
+To turn the result into a list of strings, pass in a property `joiner`:
+
+```coffee
+...
+for path in GUY.props.tree d, { joiner: '.', }
+...
+
+'a'
+'a.0'
+'a.1'
+'a.2'
+'e'
+'e.g'
+'e.g.some'
+'e.h'
+'empty'
+```
+
+The `evaluate` setting can be set to a function which will be called with an object `{ owner, key, value, }`
+where `owner` is the current object being iterated over, and `key`/`value` the current property name and
+value. The evaluate function should return `true`, `false`, or a string that may contain the words `take`
+and/or `descend`; the default (when no `evaluate` function is given) is `take,descend`, meaning all keys
+will be both included in the list as well as descended into. `true` is equivalent to `take,descend`; `false`
+means skip this property altogether. In the below example, we use the `evaluate` setting to avoid descending
+into arrays and to include only the tips (leaves, endpoints) of the tree:
+
+```coffee
+evaluate = ({ owner, key, value, }) ->
+  return 'take' if Array.isArray value
+  return 'take' unless GUY.props.has_keys value
+  return 'descend'
+...
+for path in GUY.props.tree d, { evaluate, joiner: '.', }
+...
+
+'a'
+'e.g.some'
+'e.h'
+'empty'
+```
 
 #### Class for Strict Ownership
 
