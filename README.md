@@ -12,6 +12,7 @@
   - [Modules](#modules)
     - [`GUY.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
       - [`GUY.props.keys()`](#guypropskeys)
+      - [`GUY.props.tree()`](#guypropstree)
       - [Class for Strict Ownership](#class-for-strict-ownership)
     - [`GUY.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
@@ -96,11 +97,15 @@ size_of = ( x, fallback = misfit ) ->
 * **`GUY.props.keys: () =>`**—Like `Object.keys( t )`, `Reflect.ownKeys( t )` (which is equivalent to
   `Object.getOwnPropertyNames( target ).concat(Object.getOwnPropertySymbols( target ))`) but more versatile
 * `GUY.props.keys()` can retrieve or skip non-enumerable (a.k.a. 'hidden') keys
-* `GUY.props.keys()` can retrieve only own keys (with `{ depth: 0 }`) or descend into the prototype chain for any number
-  of steps: `{ depth: null, }` (the default, equivalent to `{ depth: Infinity, }`) will descend into the prototype chain or e.g. `{ depth: 1, }`
-* `GUY.props.keys()` can retrieve only only symbols or only non-symbols (i.e. string keys)
+* `GUY.props.keys()` can retrieve only own keys (with `{ depth: 0 }`) or descend into the prototype chain
+  for any number of steps: `{ depth: null, }` (the default, equivalent to `{ depth: Infinity, }`) will
+  descend into the prototype chain or e.g. `{ depth: 1, }`
+* `GUY.props.keys()` can retrieve string keys as well as symbol keys with `{ symbols: true, }`
 * `GUY.props.keys()` works for all JS values, including `null` and `undefined` when `{ allow_any: true, }`
-  is set
+  is set (the default)
+* `GUY.props.keys()` can retrieve hidden (i.e. non-enumerable) keys with `{ hidden: true, }`
+* `GUY.props.keys()` can retrieve builtins with `{ builtins: true, }`; observe that since builtins are
+  always hidden, `{ builtins: true, hidden: false, }` makes no sense and causes a validation error.
 
 
 ```coffee
@@ -130,6 +135,34 @@ lst = [ 'x', ]
 # '__defineSetter__', 'hasOwnProperty', '__lookupGetter__', '__lookupSetter__', 'isPrototypeOf',
 # 'propertyIsEnumerable', 'valueOf', '__proto__', 'toLocaleString' ]
 ```
+
+#### `GUY.props.tree()`
+
+`GUY.props.tree()` is the logical dual to `GUY.props.keys()`: instead of descending into the prototype
+chain, `tree()` climbs through the key/value pairs attached to an object and, recursively, through the trees
+of each value's key/value pairs. In default mode, the method returns a list of lists of names ('paths'):
+
+```coffee
+log           = console.log
+{ inspect, }  = require 'util'
+d = { a: [ 0, 1, 2, ], e: { g: { some: 'thing', }, h: 42, h: null, }, empty: {}, }
+for path in GUY.props.tree d
+  log inspect path
+```
+
+```coffee
+[ 'a' ]
+[ 'a', '0' ]
+[ 'a', '1' ]
+[ 'a', '2' ]
+[ 'e' ]
+[ 'e', 'g' ]
+[ 'e', 'g', 'some' ]
+[ 'e', 'h' ]
+[ 'empty' ]
+```
+
+
 
 #### Class for Strict Ownership
 
