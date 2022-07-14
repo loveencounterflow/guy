@@ -221,7 +221,7 @@ class @Strict_owner
       yield { key, owner, }
   catch error
     return null if cfg.allow_any and ( error.message is 'Reflect.ownKeys called on non-object' )
-    throw error
+    throw new Error "^guy.props._walk_keyowners@1^ Reflect.ownKeys called on non-object #{rpr owner}"
   #.........................................................................................................
   if ( proto_owner = Object.getPrototypeOf owner )?
     yield from @_walk_keyowners proto_owner, cfg, current_depth + 1
