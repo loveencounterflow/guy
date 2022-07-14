@@ -65,6 +65,12 @@ H.types.defaults.guy_props_tree_cfg =
   joiner:       null
 
 #-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_props_tree_verdict', ( x ) ->
+  return true if @isa.boolean x
+  return false unless @isa.text x
+  return true
+
+#-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_strict_owner_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "x.target?":                                                        ( x ) -> x.target?
@@ -250,6 +256,9 @@ class @Strict_owner
       continue if cfg.allow_any and (
         /'caller', 'callee', and 'arguments' properties may not be accessed/.test error.message)
     verdict = if cfg.evaluate? then ( cfg.evaluate { owner: subowner, key, value, } ) else 'take,descend'
+    H.types.validate.guy_props_tree_verdict verdict
+    continue if verdict is false
+    verdict = 'take,descend' if verdict is true
     yield [ key ] if /\btake\b/.test verdict
     continue unless /\bdescend\b/.test verdict
     for subkey from @_walk_tree value, cfg, seen
