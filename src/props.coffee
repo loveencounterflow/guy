@@ -9,6 +9,7 @@ builtins                  = require './_builtins'
 GUY_props                 = @
 @_misfit                  = Symbol 'misfit'
 @_misfit2                 = Symbol 'misfit2'
+{ rpr, }                  = require './trm'
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -237,16 +238,21 @@ class @Strict_owner
   return [ ( ( x.toString() for x in p ).join cfg.joiner for p from @_walk_tree owner, cfg )..., ]
 
 #-----------------------------------------------------------------------------------------------------------
-@_walk_tree = ( owner, cfg ) ->
+@_walk_tree = ( owner, cfg, seen ) ->
+  seen ?= new Map()
   for { key, owner: subowner, } from @_walk_keyowners owner, cfg
-    value = subowner[ key ]
+    seen.set subowner, new Set() unless seen.has subowner
+    continue if ( seen_keys = seen.get subowner ).has key
+    seen_keys.add key
+    try
+      value = subowner[ key ]
+    catch error
+      continue if cfg.allow_any and (
+        /'caller', 'callee', and 'arguments' properties may not be accessed/.test error.message)
     verdict = if cfg.evaluate? then ( cfg.evaluate { owner: subowner, key, value, } ) else 'take,descend'
-    ### TAINT use property descriptor? might have to use descriptor.get() anyway so no advantage ###
-    # if ( Object.getOwnPropertyDescriptor subowner, key ).value
     yield [ key ] if /\btake\b/.test verdict
     continue unless /\bdescend\b/.test verdict
-    # console.log '^345^', rpr { key, value, has_keys: ( @has_keys value, cfg ), }
-    for subkey from @_walk_tree value, cfg
+    for subkey from @_walk_tree value, cfg, seen
       yield [ key, subkey, ].flat()
   return null
 
