@@ -178,7 +178,14 @@ class @Strict_owner
 #-----------------------------------------------------------------------------------------------------------
 @has = ( target, key ) =>
   ### safe version of `Reflect.has()` that never throws an error ###
-  try return Reflect.has target, key catch error then return false
+  ### try to use `Reflect.has()` on given target; will fail for `null`, `undefined`, primitive values: ###
+  try return Reflect.has target, key catch error then null
+  ### try to retrieve prototype of target; will fail for `null`, `undefined`: ###
+  try return false unless ( prototype = Object.getPrototypeOf target )? catch error then null
+  ### give up if no prototye has been returned (may happen e.g. with `target = Object.create null`): ###
+  return false unless prototype?
+  ### apply `Reflect.has()` to prototype of target; this should be the definitive answer: ###
+  return Reflect.has prototype, key
 
 #-----------------------------------------------------------------------------------------------------------
 @get = ( target, key, fallback = @_misfit ) =>
