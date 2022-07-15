@@ -472,18 +472,7 @@ Examples:
 * **[–]** implement `trm.write()` write to `stdout` without trailing newline (but formatting like `log()`)
 * **[–]** consider to drop `trm.pen()`, use improved `GUY.trm.rpr()` instead
 * **[–]** fix `GUY.props.get '', 'length'` (works for sets but not for string)s
-* **[–]** testing for a key without inadvertantly retrieving its value is surprisingly involved in JS.
-  Re-implement `GUY.props.has()`
-  * (1) using `Reflect.has()` catching `TypeError: Reflect.has called on non-object`, and
-    `Object.getPrototypeOf()`, or
-  * (2) using attribute access `x[ key ]`, discarding value and catching errors from strict owners, `null`
-    and `undefined`.
-  * option (2) *should* be faster, maybe just live with the fact that attribute checking *without* value
-    retrieval is not very viable in JS
-  * depending on favorable benchmarks, may want to cache whether instances of a given type are collections
-    with a size and if so, which property (`length` or `size`) is used
 * **[–]** consider to re-implement `deep_copy()` from `letsfreezethat` using
-  [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone); benchmarks
 
 ## Is Done
 
@@ -493,6 +482,18 @@ Examples:
   * only `acorn-loose`
 * **[+]** `parse()`: use `fallback` argument to decide whether to return value or throw error in case of
   parsing failure
+* **[+]** testing for a key without inadvertantly retrieving its value is surprisingly involved in JS.
+  Re-implement `GUY.props.has()`
+  * (1) using `Reflect.has()` catching `TypeError: Reflect.has called on non-object`, and
+    `Object.getPrototypeOf()`, or
+  * (2) using attribute access `x[ key ]`, discarding value and catching errors from strict owners, `null`
+    and `undefined`.
+  * option (2) *should* be faster, maybe just live with the fact that attribute checking *without* value
+    retrieval is not very viable in JS
+  * depending on favorable benchmarks, may want to cache whether instances of a given type are collections
+    with a size and if so, which property (`length` or `size`) is used
+  [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone); benchmarks
+* **[+]** rename `GUY.props.has_keys()` -> `GUY.props.has_any_keys()`
 
 
 
