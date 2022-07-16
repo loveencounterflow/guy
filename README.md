@@ -473,6 +473,13 @@ Examples:
 * **[–]** consider to drop `trm.pen()`, use improved `GUY.trm.rpr()` instead
 * **[–]** fix `GUY.props.get '', 'length'` (works for sets but not for string)s
 * **[–]** consider to re-implement `deep_copy()` from `letsfreezethat` using
+* **[–]** remove dependencies as far as possible, make GUY run in browser
+
+  ```coffee
+  LOUPE         = require '../deps/loupe.js'
+  @rpr          = rpr = ( x ) => LOUPE.inspect x, { customInspect: false, }
+  @xrpr         = ( x ) -> ( rpr x )[ .. 1024 ]
+  ```
 
 ## Is Done
 
