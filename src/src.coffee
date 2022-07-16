@@ -102,6 +102,9 @@ H.types.defaults.guy_src_acorn_cfg =
   return cfg.fallback if ( ast isnt misfit ) and ( ast is cfg.fallback )
   R = @_generate ast
   R = R.trim().replace /\s*\n\s*/g, ' '
+  if R is '{ [native, code]; }'
+    return cfg.fallback unless cfg.fallback is misfit
+    throw new Error "^guy.src.slug_node_from_simple_function@1^ unable to parse native code"
   switch ast.type
     when 'ReturnStatement'
       R = R.replace /^return\s*/, ''
