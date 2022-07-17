@@ -57,6 +57,7 @@ H.types.defaults.guy_src_acorn_cfg =
 #-----------------------------------------------------------------------------------------------------------
 @_parse = ( cfg ) =>
   text            = if cfg.function? then cfg.function.toString() else cfg.text
+  text            = text.replace /\s*\n\s*/g, ' '
   { use
     fallback  }   = cfg
   acorn_cfg       = { H.types.defaults.guy_src_acorn_cfg..., }
