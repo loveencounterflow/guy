@@ -2,11 +2,10 @@
 'use strict'
 
 ############################################################################################################
-props                     = @
+GUY_props                 = @
 no_such_value             = Symbol 'no_such_value'
 H                         = require './_helpers'
 builtins                  = require './_builtins'
-GUY_props                 = @
 @_misfit                  = Symbol 'misfit'
 @_misfit2                 = Symbol 'misfit2'
 { rpr, }                  = require './trm'
@@ -149,7 +148,7 @@ class @Strict_owner
     #.........................................................................................................
     get = ( target, key ) =>
       return undefined if key is Symbol.toStringTag
-      if ( value = props.get target, key, no_such_value ) is no_such_value
+      if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
         throw new Error "^guy.props.Strict_owner@1^ #{classname} instance does not have property #{H.rpr key}"
       return value
     #.........................................................................................................
