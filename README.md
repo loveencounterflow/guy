@@ -239,7 +239,9 @@ x = new GUY.props.Strict_owner { target: f, }
 > here is to try hard *not* use a proxy and use another methodology to achieve a workable solution where
 > possible. One thing that will probably not work is proxying a proxy: When you have a `Strict_owner` object
 > (which already is a proxy) and wrap it in another proxy, chances are you'll get errors like `instance does
-> not have property '0'`
+> not have property '0'` when attempting to use `node:util.inspect()` on that instance. I have been so far
+> unable to fix that bug and since been looking for a solution that works without the need for a double
+> proxy.
 
 
 ### `GUY.async`: Asynchronous Helpers
