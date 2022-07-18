@@ -492,6 +492,11 @@ Examples:
   @rpr          = rpr = ( x ) => LOUPE.inspect x, { customInspect: false, }
   @xrpr         = ( x ) -> ( rpr x )[ .. 1024 ]
   ```
+* **[–]** modify behavior of `GUY.props.tree()`:
+  * callbacks are `take_key()`, `descend_value()`, `filter_path()`
+  * `take_key: ( owner, key, value ) ->`
+  * `descend_value: ( owner, key, value ) ->`
+  * `filter_path: ( owner, path ) ->`; path will be list of strings w/out `joiner`, single string with it
 
 ## Is Done
 
