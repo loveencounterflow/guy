@@ -241,7 +241,7 @@ x = new GUY.props.Strict_owner { target: f, }
 > (which already is a proxy) and wrap it in another proxy, chances are you'll get errors like `instance does
 > not have property '0'` when attempting to use `node:util.inspect()` on that instance. I have been so far
 > unable to fix that bug and since been looking for a solution that works without the need for a double
-> proxy.
+> proxy in that other codebase.
 
 
 ### `GUY.async`: Asynchronous Helpers
