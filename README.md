@@ -497,7 +497,7 @@ Examples:
   * **[–]** `take_key: ( owner, key, value ) ->`
   * **[–]** `descend_value: ( owner, key, value ) ->`
   * **[–]** `filter_path: ( owner, path ) ->`; path will be list of strings w/out `joiner`, single string with it
-  * **[–]** implement `GUY.props.walk_tree()`
+  * **[+]** implement `GUY.props.walk_tree()`
 * **[–]** modify behavior of `GUY.trm.rpr()`:
   * **[–]** colorize for readablity
   * **[–]** change signature to either `rpr x, cfg` or `rpr P...`

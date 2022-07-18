@@ -244,10 +244,14 @@ class @Strict_owner
 #===========================================================================================================
 # TREE
 #-----------------------------------------------------------------------------------------------------------
-@tree = ( owner, cfg ) ->
+@tree = ( owner, cfg ) -> [ ( @walk_tree owner, cfg )..., ]
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_tree = ( owner, cfg ) ->
   H.types.validate.guy_props_tree_cfg ( cfg = { H.types.defaults.guy_props_tree_cfg..., cfg..., } )
-  return [ ( @_walk_tree owner, cfg )..., ] unless cfg.joiner?
-  return [ ( ( x.toString() for x in p ).join cfg.joiner for p from @_walk_tree owner, cfg )..., ]
+  if cfg.joiner? then return yield from @_walk_tree owner, cfg
+  yield ( x.toString() for x in p ).join cfg.joiner for p from @_walk_tree owner, cfg
+  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_tree = ( owner, cfg, seen ) ->
