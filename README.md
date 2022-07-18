@@ -226,10 +226,20 @@ f = ( x ) -> x * 2
 x = new GUY.props.Strict_owner { target: f, }
 ```
 
-**Note** As of Guy v6, special methods `get()` and `set()` have been removed from `Strict_owner`. They have
-been replaced with a much cleaner and more correct implementation as `GUY.props.get()` and
-`GUY.props.has()`. These methods are more versatile, too, since they can be used with *any* JS value
-(including the always-problematic `null` and `undefined`).
+> **Note** As of Guy v6, special methods `get()` and `set()` have been removed from `Strict_owner`. They
+> have been replaced with a much cleaner and more correct implementation as `GUY.props.get()` and
+> `GUY.props.has()`. These methods are more versatile, too, since they can be used with *any* JS value
+> (including the always-problematic `null` and `undefined`).
+
+> **Note** `GUY.props.Strict_owner` is implemented using an ES6
+> [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). While
+> proxies are powerfool tools [they're also notoriously hard to get
+> right](https://github.com/nodejs/node/issues/21639) because of the many methods one could/should/must
+> implement and which all have to act in mutually consistent ways. As a result, my personal recommendation
+> here is to try hard *not* use a proxy and use another methodology to achieve a workable solution where
+> possible. One thing that will probably not work is proxying a proxy: When you have a `Strict_owner` object
+> (which already is a proxy) and wrap it in another proxy, chances are you'll get errors like `instance does
+> not have property '0'`
 
 
 ### `GUY.async`: Asynchronous Helpers
