@@ -165,14 +165,14 @@ This will print:
 ```
 
 The default configuration for the `tree()` method is `{ allow_any: true, symbols: false, builtins: false,
-hidden: false, depth: null, evaluate: null, joiner: null, }`, with the last two settings being specific to
+hidden: false, depth: null, evaluate: null, sep: null, }`, with the last two settings being specific to
 `tree()`, and the first five having the same meaning as for `GUY.props.keys()`, q.v.
 
-To turn the result into a list of strings, pass in a property `joiner`:
+To turn the result into a list of strings, pass in a property `sep`:
 
 ```coffee
 ...
-for path in GUY.props.tree d, { joiner: '.', }
+for path in GUY.props.tree d, { sep: '.', }
 ...
 
 'a'
@@ -200,7 +200,7 @@ evaluate = ({ owner, key, value, }) ->
   return 'take' unless GUY.props.has_keys value
   return 'descend'
 ...
-for path in GUY.props.tree d, { evaluate, joiner: '.', }
+for path in GUY.props.tree d, { evaluate, sep: '.', }
 ...
 
 'a'
@@ -496,13 +496,15 @@ Examples:
   * **[–]** callbacks are `take_key()`, `descend_value()`, `filter_path()`
   * **[–]** `take_key: ( owner, key, value ) ->`
   * **[–]** `descend_value: ( owner, key, value ) ->`
-  * **[–]** `filter_path: ( owner, path ) ->`; path will be list of strings w/out `joiner`, single string with it
+  * **[–]** `filter_path: ( owner, path ) ->`; path will be list of strings w/out `sep`, single string with it
   * **[+]** implement `GUY.props.walk_tree()`
 * **[–]** modify behavior of `GUY.trm.rpr()`:
   * **[–]** colorize for readablity
   * **[–]** change signature to either `rpr x, cfg` or `rpr P...`
   * **[–]** in either case, provide a way to pass configuration to `node:util.inspect`
   * **[–]** allow indented output
+* **[–]** implement method that allows to name a type and give a cfg object, returns cfg for named typed
+  based on `crossmatch()`ing defaults for that type with given `cfg`
 
 
 ## Is Done
