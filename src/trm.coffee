@@ -10,6 +10,12 @@ globalThis[ σ_guy ]      ?= {}
 globalThis[ σ_guy ].t0   ?= Date.now()
 
 #-----------------------------------------------------------------------------------------------------------
+@truth = ( x ) ->
+  return @green   @rpr x if x is true
+  return @red     @rpr x if x is false
+  return @yellow  @rpr x
+
+#-----------------------------------------------------------------------------------------------------------
 @rpr      = H.rpr
 @inspect  = H.inspect
 
