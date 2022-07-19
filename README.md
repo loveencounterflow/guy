@@ -505,6 +505,10 @@ Examples:
   * **[–]** allow indented output
 * **[–]** implement method that allows to name a type and give a cfg object, returns cfg for named typed
   based on `crossmatch()`ing defaults for that type with given `cfg`
+* **[–]** `GUY.trm.warn()`, `alert()`: collect and re-issue on process exit; may want to throw error or at
+  least issue non-zero error code when messages beyond (configurable) urgency threshold were issued; this
+  will allow apps to not bail out prematurely on minor issues and keep messages from getting hidden in
+  regular messages
 
 
 ## Is Done
