@@ -92,6 +92,12 @@ size_of = ( x, fallback = misfit ) ->
   throw new Error "expected an object with `x.length` or `x.size`, got a #{typeof x} with neither"
 ```
 
+* **`GUY.props.resolve_property_chain = ( owner, property_chain ) ->`**—Given an `owner` value (typically an
+  object) and a `property_chain` as a list of names, repeatedly apply the names, first against the owner,
+  then the next name against that result and so on. This allows one to programmatically resolve chained
+  property access and to parametrize a literal `owner.first.second.other.last` as
+  `GUY.props.resolve_property_chain owner, [ 'first', 'second', 'other', 'last', ]`.
+
 #### `GUY.props.keys()`
 
 * **`GUY.props.keys: () =>`**—Like `Object.keys( t )`, `Reflect.ownKeys( t )` (which is equivalent to
