@@ -509,6 +509,9 @@ Examples:
   least issue non-zero error code when messages beyond (configurable) urgency threshold were issued; this
   will allow apps to not bail out prematurely on minor issues and keep messages from getting hidden in
   regular messages
+* **[–]** turn `Strict_owner` instances into sealed objects, retaining old behavior in new class
+  `Strict_getter`
+* **[–]** turn `GUY`, submodules into `Strict_owner` instances
 
 
 ## Is Done
