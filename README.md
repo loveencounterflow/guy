@@ -408,6 +408,17 @@ Examples:
   `console.log ( rpr a ), ( rpr b ), ( rpr c )`
 * writer `GUY.trm.pen()` returns string representation as used in `GUY.trm.log()` &c
 
+#### `GUY.sets`
+
+Operations on sets, copied / modelled on [*JavaScript for impatient programmers (ES2022 edition): Missing
+Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations)
+
+* **`unite:     ( P... ) ->`**—return the union of all sets passed in
+* **`intersect: ( P... ) ->`**—return the intersection of all sets passed in
+* **`subtract:  ( a, b ) ->`**—return the set of elements of set `a` except for those that are also in set
+  `b`
+
+
 ## To Do
 
 * **[–]** adopt `icql-dba/errors#Dba_error`:
