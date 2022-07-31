@@ -173,7 +173,6 @@ class @Strict_owner
       return value
     #.......................................................................................................
     set: ( target, key, value ) =>
-      console.log '^5535434^', { key, value, }
       if GUY_props.has target, key
         throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
       return Reflect.set target, key, value
