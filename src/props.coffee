@@ -73,9 +73,13 @@ H.types.declare 'guy_props_tree_verdict', ( x ) ->
 H.types.declare 'guy_props_strict_owner_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "x.target?":                                                        ( x ) -> x.target?
-  "@isa.boolean x.freeze":                                            ( x ) -> @isa.boolean x.freeze
   "@isa.boolean x.seal":                                              ( x ) -> @isa.boolean x.seal
+  "@isa.boolean x.freeze":                                            ( x ) -> @isa.boolean x.freeze
+  "@isa.boolean x.oneshot":                                           ( x ) -> @isa.boolean x.oneshot
   "@isa_optional.boolean x.reset":                                    ( x ) -> @isa_optional.boolean x.reset
+  # "reassignable object cannot be frozen": ( x ) ->
+  #   return false if x.oneshot and x.freeze
+  #   return true
   "x.reset is deprecated": ( x ) ->
     return true if x.reset?
     return true if x.reset is true
@@ -86,7 +90,7 @@ H.types.defaults.guy_props_strict_owner_cfg =
   reset:      true
   seal:       false
   freeze:     false
-
+  oneshot:    false
 
 #-----------------------------------------------------------------------------------------------------------
 @def  = def   = Object.defineProperty
@@ -157,7 +161,7 @@ H.types.defaults.guy_props_strict_owner_cfg =
 class @Strict_owner
 
   #---------------------------------------------------------------------------------------------------------
-  @_get_strict_owner_handlers: ( instance ) ->
+  @_get_proxy_cfg: ( instance ) ->
     #.......................................................................................................
     ownKeys:  ( target ) => Reflect.ownKeys target
     #.......................................................................................................
@@ -167,18 +171,21 @@ class @Strict_owner
       if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
         throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
       return value
-      # #.........................................................................................................
-      # set: ( target, key, value ) =>
-      #   if GUY_props.has target, key
-      #     throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
-      #   return Reflect.set target, key, value
+    #.......................................................................................................
+    set: ( target, key, value ) =>
+      console.log '^5535434^', { key, value, }
+      if GUY_props.has target, key
+        throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
+      return Reflect.set target, key, value
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     cfg = { target: @, cfg..., }
     H.types.validate.guy_props_strict_owner_cfg cfg = { H.types.defaults.guy_props_strict_owner_cfg..., cfg..., }
-    R = new Proxy cfg.target, @constructor._get_strict_owner_handlers @
+    proxy_cfg = @constructor._get_proxy_cfg @
+    delete proxy_cfg.set unless cfg.oneshot
+    R         = new Proxy cfg.target, proxy_cfg
     Object.freeze R if cfg.freeze
     Object.seal   R if cfg.seal
     return R

@@ -270,6 +270,31 @@ dso.x = 48            # TypeError: Cannot assign to read only property 'x'
 dso.y = 'something'   # TypeError: Cannot define property y, object is not extensible
 ```
 
+In addition, when property `oneshot` is set (and neither `seal` nor `freeze`), properties can be set *once*,
+but not get re-assigned. In case non-re-assignable values should also be immutable, consider to set frozen
+objects:
+
+```coffee
+d         = { x: 42, }
+dso       = new GUY.props.Strict_owner { target: d, oneshot: true, }
+dso.xy    = new GUY.props.Strict_owner { target: { foo: 'bar', }, freeze: true, }
+# dso.x     = 123     # Strict_owner instance already has property 'x'
+# dso.xy    = {}      # Strict_owner instance already has property 'xy'
+# dso.xy.foo  = 'gnu' # TypeError: Cannot assign to read only property 'foo'
+```
+
+Observe that because all of the sealing, freezing and one-shot business is performed on the proxy, not on
+the target object, we can still manipulate that one:
+
+```coffee
+debug '^35345^', dso  # { x: 42, xy: { foo: 'bar' } }
+debug '^35345^', d    # { x: 42, xy: { foo: 'bar' } }
+
+# we *can* still manipulate the underlying object:
+d.x = 123
+debug '^35345^', dso  # { x: 123, xy: { foo: 'bar' } }
+debug '^35345^', d    # { x: 123, xy: { foo: 'bar' } }
+```
 
 
 ### `GUY.async`: Asynchronous Helpers
