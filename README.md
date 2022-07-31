@@ -249,6 +249,28 @@ x = new GUY.props.Strict_owner { target: f, }
 > unable to fix that bug and since been looking for a solution that works without the need for a double
 > proxy in that other codebase.
 
+In order to get an object which is sealed and or frozen, use properties `seal` and `freeze`, respectively:
+
+```coffee
+d   = { x: 42, }
+dso = new GUY.props.Strict_owner { target: d, seal: true, freeze: true, }
+
+# this works:
+dso.x                 # 42
+
+# but none of these work:
+
+# Strict owner ship means unknown properties cannot be accessed:
+dso.y                 # Strict_owner instance does not have property 'y'
+
+# Properties of a frozen object cannot be re-assigned:
+dso.x = 48            # TypeError: Cannot assign to read only property 'x'
+
+# Properties cannot be added to a sealed object (also implied by being frozen):
+dso.y = 'something'   # TypeError: Cannot define property y, object is not extensible
+```
+
+
 
 ### `GUY.async`: Asynchronous Helpers
 
@@ -529,7 +551,46 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 * **[–]** turn `Strict_owner` instances into sealed objects, retaining old behavior in new class
   `Strict_getter`
 * **[–]** turn `GUY`, submodules into `Strict_owner` instances
+* **[–]** move deep freezing, deep sealing from `lft` to `props`?
+* **[–]** concerning `Strict_owner`: in
+  [`hengist/dev/intertype/_ng.test.coffee`](https://github.com/loveencounterflow/hengist/commit/b16acfcf57b2868849d74afc5073c632fb9eccbf#diff-fa6070699391fb27bafd4df9db13ee8288be4399d939863b689f8a6c711ef3c3R1378)
+  we have found a way to build custom-named functions with strict ownership:
 
+  ```coffee
+  @_demo_type_cfgs_as_funmctions_2 = ->
+    class Intertype
+      create_type_cfg: ( cfg ) ->
+        defaults  = { extras: true, collection: false, type: null, }
+        cfg       = { defaults..., cfg..., }
+        name      = cfg.type
+        R         = ( ( x ) -> x ** 2 ).bind @
+        Object.defineProperty R, 'name', { value: name, }
+        R[ k ]    = v for k, v of cfg
+        R         = new GUY.props.Strict_owner target: R
+        Object.seal R
+        # R         = GUY.lft.freeze R1 = R # <== doesn't freeze???
+        Object.freeze R                     # <== works as expected
+        return R
+    types = new Intertype()
+    urge '^982-1^', f = types.create_type_cfg { type: 'foobar', }
+    # Object is frozen, sealed, and has a strict `get()`ter:
+    urge '^982-2^', Object.isFrozen f
+    urge '^982-3^', Object.isSealed f
+    try f.collection = true catch error then warn rvr error.message # Cannot assign to read only property 'collection' of function 'function () { [native code] }'
+    try f.xxx               catch error then warn rvr error.message # ^guy.props.Strict_owner@1^ Strict_owner instance does not have property 'xxx'
+    try f.xxx = 111         catch error then warn rvr error.message # Cannot define property xxx, object is not extensible
+    info '^982-4^', f.name
+    info '^982-5^', f 42
+    return null
+  ```
+
+  This should lead to the following:
+  * **[–]** fix the apparent bug that `GUY.lft.freeze()` does not freeze a function
+  * **[–]** an extension of `GUY.props.Strict_owner`:
+    * **[+]** incorporate (deep?) `seal`ing (next to `freeze`ing)
+    * **[–]** allow to pass in a 'deep target' such that properties not found on the immediate target (the
+      named function in the above) will also be searched in the deep target (such as the `Intertype` or
+      `Dbay` instance), mimicking a prototype chain
 
 ## Is Done
 

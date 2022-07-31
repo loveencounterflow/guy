@@ -73,11 +73,19 @@ H.types.declare 'guy_props_tree_verdict', ( x ) ->
 H.types.declare 'guy_props_strict_owner_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "x.target?":                                                        ( x ) -> x.target?
-  "@isa.boolean x.reset":                                             ( x ) -> @isa.boolean x.reset
+  "@isa.boolean x.freeze":                                            ( x ) -> @isa.boolean x.freeze
+  "@isa.boolean x.seal":                                              ( x ) -> @isa.boolean x.seal
+  "@isa_optional.boolean x.reset":                                    ( x ) -> @isa_optional.boolean x.reset
+  "x.reset is deprecated": ( x ) ->
+    return true if x.reset?
+    return true if x.reset is true
+    throw new Error "^guy.props.Strict_owner@1^ `cfg.reset: false` is deprecated; use `cfg.seal: true` instead"
 #...........................................................................................................
 H.types.defaults.guy_props_strict_owner_cfg =
   target:     null
   reset:      true
+  seal:       false
+  freeze:     false
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -150,31 +158,29 @@ class @Strict_owner
 
   #---------------------------------------------------------------------------------------------------------
   @_get_strict_owner_handlers: ( instance ) ->
-      #.........................................................................................................
-      ownKeys:  ( target ) => Reflect.ownKeys target
-      #.........................................................................................................
-      get: ( target, key ) =>
-        return "#{instance.constructor.name}" if key is Symbol.toStringTag
-        return undefined if key is Symbol.iterator
-        if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
-          throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
-        return value
-      #.........................................................................................................
-      set: ( target, key, value ) =>
-        if GUY_props.has target, key
-          throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
-        return Reflect.set target, key, value
+    #.......................................................................................................
+    ownKeys:  ( target ) => Reflect.ownKeys target
+    #.......................................................................................................
+    get: ( target, key ) =>
+      return "#{instance.constructor.name}" if key is Symbol.toStringTag
+      return undefined if key is Symbol.iterator
+      if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
+        throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
+      return value
+      # #.........................................................................................................
+      # set: ( target, key, value ) =>
+      #   if GUY_props.has target, key
+      #     throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
+      #   return Reflect.set target, key, value
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     cfg = { target: @, cfg..., }
     H.types.validate.guy_props_strict_owner_cfg cfg = { H.types.defaults.guy_props_strict_owner_cfg..., cfg..., }
-    { get, set, ownKeys, } = @constructor._get_strict_owner_handlers @
-    #.......................................................................................................
-    if cfg.reset  then  R = new Proxy cfg.target, { ownKeys, get,      }
-    else                R = new Proxy cfg.target, { ownKeys, get, set, }
-    #.......................................................................................................
+    R = new Proxy cfg.target, @constructor._get_strict_owner_handlers @
+    Object.freeze R if cfg.freeze
+    Object.seal   R if cfg.seal
     return R
 
 
