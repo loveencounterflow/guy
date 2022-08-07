@@ -205,10 +205,15 @@ class @Strict_owner
   return Reflect.has prototype, key
 
 #-----------------------------------------------------------------------------------------------------------
-@get = ( target, key, fallback = @_misfit ) =>
+get = ( target, key, fallback ) ->
+  switch arity = arguments.length
+    when 2 then fallback = @_misfit
+    when 3 then null
+    else throw new Error "^guy.props.get@1^ expected 2 or 3 arguments, got #{arity}"
   return target[ key ] if @has target, key
   return fallback unless fallback is @_misfit
   throw new Error "^guy.props.get@1^ no such property #{H.rpr key}"
+@get = get.bind @ ### avoiding fat-arrow function so we can use `arguments` ###
 
 #-----------------------------------------------------------------------------------------------------------
 @_get_keys_cfg = ( cfg ) ->
