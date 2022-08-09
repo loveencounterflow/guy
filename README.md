@@ -44,6 +44,12 @@
 * **`GUY.props.hide: ( object, name, value ) ->`** is a shortcut to define a non-enumerable property as in
   `Object.defineProperty object, name, { enumerable: false, value, }`.
 
+* **`GUY.props.xray: ( owner, host ) ->`**—A little bit the inverse to `GUY.props.hide()`, it will return an
+  object with all key/value pairs set that were found on `owner` after applying `GUY.props.keys owner, {
+  hidden: true, symbols: true, builtins: false, }`. When `host` is set, that value will be used to store the
+  key/value pairs in, possibly overwriting existing keys. This method is useful for printing and debugging
+  objects with non-enumerable and/or symbol keys.
+
 * **`GUY.props.def_oneoff: ()`**
 
 * **`GUY.props.pick_with_fallback = ( d, fallback, keys... ) ->`**—Given an object `d`, a `fallback` value and

@@ -263,6 +263,11 @@ get = ( target, key, fallback ) ->
     yield from @_walk_keyowners proto_owner, cfg, current_depth + 1
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@xray = ( owner, base = {} ) =>
+  base[ k ] = owner[ k ] for k from @_walk_keys owner, { hidden: true, symbols: true, builtins: false, }
+  return base
+
 
 #===========================================================================================================
 # TREE
