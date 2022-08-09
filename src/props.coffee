@@ -224,15 +224,15 @@ get = ( target, key, fallback ) ->
   return cfg
 
 #-----------------------------------------------------------------------------------------------------------
-@keys = ( owner, cfg ) -> [ ( @_walk_keys owner, ( @_get_keys_cfg cfg ) )..., ]
+@keys = ( owner, cfg ) => [ ( @_walk_keys owner, ( @_get_keys_cfg cfg ) )..., ]
 
 #-----------------------------------------------------------------------------------------------------------
-@has_any_keys = ( owner, cfg ) ->
+@has_any_keys = ( owner, cfg ) =>
   return true for key from @_walk_keys owner, ( @_get_keys_cfg cfg )
   return false
 
 #-----------------------------------------------------------------------------------------------------------
-@walk_keys = ( owner, cfg ) ->
+@walk_keys = ( owner, cfg ) =>
   return @_walk_keys owner, ( @_get_keys_cfg cfg )
 
 #-----------------------------------------------------------------------------------------------------------
