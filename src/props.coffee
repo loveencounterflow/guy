@@ -70,9 +70,13 @@ H.types.declare 'guy_props_tree_verdict', ( x ) ->
   return true
 
 #-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_props_strict_owner', ( x ) -> x instanceof Strict_owner
+
+#-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_strict_owner_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "x.target?":                                                        ( x ) -> x.target?
+  "@isa.boolean x.locked":                                            ( x ) -> @isa.boolean x.locked
   "@isa.boolean x.seal":                                              ( x ) -> @isa.boolean x.seal
   "@isa.boolean x.freeze":                                            ( x ) -> @isa.boolean x.freeze
   "@isa.boolean x.oneshot":                                           ( x ) -> @isa.boolean x.oneshot
@@ -88,6 +92,7 @@ H.types.declare 'guy_props_strict_owner_cfg', tests:
 H.types.defaults.guy_props_strict_owner_cfg =
   target:     null
   reset:      true
+  locked:     true
   seal:       false
   freeze:     false
   oneshot:    false
@@ -161,33 +166,54 @@ H.types.defaults.guy_props_strict_owner_cfg =
 class @Strict_owner
 
   #---------------------------------------------------------------------------------------------------------
-  @_get_proxy_cfg: ( instance ) ->
+  Strict_owner_cfg = Symbol 'Strict_owner_cfg'
+
+  #---------------------------------------------------------------------------------------------------------
+  @_get_proxy_cfg: ( instance, cfg ) ->
+    R =
+      #.....................................................................................................
+      ownKeys: ( target ) -> Reflect.ownKeys target
+      #.....................................................................................................
+      get: ( target, key ) ->
+        return "#{instance.constructor.name}" if key is Symbol.toStringTag
+        return undefined if key is Symbol.iterator
+        if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
+          return undefined unless cfg.locked
+          throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
+        return value
+      #.....................................................................................................
+      set: ( target, key, value ) ->
+        if GUY_props.has target, key
+          throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
+        return Reflect.set target, key, value
     #.......................................................................................................
-    ownKeys:  ( target ) => Reflect.ownKeys target
-    #.......................................................................................................
-    get: ( target, key ) =>
-      return "#{instance.constructor.name}" if key is Symbol.toStringTag
-      return undefined if key is Symbol.iterator
-      if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
-        throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
-      return value
-    #.......................................................................................................
-    set: ( target, key, value ) =>
-      if GUY_props.has target, key
-        throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance already has property #{H.rpr key}"
-      return Reflect.set target, key, value
+    return R
+
+  #---------------------------------------------------------------------------------------------------------
+  @get_locked: ( self ) ->
+    return self[ Strict_owner_cfg ].locked
+
+  #---------------------------------------------------------------------------------------------------------
+  @set_locked: ( self, flag ) ->
+    H.types.validate.boolean flag
+    self[ Strict_owner_cfg ].locked = flag
+    return flag
 
   #---------------------------------------------------------------------------------------------------------
   constructor: ( cfg ) ->
     ### thx to https://stackoverflow.com/a/40714458/7568091 ###
     cfg = { target: @, cfg..., }
     H.types.validate.guy_props_strict_owner_cfg cfg = { H.types.defaults.guy_props_strict_owner_cfg..., cfg..., }
-    proxy_cfg = @constructor._get_proxy_cfg @
+    proxy_cfg                 = @constructor._get_proxy_cfg @, cfg
     delete proxy_cfg.set unless cfg.oneshot
-    R         = new Proxy cfg.target, proxy_cfg
+    R                         = new Proxy cfg.target, proxy_cfg
+    GUY_props.hide R, Strict_owner_cfg, cfg
     Object.freeze R if cfg.freeze
     Object.seal   R if cfg.seal
     return R
+
+#-----------------------------------------------------------------------------------------------------------
+Strict_owner = @Strict_owner
 
 
 #===========================================================================================================
