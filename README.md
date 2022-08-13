@@ -21,6 +21,7 @@
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
       - [`GUY.trm`](#guytrm)
+      - [`GUY.sets`](#guysets)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -301,6 +302,9 @@ d.x = 123
 debug '^35345^', dso  # { x: 123, xy: { foo: 'bar' } }
 debug '^35345^', d    # { x: 123, xy: { foo: 'bar' } }
 ```
+
+It is possible to lift the strict behavior of `Strict_owner` instances by using `Strict_owner.set_locked
+false` and resume strict behavior with `Strict_owner.set_locked true`.
 
 
 ### `GUY.async`: Asynchronous Helpers
