@@ -222,6 +222,19 @@ class @Strict_owner
     Object.seal   R if cfg.seal
     return R
 
+  #---------------------------------------------------------------------------------------------------------
+  @create: ( cfg ) ->
+    cfg = { target: {}, cfg..., }
+    H.types.validate.guy_props_strict_owner_cfg cfg = { H.types.defaults.guy_props_strict_owner_cfg..., cfg..., }
+    proxy_cfg = @constructor._get_proxy_cfg cfg.target, cfg
+    delete proxy_cfg.set unless cfg.oneshot
+    R         = new Proxy cfg.target, proxy_cfg
+    GUY_props.hide R, Strict_owner_cfg, cfg
+    ### TAINT consider to freeze, seal target instread of proxy ###
+    Object.freeze R if cfg.freeze
+    Object.seal   R if cfg.seal
+    return R
+
 #-----------------------------------------------------------------------------------------------------------
 Strict_owner = @Strict_owner
 
