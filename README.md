@@ -14,6 +14,7 @@
       - [`GUY.props.keys()`](#guypropskeys)
       - [`GUY.props.tree()`](#guypropstree)
       - [Class for Strict Ownership](#class-for-strict-ownership)
+        - [Special Keys](#special-keys)
     - [`GUY.async`: Asynchronous Helpers](#guyasync-asynchronous-helpers)
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
     - [`GUY.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
@@ -305,6 +306,17 @@ debug '^35345^', d    # { x: 123, xy: { foo: 'bar' } }
 
 It is possible to lift the strict behavior of `Strict_owner` instances by using `Strict_owner.set_locked
 false` and resume strict behavior with `Strict_owner.set_locked true`.
+
+##### Special Keys
+
+* `return "#{instance.constructor.name}" if key is Symbol.toStringTag`
+* `return target.constructor         if key is 'constructor'`
+* `return target.toString            if key is 'toString'`
+* `return target.call                if key is 'call'`
+* `return target.apply               if key is 'apply'`
+* `return target[ Symbol.iterator  ] if key is Symbol.iterator`
+* `return target[ node_inspect     ] if key is node_inspect`
+* `return target[ 0                ] if key is '0'`
 
 
 ### `GUY.async`: Asynchronous Helpers
