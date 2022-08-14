@@ -9,6 +9,9 @@ builtins                  = require './_builtins'
 @_misfit                  = Symbol 'misfit'
 @_misfit2                 = Symbol 'misfit2'
 { rpr, }                  = require './trm'
+### see https://nodejs.org/dist/latest-v18.x/docs/api/util.html#utilinspectcustom ###
+node_inspect              = Symbol.for 'nodejs.util.inspect.custom'
+
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -176,7 +179,14 @@ class @Strict_owner
       #.....................................................................................................
       get: ( target, key ) ->
         return "#{instance.constructor.name}" if key is Symbol.toStringTag
-        return undefined if key is Symbol.iterator
+        return target.constructor             if key is 'constructor'
+        return target.toString                if key is 'toString'
+        return target.call                    if key is 'call'
+        return target.apply                   if key is 'apply'
+        return target[ Symbol.iterator  ]     if key is Symbol.iterator
+        return target[ node_inspect     ]     if key is node_inspect
+        ### NOTE necessitated by behavior of `node:util.inspect()`: ###
+        return target[ 0                ]     if key is '0'
         if ( value = GUY_props.get target, key, no_such_value ) is no_such_value
           return undefined unless cfg.locked
           throw new Error "^guy.props.Strict_owner@1^ #{instance.constructor.name} instance does not have property #{H.rpr key}"
