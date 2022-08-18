@@ -482,6 +482,9 @@ Examples:
 * all writers and loggers apply `GUY.trm.rpr` to each argument independently, so `echo a, b, c` is like
   `console.log ( rpr a ), ( rpr b ), ( rpr c )`
 * writer `GUY.trm.pen()` returns string representation as used in `GUY.trm.log()` &c
+* `GUY.trm.strip_ansi: ( text ) ->` uses RegEx from
+  (chalk)[https://raw.githubusercontent.com/chalk/ansi-regex/main/index.js] to strip ANSI codes from a given
+  string
 
 #### `GUY.sets`
 

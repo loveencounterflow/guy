@@ -8,6 +8,32 @@ C._temoprary_compile_colors @
 σ_guy                     = Symbol 'GUY'
 globalThis[ σ_guy ]      ?= {}
 globalThis[ σ_guy ].t0   ?= Date.now()
+### thx to https://github.com/chalk/ansi-regex/blob/main/index.js ###
+@_ansi_pattern              = ///
+  [\u001B\u009B]
+  [[\]()\#;?]*
+  (?:(?:(?:(?:;[-a-zA-Z\d\/\#&.:=?%@~_]+)*
+  |
+  [a-zA-Z\d]+
+  (?:;[-a-zA-Z\d\/\#&.:=?%@~_]*)*)?\u0007)
+  |
+  (?:(?:\d{1,4}(?:;\d{0,4})*)?
+  [\dA-PR-TZcf-nq-uy=><~]))
+  ///g
+
+# @_ansi_pattern = do =>
+#   ```
+#   function ansiRegex({onlyFirst = false} = {}) {
+#     const pattern = [
+#       '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+#       '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))'
+#     ].join('|');
+
+#     return new RegExp(pattern, onlyFirst ? undefined : 'g');
+#   }
+#   ```
+#   return ansiRegex()
+
 
 #-----------------------------------------------------------------------------------------------------------
 @truth = ( x ) ->
@@ -62,4 +88,4 @@ get_timestamp = =>
 #-----------------------------------------------------------------------------------------------------------
 @log                      = @get_writer process.stderr
 @echo                     = @get_writer process.stdout
-
+@strip_ansi               = ( text ) -> text.replace @_ansi_pattern, ''
