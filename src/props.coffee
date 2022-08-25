@@ -102,7 +102,11 @@ H.types.defaults.guy_props_strict_owner_cfg =
 
 #-----------------------------------------------------------------------------------------------------------
 @def  = def   = Object.defineProperty
-@hide = hide  = ( object, name, value ) => Object.defineProperty object, name, { enumerable: false, value, }
+@hide = hide  = ( object, name, value ) => Object.defineProperty object, name,
+    enumerable:   false
+    writable:     true
+    configurable: true
+    value:        value
 
 #-----------------------------------------------------------------------------------------------------------
 @def_oneoff = def_oneoff = ( object, name, cfg, method ) =>
