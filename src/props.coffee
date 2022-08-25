@@ -321,6 +321,10 @@ get = ( target, key, fallback ) ->
   base[ k ] = owner[ k ] for k from @_walk_keys owner, { hidden: true, symbols: true, builtins: false, }
   return base
 
+#-----------------------------------------------------------------------------------------------------------
+### thx to https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptors#creating_a_shallow_copy ###
+@_shallow_copy = ( d ) -> Object.create ( Object.getPrototypeOf d ), ( Object.getOwnPropertyDescriptors d )
+
 
 #===========================================================================================================
 # TREE

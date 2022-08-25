@@ -106,6 +106,13 @@ size_of = ( x, fallback = misfit ) ->
   property access and to parametrize a literal `owner.first.second.other.last` as
   `GUY.props.resolve_property_chain owner, [ 'first', 'second', 'other', 'last', ]`.
 
+* **`GUY.props._shallow_copy = ( d ) ->`**—Given object `d`, return a shallow copy of it using the technique
+  demonstrated in the [MDN documentation for
+  `Object.getOwnPropertyDescriptors()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptors#creating_a_shallow_copy):
+  `( d ) -> Object.create ( Object.getPrototypeOf d ), ( Object.getOwnPropertyDescriptors d )`. This method
+  is not yet official part of the API because it may get an extension to work transparently with primitive
+  values.
+
 #### `GUY.props.keys()`
 
 * **`GUY.props.keys: () =>`**—Like `Object.keys( t )`, `Reflect.ownKeys( t )` (which is equivalent to
