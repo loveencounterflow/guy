@@ -649,6 +649,8 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
       named function in the above) will also be searched in the deep target (such as the `Intertype` or
       `Dbay` instance), mimicking a prototype chain
 
+* **[–]** integrate pinned package versions helper, cf `( require 'mixa/lib/check-package-versions' )
+  require '../pinned-package-versions.json'`
 
 ## Is Done
 
