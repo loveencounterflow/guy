@@ -503,6 +503,55 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 * **`subtract:  ( a, b ) ->`**—return the set of elements of set `a` except for those that are also in set
   `b`
 
+#### `GUY.temp`
+
+`GUY.temp` provides context handlers to work with temporary files and directories. It is built on top of
+[`temp`](https://github.com/bruce/node-temp).
+
+`GUY.temp.with_file: ( cfg, handler ) ->`
+`GUY.temp.with_directory: ( cfg, handler ) ->`
+
+```coffee
+
+#-----------------------------------------------------------------------------------------------------------
+@GUY_temp_context_handler_file = ( T, done ) ->
+  GUY = require '../../../apps/guy'
+  #.........................................................................................................
+  do =>
+    path = null
+    info = GUY.temp.with_file ({ path: mypath, fd, }) ->
+      path = mypath
+      T?.ok isa.fs_file mypath
+    T?.eq info, { files: 1, dirs: 0, }
+    T?.ok not isa.fs_file path
+  #.........................................................................................................
+  return done?()
+
+#-----------------------------------------------------------------------------------------------------------
+@GUY_temp_context_handler_directory = ( T, done ) ->
+  GUY = require '../../../apps/guy'
+  #.........................................................................................................
+  do =>
+    path = null
+    info = GUY.temp.with_directory ({ path: mypath, }) ->
+      path = mypath
+      debug '^34534^', { path, }
+      T?.ok isa.fs_directory mypath
+    T?.eq info, { files: 0, dirs: 1, }
+    T?.ok not isa.fs_directory path
+  #.........................................................................................................
+  do =>
+    path = null
+    info = GUY.temp.with_directory { prefix: 'whatever-', }, ({ path: mypath, }) ->
+      path = mypath
+      debug '^34534^', { path, }
+      T?.ok ( PATH.basename mypath ).startsWith 'whatever-'
+      T?.ok isa.fs_directory mypath
+    T?.eq info, { files: 0, dirs: 1, }
+    T?.ok not isa.fs_directory path
+  #.........................................................................................................
+  return done?()
+```
 
 ## To Do
 
