@@ -31,10 +31,11 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     when 2 then null
     else throw new Error "expected 1 or 2 arguments, got #{arity}"
   cfg           = { defaults..., cfg..., }
+  FS            = require 'node:fs'
   TEMP          = require 'tmp'
-  { name
+  { name: path
     removeCallback } = TEMP.dirSync cfg
-  try handler { path: name, } finally
-    removeCallback() unless cfg.keep
+  try handler { path, } finally
+    FS.rmdirSync path, { recursive: true, } unless cfg.keep
   return null
 

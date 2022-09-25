@@ -506,7 +506,7 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 #### `GUY.temp`
 
 `GUY.temp` provides context handlers to work with temporary files and directories. It is built on top of
-[`temp`](https://github.com/bruce/node-temp).
+[`tmp`](https://github.com/raszi/node-tmp).
 
 `GUY.temp.with_file: ( cfg, handler ) ->`
 `GUY.temp.with_directory: ( cfg, handler ) ->`
@@ -721,6 +721,10 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
     with a size and if so, which property (`length` or `size`) is used
   [`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone); benchmarks
 * **[+]** rename `GUY.props.has_keys()` -> `GUY.props.has_any_keys()`
+* **[+]** replace peer-dependency [`temp`](https://github.com/bruce/node-temp) with
+  [`tmp`](https://github.com/raszi/node-tmp) as the former has global state (see
+  [`node-temp#98`](https://github.com/bruce/node-temp/issues/98))
+
 
 
 
