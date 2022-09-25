@@ -34,6 +34,6 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
   TEMP            = require 'tmp'
   { name: path, } = TEMP.dirSync cfg
   try handler { path, } finally
-    FS.rmdirSync path, { recursive: true, } unless cfg.keep
+    FS.rmSync path, { recursive: true, } unless cfg.keep
   return null
 
