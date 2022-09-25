@@ -15,12 +15,11 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     else throw new Error "expected 1 or 2 arguments, got #{arity}"
   cfg           = { defaults..., cfg..., }
   TEMP          = require 'tmp'
-  debug '^34534^', cfg
-  { name,
-    fd,
+  { name: path
+    fd
     removeCallback } = TEMP.fileSync {}
   # { name: path, fd }  = TEMP.fileSync cfg
-  try handler { path: name, fd, } finally
+  try handler { path, fd, } finally
     removeCallback() unless cfg.keep
   return null
 
@@ -30,11 +29,10 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     when 1 then [ cfg, handler, ] = [ null, cfg, ]
     when 2 then null
     else throw new Error "expected 1 or 2 arguments, got #{arity}"
-  cfg           = { defaults..., cfg..., }
-  FS            = require 'node:fs'
-  TEMP          = require 'tmp'
-  { name: path
-    removeCallback } = TEMP.dirSync cfg
+  cfg             = { defaults..., cfg..., }
+  FS              = require 'node:fs'
+  TEMP            = require 'tmp'
+  { name: path, } = TEMP.dirSync cfg
   try handler { path, } finally
     FS.rmdirSync path, { recursive: true, } unless cfg.keep
   return null
