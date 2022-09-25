@@ -511,6 +511,10 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 `GUY.temp.with_file: ( cfg, handler ) ->`
 `GUY.temp.with_directory: ( cfg, handler ) ->`
 
+**Note** refer to
+[hengist](https://github.com/loveencounterflow/hengist/blob/master/dev/guy/src/temp.tests.coffee) to see how
+to use these methods until docs are written; the below gives a rough idea:
+
 ```coffee
 
 #-----------------------------------------------------------------------------------------------------------
@@ -700,6 +704,7 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 
 * **[–]** integrate pinned package versions helper, cf `( require 'mixa/lib/check-package-versions' )
   require '../pinned-package-versions.json'`
+* **[–]** documentation for `temp`
 
 ## Is Done
 
@@ -724,6 +729,7 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 * **[+]** replace peer-dependency [`temp`](https://github.com/bruce/node-temp) with
   [`tmp`](https://github.com/raszi/node-tmp) as the former has global state (see
   [`node-temp#98`](https://github.com/bruce/node-temp/issues/98))
+* **[+]** make `temp` context handlers work with async functions
 
 
 
