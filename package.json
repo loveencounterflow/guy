@@ -23,19 +23,20 @@
   "homepage": "https://github.com/loveencounterflow/guy",
   "dependencies": {
     "intertype-legacy": "^7.7.1",
-    "letsfreezethat": "^3.1.0",
-    "tmp": "^0.2.1"
+    "letsfreezethat": "^3.1.0"
   },
   "devDependencies": {
     "acorn": "^8.7.1",
     "acorn-loose": "^8.3.0",
     "acorn-walk": "^8.2.0",
-    "astring": "^1.8.3"
+    "astring": "^1.8.3",
+    "tmp": "^0.2.1"
   },
   "peerDependencies": {
     "acorn": "^8.7.1",
     "acorn-loose": "^8.3.0",
     "acorn-walk": "^8.2.0",
-    "astring": "^1.8.3"
+    "astring": "^1.8.3",
+    "tmp": "^0.2.1"
   }
 }

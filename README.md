@@ -505,6 +505,14 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 
 #### `GUY.temp`
 
+> This submodule needs peer-dependencies, install them with
+>
+> `npm install tmp`
+>
+> or
+>
+> `pnpm add tmp`
+
 `GUY.temp` provides context handlers to work with temporary files and directories. It is built on top of
 [`tmp`](https://github.com/raszi/node-tmp).
 
@@ -633,7 +641,7 @@ to use these methods until docs are written; the below gives a rough idea:
 * **[–]** implement `trm.write()` write to `stdout` without trailing newline (but formatting like `log()`)
 * **[–]** consider to drop `trm.pen()`, use improved `GUY.trm.rpr()` instead
 * **[–]** fix `GUY.props.get '', 'length'` (works for sets but not for string)s
-* **[–]** consider to re-implement `deep_copy()` from `letsfreezethat` using
+* **[–]** consider to re-implement `deep_copy()` from `letsfreezethat` using `rfdc`
 * **[–]** remove dependencies as far as possible, make GUY run in browser
 
   ```coffee
