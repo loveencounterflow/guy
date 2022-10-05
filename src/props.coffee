@@ -187,6 +187,7 @@ class @Strict_owner
         return target.toString                if key is 'toString'
         return target.call                    if key is 'call'
         return target.apply                   if key is 'apply'
+        return target.then                    if key is 'then'
         return target[ Symbol.iterator  ]     if key is Symbol.iterator
         return target[ node_inspect     ]     if key is node_inspect
         ### NOTE necessitated by behavior of `node:util.inspect()`: ###
