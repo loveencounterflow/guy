@@ -503,6 +503,16 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 * **`subtract:  ( a, b ) ->`**—return the set of elements of set `a` except for those that are also in set
   `b`
 
+#### `GUY.str`
+
+* **`escape_for_regex: ( text ) ->`**—escape `text` so it can safely be used as a regex, with all
+  meta-characters properly escaped.
+
+* **`SQL`**—a [tag
+  function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals?retiredLocale=de#tagged_templates)
+  that can be used to mark string literals as SQL which can then be properly treated by text editors that
+  support nested languages.
+
 #### `GUY.temp`
 
 > This submodule needs peer-dependencies, install them with
