@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/samesame.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA;AAAA,MAAA,GAAA;;;EAGA,CAAA,CAAE,GAAF,CAAA,GAA4B,OAAA,CAAQ,OAAR,CAA5B,EAHA;;;EAOA,IAAC,CAAA,MAAD,GAAc,CAAE,OAAA,CAAQ,MAAR,CAAF,CAAkB,CAAC;;EACjC,IAAC,CAAA,SAAD,GAAc,CAAE,OAAA,CAAQ,iCAAR,CAAF,CAAA,CAAA;AARd",
+  "sourcesContent": [
+    "\n'use strict'\n\n############################################################################################################\n{ rpr, }                  = require './trm'\n\n\n#-----------------------------------------------------------------------------------------------------------\n@equals     = ( require 'util' ).isDeepStrictEqual\n@deep_copy  = ( require '../dependencies/rfdc-patched.js' )()\n\n\n\n"
+  ]
+}
