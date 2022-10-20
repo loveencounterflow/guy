@@ -23,6 +23,9 @@
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
       - [`GUY.trm`](#guytrm)
       - [`GUY.sets`](#guysets)
+      - [`GUY.str`](#guystr)
+      - [`GUY.samesame`](#guysamesame)
+      - [`GUY.temp`](#guytemp)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -512,6 +515,26 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
   function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals?retiredLocale=de#tagged_templates)
   that can be used to mark string literals as SQL which can then be properly treated by text editors that
   support nested languages.
+
+#### `GUY.samesame`
+
+Contains two methods, `equals()` and `deep_copy()`, that are thought to be among the best and fastest
+implementations for the purposes of deep equality checking and deep copying.
+
+* **`@equals     = ( require 'util' ).isDeepStrictEqual`**
+* **`@deep_copy  = ( require '../dependencies/rfdc-patched.js' )()`**
+
+See also
+
+  * [`jseq`](https://github.com/loveencounterflow/jseq) for an in-depth comparison of numerous alternatives
+    to the present implementation of `GUY.samesame.equals()`.
+  * [*2ality on `structuredClone()`*](https://2ality.com/2022/01/structured-clone.html) for some
+    shortcomings of the new JS built-in `structuredClone()` (besides the insane naming decision).
+  * [*`rfdc`: Really Fast Deep Clone*](https://github.com/davidmarkclements/rfdc) for the underlying
+    implementation of `GUY.samesame.deep_copy()`.
+  * [*`clone-regexp` by Sindre Sorhus*](https://github.com/sindresorhus/clone-regexp/blob/main/index.js) for
+    the code added to `rfdc` to enable copying of RegExes.
+
 
 #### `GUY.temp`
 
