@@ -523,6 +523,7 @@ implementations for the purposes of deep equality checking and deep copying.
 
 * **`@equals     = ( require 'util' ).isDeepStrictEqual`**
 * **`@deep_copy  = ( require '../dependencies/rfdc-patched.js' )()`**
+* **`@copy_regex = ( require '../dependencies/sindresorhus-clone-regexp.js' ).cloneRegExp`**
 
 See also
 
