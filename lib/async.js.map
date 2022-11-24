@@ -6,8 +6,8 @@
     "../src/async.coffee"
   ],
   "names": [],
-  "mappings": "AACA;EAAA;EAEA,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAAuC,WAAA,CAAY,CAAZ,EAAkB,GAAA,GAAM,IAAxB;EAAvC;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAAuC,UAAA,CAAY,CAAZ,EAAkB,GAAA,GAAM,IAAxB;EAAvC;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,CAAA,GAAA;WAAe,IAAI,OAAJ,CAAY,CAAE,IAAF,CAAA,GAAA;aAAY,UAAA,CAAY,IAAZ,EAAkB,GAAA,GAAM,IAAxB;IAAZ,CAAZ;EAAf;;EACV,IAAC,CAAA,KAAD,GAAU,KAAA,CAAE,IAAI,QAAA,CAAA,CAAA,EAAA,CAAN,CAAA,GAAA;IAAe,MAAM,IAAC,CAAA,KAAD,CAAO,CAAP;AAAU,WAAO,CAAA,MAAM,CAAA,CAAA,CAAN;EAAtC;AALV",
+  "mappings": "AACA;EAAA;EAEA,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAA0C,WAAA,CAAY,CAAZ,EAAgC,GAAA,GAAM,IAAtC;EAA1C;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,EAAO,CAAP,CAAA,GAAA;WAAe,IAAI,OAAJ,CAAY,CAAE,OAAF,CAAA,GAAA;aAAe,UAAA,CAAY,CAAE,QAAA,CAAA,CAAA;eAAG,OAAA,CAAQ,CAAA,CAAA,CAAR;MAAH,CAAF,CAAZ,EAAgC,GAAA,GAAM,IAAtC;IAAf,CAAZ;EAAf;;EACV,IAAC,CAAA,KAAD,GAAU,CAAE,GAAF,CAAA,GAAA;WAAe,IAAI,OAAJ,CAAY,CAAE,OAAF,CAAA,GAAA;aAAe,UAAA,CAAY,OAAZ,EAAgC,GAAA,GAAM,IAAtC;IAAf,CAAZ;EAAf;;EACV,IAAC,CAAA,KAAD,GAAU,KAAA,CAAE,IAAI,QAAA,CAAA,CAAA,EAAA,CAAN,CAAA,GAAA;IAAe,MAAM,IAAC,CAAA,KAAD,CAAO,CAAP;AAAU,WAAO,CAAA,MAAM,CAAA,CAAA,CAAN;EAAtC;AALV",
   "sourcesContent": [
-    "\n'use strict'\n\n@every  = ( dts, f  ) =>                         setInterval f,    dts * 1000\n@after  = ( dts, f  ) =>                         setTimeout  f,    dts * 1000\n@sleep  = ( dts     ) => new Promise ( done ) => setTimeout  done, dts * 1000\n@defer  = ( f = ->  ) => await @sleep 0; return await f()\n"
+    "\n'use strict'\n\n@every  = ( dts, f  ) =>                            setInterval f,                  dts * 1000\n@after  = ( dts, f  ) => new Promise ( resolve ) => setTimeout  ( -> resolve f() ), dts * 1000\n@sleep  = ( dts     ) => new Promise ( resolve ) => setTimeout  resolve,            dts * 1000\n@defer  = ( f = ->  ) => await @sleep 0; return await f()\n"
   ]
 }
