@@ -772,6 +772,8 @@ to use these methods until docs are written; the below gives a rough idea:
   [`tmp`](https://github.com/raszi/node-tmp) as the former has global state (see
   [`node-temp#98`](https://github.com/bruce/node-temp/issues/98))
 * **[+]** make `temp` context handlers work with async functions
+* **[+]** consider to use promise with `after`, as in
+  `after  = ( dts, f  ) => new Promise ( resolve ) -> setTimeout ( -> resolve f() ), dts * 1000`
 
 
 
