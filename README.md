@@ -25,6 +25,7 @@
       - [`GUY.sets`](#guysets)
       - [`GUY.str`](#guystr)
       - [`GUY.samesame`](#guysamesame)
+      - [`GUY.rnd`](#guyrnd)
       - [`GUY.temp`](#guytemp)
   - [To Do](#to-do)
   - [Is Done](#is-done)
@@ -536,6 +537,17 @@ See also
   * [*`clone-regexp` by Sindre Sorhus*](https://github.com/sindresorhus/clone-regexp/blob/main/index.js) for
     the code added to `rfdc` to enable copying of RegExes.
 
+
+#### `GUY.rnd`
+
+* **`@_shuffle = ( list, ratio, rnd, random_integer ) ->`**
+* **`@get_rnd = ( seed = 1, delta = 1 ) ->`**
+* **`@get_rnd_int = ( seed = 1, delta = 1 ) ->`**
+* **`@get_shuffle = ( seed_0 = 0, seed_1 = 1 ) ->`**
+* **`@integer_from_normal_float = ( x, min = 0, max = 2 ) ->`**
+* **`@random_integer = ( min = 0, max = 2 ) ->`**
+* **`@random_number = ( min = 0, max = 1 ) ->`**
+* **`@shuffle = ( list, ratio = 1 ) ->`**
 
 #### `GUY.temp`
 
