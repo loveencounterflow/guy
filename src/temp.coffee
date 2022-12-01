@@ -74,3 +74,25 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     FS.rmSync path, { recursive: true, } unless cfg.keep
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@with_shadow_file = ( original_path, handler ) ->
+  type  = Object::toString.call handler
+  return @_with_shadow_file_async original_path, handler if type is '[object AsyncFunction]'
+  return @_with_shadow_file_sync  original_path, handler if type is '[object Function]'
+  throw new Error "^guy.temp@3^ expected an (sync or async) function, got a #{type}"
+
+#-----------------------------------------------------------------------------------------------------------
+@_with_shadow_file_sync = ( original_path, handler ) ->
+  ### TAINT check that original_path is nonexistent or file path, not directory ###
+  FS        = require 'node:fs'
+  PATH      = require 'node:path'
+  real_path = FS.realpathSync original_path
+  @with_directory ({ path: folder_path, }) ->
+    base_name = PATH.basename real_path
+    temp_path = PATH.join folder_path, base_name
+    FS.copyFileSync real_path, temp_path
+    handler { path: temp_path, }
+    FS.renameSync temp_path, real_path
+  return null
+
+
