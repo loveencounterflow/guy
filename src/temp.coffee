@@ -17,7 +17,7 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
   type  = Object::toString.call handler
   return @_with_file_async cfg, handler if type is '[object AsyncFunction]'
   return @_with_file_sync  cfg, handler if type is '[object Function]'
-  throw new Error "^guy.async@45^ expected an (sync or async) function, got a #{type}"
+  throw new Error "^guy.temp@1^ expected an (sync or async) function, got a #{type}"
 
 #-----------------------------------------------------------------------------------------------------------
 @with_directory = ( cfg, handler ) ->
@@ -29,7 +29,7 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
   type  = Object::toString.call handler
   return @_with_directory_async cfg, handler if type is '[object AsyncFunction]'
   return @_with_directory_sync  cfg, handler if type is '[object Function]'
-  throw new Error "^guy.async@45^ expected an (sync or async) function, got a #{type}"
+  throw new Error "^guy.temp@2^ expected an (sync or async) function, got a #{type}"
 
 #-----------------------------------------------------------------------------------------------------------
 @_with_file_sync = ( cfg, handler ) ->
