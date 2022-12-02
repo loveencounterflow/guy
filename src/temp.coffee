@@ -84,6 +84,7 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
 #-----------------------------------------------------------------------------------------------------------
 @_with_shadow_file_sync = ( original_path, handler ) ->
   ### TAINT check that original_path is nonexistent or file path, not directory ###
+  GFS       = require './fs'
   FS        = require 'node:fs'
   PATH      = require 'node:path'
   real_path = FS.realpathSync original_path
@@ -92,7 +93,7 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     temp_path = PATH.join folder_path, base_name
     FS.copyFileSync real_path, temp_path
     handler { path: temp_path, }
-    FS.renameSync temp_path, real_path
+    GFS.rename_sync temp_path, real_path
   return null
 
 

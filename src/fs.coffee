@@ -93,9 +93,16 @@ defaults =
     throw new Error "^guy.fs.get_content_hash@1^ unable to generate hash of length #{cfg.length} using #{command}"
   return R
 
-
-
-
+#-----------------------------------------------------------------------------------------------------------
+@rename_sync = ( from_path, to_path ) ->
+  ### Same as `FS.renameSync()`, but falls back to `FS.copyFileSync()`, `FS.unlinkSync()` in case device
+  boundaries are crossed. Thx to https://github.com/sindresorhus/move-file/blob/main/index.js ###
+  FS = require 'node:fs'
+  try FS.renameSync from_path, to_path catch error
+    throw error unless error.code is 'EXDEV'
+    FS.copyFileSync from_path, to_path
+    FS.unlinkSync from_path
+  return null
 
 
 
