@@ -76,13 +76,20 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
 
 #-----------------------------------------------------------------------------------------------------------
 @with_shadow_file = ( original_path, handler ) ->
+  if ( type = Object::toString.call original_path ) is '[object Object]'
+    cfg = { path: null, all: false, original_path..., }
+    return @_with_shadow_file cfg.path, cfg.all, handler
+  return @_with_shadow_file original_path, false, handler
+
+#-----------------------------------------------------------------------------------------------------------
+@_with_shadow_file = ( original_path, all, handler ) ->
   type  = Object::toString.call handler
-  return @_with_shadow_file_async original_path, handler if type is '[object AsyncFunction]'
-  return @_with_shadow_file_sync  original_path, handler if type is '[object Function]'
+  return @_with_shadow_file_async original_path, all, handler if type is '[object AsyncFunction]'
+  return @_with_shadow_file_sync  original_path, all, handler if type is '[object Function]'
   throw new Error "^guy.temp@3^ expected an (sync or async) function, got a #{type}"
 
 #-----------------------------------------------------------------------------------------------------------
-@_with_shadow_file_sync = ( original_path, handler ) ->
+@_with_shadow_file_sync = ( original_path, all, handler ) ->
   ### TAINT check that original_path is nonexistent or file path, not directory ###
   GFS       = require './fs'
   FS        = require 'node:fs'
@@ -93,7 +100,15 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     temp_path = PATH.join folder_path, base_name
     FS.copyFileSync real_path, temp_path
     handler { path: temp_path, }
-    GFS.rename_sync temp_path, real_path
+    if all
+      real_folder_path = PATH.dirname real_path
+      for filename in FS.readdirSync folder_path
+        source_path = PATH.join folder_path, filename
+        target_path = PATH.join real_folder_path, filename
+        continue unless ( FS.lstatSync source_path ).isFile()
+        GFS.rename_sync source_path, target_path
+    else
+      GFS.rename_sync temp_path, real_path
   return null
 
 
