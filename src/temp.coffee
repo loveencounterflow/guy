@@ -111,40 +111,40 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
       GFS.rename_sync temp_path, real_path
   return null
 
-#-----------------------------------------------------------------------------------------------------------
-@with_shadow_files = ( original_paths..., handler ) ->
-  unless ( arity = arguments.length ) > 1
-    throw new Error "^guy.temp@1^ expected 2 or more arguments, got #{arity}"
-  type = Object::toString.call handler
-  return @_with_shadow_files_async original_paths, handler if type is '[object AsyncFunction]'
-  return @_with_shadow_files_sync  original_paths, handler if type is '[object Function]'
-  throw new Error "^guy.temp@3^ expected an (sync or async) function, got a #{type}"
+# #-----------------------------------------------------------------------------------------------------------
+# @with_shadow_files = ( original_paths..., handler ) ->
+#   unless ( arity = arguments.length ) > 1
+#     throw new Error "^guy.temp@1^ expected 2 or more arguments, got #{arity}"
+#   type = Object::toString.call handler
+#   return @_with_shadow_files_async original_paths, handler if type is '[object AsyncFunction]'
+#   return @_with_shadow_files_sync  original_paths, handler if type is '[object Function]'
+#   throw new Error "^guy.temp@3^ expected an (sync or async) function, got a #{type}"
 
-#-----------------------------------------------------------------------------------------------------------
-@_with_shadow_files_sync = ( original_paths, handler ) ->
-  ### TAINT check that original_path is nonexistent or file path, not directory ###
-  GFS           = require './fs'
-  FS            = require 'node:fs'
-  PATH          = require 'node:path'
-  paths         = []
-  real_paths    = ( FS.realpathSync original_path for original_path in original_paths )
-  @with_directory ({ path: folder_path, }) ->
-    temp_paths = []
-    for real_path in real_paths
-      base_name = PATH.basename real_path
-      temp_path = PATH.join folder_path, base_name
-      FS.copyFileSync real_path, temp_path
-      temp_paths.push temp_path
-    handler { paths: temp_paths, }
-    for temp_path, idx in temp_paths
-      real_path = real_paths[ idx ]
-      if safe_is_file FS, temp_path then  GFS.rename_sync temp_path,  real_path
-      else                                FS.unlinkSync               real_path
-  return null
+# #-----------------------------------------------------------------------------------------------------------
+# @_with_shadow_files_sync = ( original_paths, handler ) ->
+#   ### TAINT check that original_path is nonexistent or file path, not directory ###
+#   GFS           = require './fs'
+#   FS            = require 'node:fs'
+#   PATH          = require 'node:path'
+#   paths         = []
+#   real_paths    = original_paths # ( FS.realpathSync original_path for original_path in original_paths )
+#   @with_directory ({ path: folder_path, }) ->
+#     temp_paths = []
+#     for real_path in real_paths
+#       base_name = PATH.basename real_path
+#       temp_path = PATH.join folder_path, base_name
+#       FS.copyFileSync real_path, temp_path
+#       temp_paths.push temp_path
+#     handler { paths: temp_paths, }
+#     for temp_path, idx in temp_paths
+#       real_path = real_paths[ idx ]
+#       if safe_is_file FS, temp_path then  GFS.rename_sync temp_path,  real_path
+#       else                                FS.unlinkSync               real_path
+#   return null
 
-#-----------------------------------------------------------------------------------------------------------
-safe_is_file = ( FS, path ) ->
-  try return ( FS.lstatSync path ).isFile() catch error
-    throw error if error.code isnt 'ENOENT'
-  return false
+# #-----------------------------------------------------------------------------------------------------------
+# safe_is_file = ( FS, path ) ->
+#   try return ( FS.lstatSync path ).isFile() catch error
+#     throw error if error.code isnt 'ENOENT'
+#   return false
 
