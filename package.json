@@ -30,6 +30,7 @@
     "acorn-loose": "^8.3.0",
     "acorn-walk": "^8.2.0",
     "astring": "^1.8.3",
+    "dayjs": "^1.11.7",
     "tmp": "^0.2.1"
   },
   "peerDependencies": {
@@ -37,6 +38,7 @@
     "acorn-loose": "^8.3.0",
     "acorn-walk": "^8.2.0",
     "astring": "^1.8.3",
+    "dayjs": "^1.11.7",
     "tmp": "^0.2.1"
   }
 }
