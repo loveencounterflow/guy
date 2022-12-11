@@ -611,6 +611,29 @@ to use these methods until docs are written; the below gives a rough idea:
   return done?()
 ```
 
+#### `GUY.datetime`
+
+> This submodule needs peer-dependencies, install them with
+>
+> `npm install dayjs`
+>
+> or
+>
+> `pnpm add dayjs`
+
+`GUY.datetime` provides methods to obtain and convert timestamps.
+
+* `isots`: ISO TimeStamp
+* `srts`: Short, Readable TimeStamp
+
+* **`@from_now = ( srts ) ->`**
+* **`@now = ( cfg ) ->`**
+* **`@srts_from_isots = ( isots ) ->`**
+* **`@parse = ( srts ) ->`**
+* **`@format = ( srts, P... ) ->`**
+* **`@isots_from_srts = ( srts ) ->`**
+
+
 ## To Do
 
 * **[–]** adopt `icql-dba/errors#Dba_error`:
