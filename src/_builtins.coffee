@@ -44,12 +44,6 @@ module.exports = new Set [
   DataView::
   JSON::
   Promise::
-  # Generator::
-  # GeneratorFunction::
-  # AsyncFunction::
-  # AsyncGenerator::
-  # AsyncGeneratorFunction::
-  # Reflection::
   Reflect::
   Proxy::
   Intl::
@@ -71,3 +65,9 @@ module.exports = new Set [
   WebAssembly.RuntimeError::
   ]
 
+  # Generator::
+  # GeneratorFunction::
+  # AsyncFunction::
+  # AsyncGenerator::
+  # AsyncGeneratorFunction::
+  # Reflection::
