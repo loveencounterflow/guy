@@ -40,16 +40,17 @@ defaults =
   ### thx to https://github.com/nacholibre/node-readlines ###
   H.types.validate.guy_walk_lines_cfg ( cfg = { defaults.guy_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
-  readline_cfg =
-    readChunk:          4 * 1024 # chunk_size, byte_count
-    newLineCharacter:   '\n'      # nl
-  readlines = new ( require '../dependencies/n-readlines-patched' ) path, readline_cfg
-  if cfg.decode
-    while ( line = readlines.next() ) isnt false
-      yield line.toString 'utf-8'
-  else
-    while ( line = readlines.next() ) isnt false
-      yield line
+  nl            = '\n'
+  readline_cfg  =
+    readChunk:          16 * 1024 # chunk_size, byte_count
+    newLineCharacter:   nl
+  readlines     = new ( require '../dependencies/n-readlines-patched' ) path, readline_cfg
+  { decode  }   = cfg
+  count         = 0
+  while ( line = readlines.next() ) isnt false
+    count++
+    yield if decode then ( line.toString 'utf-8' ) else line
+  yield ( if decode then '' else Buffer.from '' ) if count is 0
   return null
 
 #-----------------------------------------------------------------------------------------------------------
