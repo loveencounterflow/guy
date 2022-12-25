@@ -33,6 +33,7 @@ defaults =
     line_count:     +Infinity
   guy_get_content_hash_cfg:
     length:         17
+    fallback:       misfit
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( path, cfg ) ->
@@ -82,6 +83,7 @@ defaults =
   command   = if platform is 'linux' then 'sha1sum' else 'shasum'
   result    = CP.spawnSync command, [ '-b', path, ]
   if result.status isnt 0
+    return cfg.fallback unless cfg.fallback is misfit
     if result.stderr?
       throw new Error "^guy.fs.get_content_hash@1^ " + result.stderr.toString 'utf-8'
     else
