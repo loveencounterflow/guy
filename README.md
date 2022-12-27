@@ -615,7 +615,8 @@ to use these methods until docs are written; the below gives a rough idea:
 
 `GUY.temp.create_directory()` will create a directory and return an object with two entries, `rm` and
 `path`. `rm` is a function that, when called without arguments, will remove the directory whose location is
-indicated by `path`.
+indicated by `path`. One way to ensure such a temporary directory will in fact be removed is to use
+`GUY.process.on_exit()`, as in `GUY.process.on_exit -> warn "removing #{path}"; rm()`
 
 
 #### `GUY.datetime`
