@@ -74,4 +74,13 @@ defaults                  = { keep: false, prefix: 'guy.temp-', suffix: '', }
     FS.rmSync path, { recursive: true, } unless cfg.keep
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@create_directory = ( cfg ) ->
+  FS              = require 'node:fs'
+  TEMP            = require 'tmp'
+  cfg             = { defaults..., cfg..., }
+  { name: path, } = TEMP.dirSync cfg
+  rm              = -> FS.rmSync path, { recursive: true, }
+  return { path, rm, }
+
 
