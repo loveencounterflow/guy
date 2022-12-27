@@ -27,6 +27,7 @@
       - [`GUY.samesame`](#guysamesame)
       - [`GUY.rnd`](#guyrnd)
       - [`GUY.temp`](#guytemp)
+      - [`GUY.datetime`](#guydatetime)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -564,6 +565,7 @@ See also
 
 `GUY.temp.with_file: ( cfg, handler ) ->`
 `GUY.temp.with_directory: ( cfg, handler ) ->`
+`GUY.temp.create_directory: ( cfg ) ->`
 
 **Note** refer to
 [hengist](https://github.com/loveencounterflow/hengist/blob/master/dev/guy/src/temp.tests.coffee) to see how
@@ -610,6 +612,11 @@ to use these methods until docs are written; the below gives a rough idea:
   #.........................................................................................................
   return done?()
 ```
+
+`GUY.temp.create_directory()` will create a directory and return an object with two entries, `rm` and
+`path`. `rm` is a function that, when called without arguments, will remove the directory whose location is
+indicated by `path`.
+
 
 #### `GUY.datetime`
 
