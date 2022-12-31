@@ -394,7 +394,24 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 * **`GUY.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
   I'm aware of, yet. The optional `cfg` argument may be an object with a single property `decode`; when set
-  to `false`, `walk_lines()` will iterate over buffers instead of strings.
+  to `false`, `walk_lines()` will iterate over buffers instead of strings. Observe that currently the
+  newline character is always assumed to be `\n` (i.e. U+00a0).
+
+  **Behavior regarding terminal newline characters**: The following invariant shall hold:
+
+  ```coffee
+  FS            = require 'node:fs'
+  file_content  = FS.readFileSync path, { encoding: 'utf-8', }
+  lines_1       = file_content.split '\n'
+  lines_2       = [ ( GUY.fs.walk_lines path )..., ]
+  ( JSON.stringify lines_1 ) == ( JSON.stringify lines_2 )
+  ```
+
+  In other words, the lines iterated over by `GUY.fs.walk_lines()` are the same lines as would be obtained
+  by splitting the file content using `String::split()`, meaning that
+    * newline characters right before the end-of-file (EOF) will generate an additional, empty line (because
+      `( '\n' ).split '\n'` gives `[ '', '', ]`)
+    * an empty file will generate a single empty string (because `( '' ).split '\n'` gives `[ '', ]`)
 
 * **`GUY.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
   the referenced file; optionally, when the iterator is exhausted (all lines have been read), restart from
