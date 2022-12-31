@@ -7,9 +7,20 @@ misfit                    = Symbol 'misfit'
 platform                  = ( require 'os' ).platform()
 
 #-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_buffer_chr', ( x ) ->
+  return true if ( @isa.integer x ) and ( 0x00 <= x <= 0xff )
+  return true if ( @isa.buffer  x ) and ( x.length > 0 )
+  return true if ( @isa.text    x ) and ( x.length > 0 )
+  return false
+
+#-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_walk_lines_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
-  "@isa.boolean x.decode":                                            ( x ) -> @isa.boolean x.decode
+  "@isa_optional.nonempty_text x.encoding":                           ( x ) -> @isa_optional.nonempty_text x.encoding
+  "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
+  "@isa.buffer x.newline and ( Buffer.from '\n' ).equals x.newline":  \
+    ( x ) -> ( @isa.buffer x.newline ) and ( Buffer.from '\n' ).equals x.newline
+  # "@isa.guy_buffer_chr x.newline":                                    ( x ) -> @isa.guy_buffer_chr x.newline
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_walk_circular_lines_cfg', tests:
@@ -26,7 +37,9 @@ H.types.declare 'guy_get_content_hash_cfg', tests:
 #-----------------------------------------------------------------------------------------------------------
 defaults =
   guy_walk_lines_cfg:
-    decode:         true
+    encoding:       'utf-8'
+    newline:        Buffer.from '\n'
+    chunk_size:     16 * 1024
   guy_walk_circular_lines_cfg:
     decode:         true
     loop_count:     1
@@ -37,21 +50,60 @@ defaults =
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( path, cfg ) ->
-  ### TAINT make newline, buffersize configurable ###
-  ### thx to https://github.com/nacholibre/node-readlines ###
   H.types.validate.guy_walk_lines_cfg ( cfg = { defaults.guy_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
-  nl            = '\n'
-  readline_cfg  =
-    readChunk:          16 * 1024 # chunk_size, byte_count
-    newLineCharacter:   nl
-  readlines     = new ( require '../dependencies/n-readlines-patched' ) path, readline_cfg
-  { decode  }   = cfg
+  { chunk_size
+    newline
+    encoding }  = cfg
+  #.........................................................................................................
+  nl_length     = 1
+  # nl_length     = switch type = H.types.type_of newline
+  #   when 'float'  then 1
+  #   when 'text'   then Buffer.byteLength newline, encoding ? 'utf-8'
+  #   when 'buffer' then buffer.length
+  #   else throw new Error "^guy.fs.walk_lines@1^ internal error: didn't expect a #{type}"
+  #.........................................................................................................
   count         = 0
-  while ( line = readlines.next() ) isnt false
+  for line from @_walk_lines path, chunk_size, newline, nl_length
     count++
-    yield if decode then ( line.toString 'utf-8' ) else line
-  yield ( if decode then '' else Buffer.from '' ) if count is 0
+    yield if encoding? then line.toString encoding else line
+  yield ( if encoding? then '' else Buffer.from '' ) if count is 0
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@_walk_lines = ( path, chunk_size, newline, nl_length ) ->
+  FS            = require 'node:fs'
+  fd            = FS.openSync path
+  cache         = []
+  byte_idx      = 0
+  #.........................................................................................................
+  flush = ->
+    yield cache[ 0 ]          if cache.length is 1
+    yield Buffer.concat cache if cache.length > 1
+    cache.length = 0
+    return null
+  #.........................................................................................................
+  walk_lines = ( buffer ) ->
+    loop
+      next_idx  = buffer.indexOf newline
+      if next_idx is -1
+        cache.push buffer
+        # return null
+        break
+      cache.push buffer.subarray 0, next_idx
+      yield from flush()
+      buffer = buffer.subarray next_idx + nl_length
+    return null
+  #.........................................................................................................
+  loop
+    buffer      = Buffer.alloc chunk_size
+    byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
+    break if byte_count is 0
+    byte_idx   += byte_count
+    buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
+    yield from walk_lines buffer
+  #.........................................................................................................
+  yield from flush()
   return null
 
 #-----------------------------------------------------------------------------------------------------------
