@@ -117,7 +117,8 @@ class LineByLine {
     }
 
     next() {
-        if (!this.fd) return false;
+        if (!this.fd) {
+            return false; }
 
         let line = false;
 
@@ -146,13 +147,15 @@ class LineByLine {
         }
 
         if (this.eofReached && this.linesCache.length === 0) {
+            var readBuffer = Buffer.alloc( 1 )
+            bytesRead = fs.readSync(this.fd, readBuffer, 0, 1, this.fdPosition - 1);
             this.close();
+            if ( readBuffer[0] === this.newLineCharacter ) { return ''; };
         }
 
         if (line && line[line.length-1] === this.newLineCharacter) {
             line = line.slice(0, line.length-1);
         }
-
         return line;
     }
 }
