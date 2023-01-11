@@ -151,6 +151,10 @@ H.types.defaults.guy_props_strict_owner_cfg =
   return R
 
 #-----------------------------------------------------------------------------------------------------------
+@nonull_assign = ( first, others... ) ->
+  return Object.assign {}, first, ( @omit_nullish other for other in others )...
+
+#-----------------------------------------------------------------------------------------------------------
 @crossmerge = ( cfg ) ->
   H.types.validate.guy_props_crossmerge_cfg ( cfg = { H.types.defaults.guy_props_crossmerge_cfg..., cfg..., } )
   R       = {}
