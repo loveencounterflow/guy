@@ -70,6 +70,12 @@
 * **`GUY.props.omit_nullish = ( d ) ->`**—Given an object `d`, return a copy of it where all `undefined` and
   `null` values are not set. In case `d` is `null` or `undefined`, an empty object will be returned.
 
+* **`GUY.props.nonull_assign = ( first, others... ) ->`**—Given one or more objects, return what `{
+  first..., other_0..., 0ther_1..., ... }` would return after removing all `null` and `undefined` attributes
+  from all the `other` values, i.e. `Object.assign {}, first, ( @omit_nullish other for other in others
+  )...`. This method is useful if you have an object with default values and want to derive settings by
+  passing in settings where `null` and `undefined` mean 'unset', 'don't care'.
+
 * **`GUY.props.crossmerge = ( cfg ) ->`**—Given an object `keys` and an object `values`, return a new object
   whose keys come from the former and whose values come fom the latter. Should there be a key in `keys` that
   is not set in `values`, an error will be thrown unless `fallback` has been set (to any value, inlcuding
