@@ -813,6 +813,32 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
 * **[–]** integrate pinned package versions helper, cf `( require 'mixa/lib/check-package-versions' )
   require '../pinned-package-versions.json'`
 * **[–]** documentation for `temp`
+* **[–]** implement line walker for strings, analoguous to `GUY.fs.walk_lines()`:
+  ```coffee
+  #.........................................................................................................
+  walk_lines = ( text ) ->
+    validate.text text
+    pattern       = /.*?(\n|$)/suy
+    last_position = text.length - 1
+    loop
+      break if pattern.lastIndex > last_position
+      unless ( match = text.match pattern )?
+        debug '^3234^', text[ pattern.lastIndex .. ]
+        break
+      yield match[ 0 ]
+    R = walk_lines()
+    R.reset = -> pattern.lastIndex = 0
+    return R
+  #.........................................................................................................
+  md_lexer  = new_toy_md_lexer 'md'
+  parser    = new_toy_parser()
+  lines     = probe.split /\n+/us
+  #.........................................................................................................
+  debug '^79-1^'
+  debug '^79-1^', rpr line for line from walk_lines probe
+  debug '^79-1^', rpr line for line from walk_lines probe + '\n'
+  debug '^79-1^', rpr line for line from walk_lines probe + '\n\n'
+  ```
 
 ## Is Done
 
