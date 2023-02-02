@@ -839,6 +839,7 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
   debug '^79-1^', rpr line for line from walk_lines probe + '\n'
   debug '^79-1^', rpr line for line from walk_lines probe + '\n\n'
   ```
+* **[–]** make line walkers work with different EOL standards inlcuding `\n\r`, `\r`
 
 ## Is Done
 
