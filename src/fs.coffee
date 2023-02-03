@@ -14,7 +14,7 @@ H.types.declare 'guy_buffer_chr', ( x ) ->
   return false
 
 #-----------------------------------------------------------------------------------------------------------
-H.types.declare 'guy_walk_lines_cfg', tests:
+H.types.declare 'guy_fs_walk_lines_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "@isa_optional.nonempty_text x.encoding":                           ( x ) -> @isa_optional.nonempty_text x.encoding
   "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
@@ -36,7 +36,7 @@ H.types.declare 'guy_get_content_hash_cfg', tests:
 
 #-----------------------------------------------------------------------------------------------------------
 defaults =
-  guy_walk_lines_cfg:
+  guy_fs_walk_lines_cfg:
     encoding:       'utf-8'
     newline:        Buffer.from '\n'
     chunk_size:     16 * 1024
@@ -50,32 +50,30 @@ defaults =
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( path, cfg ) ->
-  H.types.validate.guy_walk_lines_cfg ( cfg = { defaults.guy_walk_lines_cfg..., cfg..., } )
+  H.types.validate.guy_fs_walk_lines_cfg ( cfg = { defaults.guy_fs_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
   { chunk_size
     newline
     encoding }  = cfg
   #.........................................................................................................
-  nl_length     = 1
-  # nl_length     = switch type = H.types.type_of newline
-  #   when 'float'  then 1
-  #   when 'text'   then Buffer.byteLength newline, encoding ? 'utf-8'
-  #   when 'buffer' then buffer.length
-  #   else throw new Error "^guy.fs.walk_lines@1^ internal error: didn't expect a #{type}"
-  #.........................................................................................................
   count         = 0
-  for line from @_walk_lines path, chunk_size, newline, nl_length
+  for line from @_walk_lines path, chunk_size
     count++
     yield if encoding? then line.toString encoding else line
   yield ( if encoding? then '' else Buffer.from '' ) if count is 0
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@_walk_lines = ( path, chunk_size, newline, nl_length ) ->
+@_walk_lines = ( path, chunk_size ) ->
   FS            = require 'node:fs'
   fd            = FS.openSync path
   cache         = []
   byte_idx      = 0
+  cr            = 0x0d
+  lf            = 0x0a
+  prv_was_cr    = false
+  is_lf         = false
+  is_cr         = false
   #.........................................................................................................
   flush = ->
     yield cache[ 0 ]          if cache.length is 1
@@ -85,14 +83,32 @@ defaults =
   #.........................................................................................................
   walk_lines = ( buffer ) ->
     loop
-      next_idx  = buffer.indexOf newline
-      if next_idx is -1
-        cache.push buffer
-        # return null
-        break
+      next_idx_cr = if ( next_idx_cr = buffer.indexOf cr ) is -1 then Infinity else next_idx_cr
+      next_idx_lf = if ( next_idx_lf = buffer.indexOf lf ) is -1 then Infinity else next_idx_lf
+      prv_was_cr  = is_cr
+      is_lf       = false
+      is_cr       = false
+      #.....................................................................................................
+      if next_idx_cr is Infinity
+        if next_idx_lf is Infinity
+          cache.push buffer
+          break
+        next_idx  = next_idx_lf
+        is_lf     = true
+        is_cr     = false
+      else
+        if ( next_idx_lf is Infinity ) or ( next_idx_cr < next_idx_lf )
+          next_idx  = next_idx_cr
+          is_lf     = false
+          is_cr     = true
+        else
+          next_idx  = next_idx_lf
+          is_lf     = true
+          is_cr     = false
+      #.....................................................................................................
       cache.push buffer.subarray 0, next_idx
       yield from flush()
-      buffer = buffer.subarray next_idx + nl_length
+      buffer = buffer.subarray next_idx + 1 # i.e. nl_length
     return null
   #.........................................................................................................
   loop
