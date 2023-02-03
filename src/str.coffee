@@ -31,15 +31,18 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   # H.types.validate.nonempty_text path
   # { newline   } = cfg
   #.........................................................................................................
-  pattern       = /.*?(\n|$)/suy
+  # pattern       = /.*?(\n|$)/suy
+  if text is ''
+    yield ''
+    return null
+  pattern       = /(.*?)(?:\r\n|\r|\n|$)/suy
   last_position = text.length - 1
   loop
     break if pattern.lastIndex > last_position
-    unless ( match = text.match pattern )?
-      debug '^3234^', text[ pattern.lastIndex .. ]
-      break
-    yield match[ 0 ]
-  R = walk_lines()
+    break unless ( match = text.match pattern )?
+    yield match[ 1 ]
+  yield '' if ( text.match /\n$/ )?
+  R = @walk_lines()
   R.reset = -> pattern.lastIndex = 0
   return R
 
