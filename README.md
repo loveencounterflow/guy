@@ -19,6 +19,7 @@
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
     - [`GUY.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
     - [`GUY.lft`: Freezing Objects](#guylft-freezing-objects)
+    - [`GUY.fs.walk_lines()` and `GUY.str.walk_lines()`](#guyfswalk_lines-and-guystrwalk_lines)
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
       - [`GUY.trm`](#guytrm)
@@ -394,8 +395,7 @@ is implemented in, `guy-nowait`has been removed from this release.
 and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
-
-### `GUY.fs`: File-Related Stuff
+### `GUY.fs.walk_lines()` and `GUY.str.walk_lines()`
 
 * **`GUY.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
@@ -418,6 +418,18 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
     * newline characters right before the end-of-file (EOF) will generate an additional, empty line (because
       `( '\n' ).split '\n'` gives `[ '', '', ]`)
     * an empty file will generate a single empty string (because `( '' ).split '\n'` gives `[ '', ]`)
+
+* The newline character sequences recognized by `GUY.fs.walk_lines()` are
+  * `\r` = U+000d Carriage Return (CR) (ancient Macs)
+  * `\n` = U+000a Line Feed (LF) (Unix, Linux)
+  * `\r\n` = U+000d U+00a0 Carriage Return followed by Line Feed (CRLF) (Windows)
+  * i.e. a file containing only the characters `\r\r\n\r\n\n\n` will be parsed as `\r`, `\r\n`, `\r\n`,
+    `\n`, `\n`, that is, as six empty lines, as two of the line feeds are pre-empted by the preceding
+    carriage returns. This behavior is consistent with the text of the file being split as
+    `'\r\r\n\r\n\n\n'.split /\r\n|\r|\n/`, which gives `[ '', '', '', '', '', '' ]`
+
+
+### `GUY.fs`: File-Related Stuff
 
 * **`GUY.fs.walk_circular_lines = ( path, cfg ) ->`**—Given a `path`, return an iterator over the lines in
   the referenced file; optionally, when the iterator is exhausted (all lines have been read), restart from
