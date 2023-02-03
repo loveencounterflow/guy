@@ -839,7 +839,11 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
   debug '^79-1^', rpr line for line from walk_lines probe + '\n'
   debug '^79-1^', rpr line for line from walk_lines probe + '\n\n'
   ```
+* **[–]** `GUY.fs.walk_lines()`, `GUY.str.walk_lines()`: implement option to add custom suffix to each line
+  such as (most frequently) `\n` to help in line-wise lexing
 * **[–]** make line walkers work with different EOL standards inlcuding `\n\r`, `\r`
+* **[–]** possible / useful to implement `step` / `walk` / `run` API for `fs.walk_lines()`,
+  `str.walk_lines()`?
 
 ## Is Done
 
