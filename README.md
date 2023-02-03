@@ -426,7 +426,10 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   * i.e. a file containing only the characters `\r\r\n\r\n\n\n` will be parsed as `\r`, `\r\n`, `\r\n`,
     `\n`, `\n`, that is, as six empty lines, as two of the line feeds are pre-empted by the preceding
     carriage returns. This behavior is consistent with the text of the file being split as
-    `'\r\r\n\r\n\n\n'.split /\r\n|\r|\n/`, which gives `[ '', '', '', '', '', '' ]`
+    `'\r\r\n\r\n\n\n'.split /\r\n|\r|\n/`, which gives `[ '', '', '', '', '', '' ]`. This is, incidentally,
+    also what `pico` and Sublime Text 4 (on Linux) and [Textpad
+    8.15](https://www.textpad.com/download#TextPad8151) (on Wine under Linux) show, although Notepad (on
+    Wine under Linux) thinks the file in question has only 5 lines.
 
 
 ### `GUY.fs`: File-Related Stuff
