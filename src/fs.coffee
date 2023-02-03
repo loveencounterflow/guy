@@ -5,6 +5,7 @@
 H                         = require './_helpers'
 misfit                    = Symbol 'misfit'
 platform                  = ( require 'os' ).platform()
+rpr                       = ( require 'util' ).inspect
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_buffer_chr', ( x ) ->
@@ -83,30 +84,31 @@ defaults =
   #.........................................................................................................
   walk_lines = ( buffer ) ->
     loop
-      next_idx_cr = if ( next_idx_cr = buffer.indexOf cr ) is -1 then Infinity else next_idx_cr
-      next_idx_lf = if ( next_idx_lf = buffer.indexOf lf ) is -1 then Infinity else next_idx_lf
-      prv_was_cr  = is_cr
-      is_lf       = false
-      is_cr       = false
+      next_idx_cr = buffer.indexOf cr
+      next_idx_lf = buffer.indexOf lf
       #.....................................................................................................
-      if next_idx_cr is Infinity
-        if next_idx_lf is Infinity
+      if next_idx_cr is -1
+        if next_idx_lf is -1
           cache.push buffer
           break
         next_idx  = next_idx_lf
+        prv_was_cr  = is_cr
         is_lf     = true
         is_cr     = false
       else
-        if ( next_idx_lf is Infinity ) or ( next_idx_cr < next_idx_lf )
+        if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
           next_idx  = next_idx_cr
+          prv_was_cr  = is_cr
           is_lf     = false
           is_cr     = true
         else
           next_idx  = next_idx_lf
+          prv_was_cr  = is_cr
           is_lf     = true
           is_cr     = false
       #.....................................................................................................
-      cache.push buffer.subarray 0, next_idx
+      unless prv_was_cr and is_lf
+        cache.push buffer.subarray 0, next_idx
       yield from flush()
       buffer = buffer.subarray next_idx + 1 # i.e. nl_length
     return null
@@ -121,6 +123,10 @@ defaults =
   #.........................................................................................................
   yield from flush()
   return null
+      # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
+
+    # console.log '^54-4^', rpr buffer.toString()
+
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_circular_lines = ( path, cfg ) ->
