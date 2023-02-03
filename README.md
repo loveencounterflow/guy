@@ -430,7 +430,8 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
     also what `pico` and Sublime Text 4 (on Linux) and [Textpad
     8.15](https://www.textpad.com/download#TextPad8151) (on Wine under Linux) show, although Notepad (on
     Wine under Linux) thinks the file in question has only 5 lines.
-
+* `GUY.str.walk_lines()` behaves like `GUY.fs.walk_lines()`, although it does not yield buffers (yet) amd
+  has no way to set the chunk size
 
 ### `GUY.fs`: File-Related Stuff
 
