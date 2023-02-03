@@ -91,25 +91,26 @@ defaults =
         if next_idx_lf is -1
           cache.push buffer
           break
-        next_idx  = next_idx_lf
+        next_idx    = next_idx_lf
         prv_was_cr  = is_cr
-        is_lf     = true
-        is_cr     = false
+        is_lf       = true
+        is_cr       = false
       else
         if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
-          next_idx  = next_idx_cr
+          next_idx    = next_idx_cr
           prv_was_cr  = is_cr
-          is_lf     = false
-          is_cr     = true
+          is_lf       = false
+          is_cr       = true
         else
-          next_idx  = next_idx_lf
+          next_idx    = next_idx_lf
           prv_was_cr  = is_cr
-          is_lf     = true
-          is_cr     = false
+          is_lf       = true
+          is_cr       = false
       #.....................................................................................................
+      # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
       unless prv_was_cr and is_lf
         cache.push buffer.subarray 0, next_idx
-      yield from flush()
+        yield from flush()
       buffer = buffer.subarray next_idx + 1 # i.e. nl_length
     return null
   #.........................................................................................................
@@ -119,13 +120,12 @@ defaults =
     break if byte_count is 0
     byte_idx   += byte_count
     buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
+    # console.log '^54-4^', rpr buffer.toString()
     yield from walk_lines buffer
   #.........................................................................................................
   yield from flush()
   return null
-      # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
 
-    # console.log '^54-4^', rpr buffer.toString()
 
 
 #-----------------------------------------------------------------------------------------------------------
