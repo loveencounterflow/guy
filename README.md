@@ -432,6 +432,11 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
     Wine under Linux) thinks the file in question has only 5 lines.
 * `GUY.str.walk_lines()` behaves like `GUY.fs.walk_lines()`, although it does not yield buffers (yet) amd
   has no way to set the chunk size
+* both `GUY.str.walk_lines()` and `GUY.fs.walk_lines()` will return right-trimmed lines (i.e. remove
+  whitespace from the end of the string) unless a setting `trim: false` is included as the second argument
+  to the method (as in, `walk_lines path, { trim: false, }`). With `GUY.fs.walk_lines()`, trimming is only
+  available if lines are decoded, so when one calls `walk_lines path, { trim: false, encoding: null, }` to
+  get buffers, those will not be trimmed.
 
 ### `GUY.fs`: File-Related Stuff
 
