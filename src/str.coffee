@@ -5,19 +5,15 @@
 H                         = require './_helpers'
 
 
-# #-----------------------------------------------------------------------------------------------------------
-# H.types.declare 'guy_str_walk_lines_cfg', tests:
-#   "@isa.object x":                                                    ( x ) -> @isa.object x
-#   "@isa_optional.nonempty_text x.encoding":                           ( x ) -> @isa_optional.nonempty_text x.encoding
-#   "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
-#   "@isa.buffer x.newline and ( Buffer.from '\n' ).equals x.newline":  \
-#     ( x ) -> ( @isa.buffer x.newline ) and ( Buffer.from '\n' ).equals x.newline
-#   # "@isa.guy_buffer_chr x.newline":                                    ( x ) -> @isa.guy_buffer_chr x.newline
+#-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_str_walk_lines_cfg', tests:
+  "@isa.object x":          ( x ) -> @isa.object x
+  "@isa.boolean x.trim":    ( x ) -> @isa.boolean x.trim
 
-# #-----------------------------------------------------------------------------------------------------------
-# defaults =
-#   guy_str_walk_lines_cfg:
-#     newline:        '\n'
+#-----------------------------------------------------------------------------------------------------------
+defaults =
+  guy_str_walk_lines_cfg:
+    trim: true
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -27,9 +23,8 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( text, cfg ) ->
-  # H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
-  # H.types.validate.nonempty_text path
-  # { newline   } = cfg
+  H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
+  { trim } = cfg
   #.........................................................................................................
   # pattern       = /.*?(\n|$)/suy
   if text is ''
@@ -40,7 +35,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   loop
     break if pattern.lastIndex > last_position
     break unless ( match = text.match pattern )?
-    yield match[ 1 ]
+    yield if trim then match[ 1 ].trimEnd() else match[ 1 ]
   yield '' if ( text.match /\n$/ )?
   R = @walk_lines()
   R.reset = -> pattern.lastIndex = 0

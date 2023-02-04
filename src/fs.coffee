@@ -21,6 +21,7 @@ H.types.declare 'guy_fs_walk_lines_cfg', tests:
   "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
   "@isa.buffer x.newline and ( Buffer.from '\n' ).equals x.newline":  \
     ( x ) -> ( @isa.buffer x.newline ) and ( Buffer.from '\n' ).equals x.newline
+  "@isa.boolean x.trim":                                              ( x ) -> @isa.boolean x.trim
   # "@isa.guy_buffer_chr x.newline":                                    ( x ) -> @isa.guy_buffer_chr x.newline
 
 #-----------------------------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ defaults =
     encoding:       'utf-8'
     newline:        Buffer.from '\n'
     chunk_size:     16 * 1024
+    trim:           true
   guy_walk_circular_lines_cfg:
     decode:         true
     loop_count:     1
@@ -54,13 +56,17 @@ defaults =
   H.types.validate.guy_fs_walk_lines_cfg ( cfg = { defaults.guy_fs_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
   { chunk_size
-    newline
-    encoding }  = cfg
+    encoding
+    trim      } = cfg
   #.........................................................................................................
   count         = 0
   for line from @_walk_lines path, chunk_size
     count++
-    yield if encoding? then line.toString encoding else line
+    if encoding?
+      line  = line.toString encoding
+      yield if trim then line.trimEnd() else line
+    else
+      yield line
   yield ( if encoding? then '' else Buffer.from '' ) if count is 0
   return null
 
