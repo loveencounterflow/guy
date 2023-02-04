@@ -1,6 +1,6 @@
 {
   "name": "guy",
-  "version": "12.8.0",
+  "version": "12.9.0",
   "description": "npm dependencies checker",
   "main": "lib/main.js",
   "scripts": {
