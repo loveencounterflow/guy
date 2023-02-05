@@ -862,7 +862,8 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
   ```
 * **[–]** `GUY.fs.walk_lines()`, `GUY.str.walk_lines()`: implement option to add custom suffix to each line
   such as (most frequently) `\n` to help in line-wise lexing
-* **[–]** make line walkers work with different EOL standards inlcuding `\n\r`, `\r`
+* **[–]** implement option to track global position in `GUY.*.walk_lines()`, including skipped newline
+  characters
 * **[–]** possible / useful to implement `step` / `walk` / `run` API for `fs.walk_lines()`,
   `str.walk_lines()`?
 
@@ -892,6 +893,7 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
 * **[+]** make `temp` context handlers work with async functions
 * **[+]** consider to use promise with `after`, as in
   `after  = ( dts, f  ) => new Promise ( resolve ) -> setTimeout ( -> resolve f() ), dts * 1000`
+* **[+]** make line walkers work with different EOL standards inlcuding `\n\r`, `\r`
 
 
 
