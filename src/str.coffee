@@ -21,6 +21,10 @@ defaults =
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping ###
 @escape_for_regex = ( text ) -> text.replace /[.*+?^${}()|[\]\\]/g, '\\$&'
 
+#---------------------------------------------------------------------------------------------------------
+### thx to https://www.designcise.com/web/tutorial/which-characters-need-to-be-escaped-in-a-regular-expression-class ###
+@escape_for_regex_class = ( text ) -> text.replace /([\^\-\]\/])/g, '\\$1'
+
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( text, cfg ) ->
   H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
