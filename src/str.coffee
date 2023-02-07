@@ -27,23 +27,39 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( text, cfg ) ->
+  for { line_nr, text, } from @walk_lines_with_positions text, cfg
+    yield text
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_lines_with_positions = ( text, cfg ) ->
   H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
-  { trim } = cfg
+  { trim }  = cfg
+  line_nr   = 0
   #.........................................................................................................
-  # pattern       = /.*?(\n|$)/suy
   if text is ''
-    yield ''
+    yield { line_nr: 1, text: '', }
     return null
+  #.........................................................................................................
   pattern       = /(.*?)(?:\r\n|\r|\n|$)/suy
   last_position = text.length - 1
+  #.........................................................................................................
   loop
     break if pattern.lastIndex > last_position
     break unless ( match = text.match pattern )?
-    yield if trim then match[ 1 ].trimEnd() else match[ 1 ]
-  yield '' if ( text.match /\n$/ )?
-  R = @walk_lines()
-  R.reset = -> pattern.lastIndex = 0
-  return R
+    line_nr++
+    if trim
+      line  = match[ 1 ].trimEnd()
+      yield { line_nr, line, }
+    else
+      line  = match[ 1 ]
+      yield { line_nr, line, }
+  #.........................................................................................................
+  if ( text.match /\n$/ )?
+    line_nr++
+    yield { line_nr, text: '', }
+  #.........................................................................................................
+  return null
 
 #===========================================================================================================
 #
