@@ -26,8 +26,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 @escape_for_regex_class = ( text ) -> text.replace /([\^\-\]\/])/g, '\\$1'
 
 #-----------------------------------------------------------------------------------------------------------
-@walk_lines = ( text, cfg ) ->
-  for { line_nr, text, } from @walk_lines_with_positions text, cfg
+@walk_lines = ( text, cfg ) -> yield line for { line, } from @walk_lines_with_positions text, cfg
     yield text
   return null
 
