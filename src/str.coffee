@@ -35,29 +35,31 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 @walk_lines_with_positions = ( text, cfg ) ->
   H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
   { trim }  = cfg
-  line_nr   = 0
   #.........................................................................................................
   if text is ''
-    yield { line_nr: 1, text: '', }
+    yield { idx: -1, lnr: 1, text: '', nl: '', }
     return null
   #.........................................................................................................
-  pattern       = /(.*?)(?:\r\n|\r|\n|$)/suy
+  lnr           = 0
+  pattern       = /(.*?)(\r\n|\r|\n|$)/suy
   last_position = text.length - 1
   #.........................................................................................................
   loop
+    idx = pattern.lastIndex
     break if pattern.lastIndex > last_position
     break unless ( match = text.match pattern )?
-    line_nr++
+    [ linenl, line, nl, ] = match
+    lnr++
     if trim
       line  = match[ 1 ].trimEnd()
-      yield { line_nr, line, }
+      yield { idx, lnr, line, nl, }
     else
       line  = match[ 1 ]
-      yield { line_nr, line, }
+      yield { idx, lnr, line, nl, }
   #.........................................................................................................
   if ( text.match /\n$/ )?
-    line_nr++
-    yield { line_nr, text: '', }
+    lnr++
+    yield { idx: pattern.lastIndex + 1, lnr, text: '', nl: '\n', }
   #.........................................................................................................
   return null
 
