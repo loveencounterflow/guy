@@ -27,8 +27,6 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( text, cfg ) -> yield line for { line, } from @walk_lines_with_positions text, cfg
-    yield text
-  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines_with_positions = ( text, cfg ) ->
@@ -36,7 +34,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   { trim }  = cfg
   #.........................................................................................................
   if text is ''
-    yield { idx: -1, lnr: 1, text: '', nl: '', }
+    yield { idx: -1, lnr: 1, line: '', nl: '', }
     return null
   #.........................................................................................................
   lnr           = 0
@@ -58,7 +56,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   #.........................................................................................................
   if ( text.match /\n$/ )?
     lnr++
-    yield { idx: pattern.lastIndex + 1, lnr, text: '', nl: '\n', }
+    yield { idx: pattern.lastIndex + 1, lnr, line: '', nl: '\n', }
   #.........................................................................................................
   return null
 
