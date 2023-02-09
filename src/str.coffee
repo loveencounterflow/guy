@@ -54,9 +54,9 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
       line  = match[ 1 ]
       yield { lnr, line, nl, }
   #.........................................................................................................
-  if ( text.match /\n$/ )?
+  if ( text.match /(\r|\n)$/ )?
     lnr++
-    yield { lnr, line: '', nl: '\n', }
+    yield { lnr, line: '', nl: '', }
   #.........................................................................................................
   return null
 
