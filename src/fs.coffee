@@ -6,6 +6,14 @@ H                         = require './_helpers'
 misfit                    = Symbol 'misfit'
 platform                  = ( require 'os' ).platform()
 rpr                       = ( require 'util' ).inspect
+#-----------------------------------------------------------------------------------------------------------
+### Constants: ###
+cr                        = 0x0d
+lf                        = 0x0a
+empty_string              = ''
+empty_buffer              = Buffer.from empty_string
+cr_buffer                 = Buffer.from [ cr, ]
+lf_buffer                 = Buffer.from [ lf, ]
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_buffer_chr', ( x ) ->
@@ -52,7 +60,11 @@ defaults =
     fallback:       misfit
 
 #-----------------------------------------------------------------------------------------------------------
-@walk_lines = ( path, cfg ) ->
+@walk_lines = ( path, cfg ) -> yield line for { line, } from @walk_lines_with_positions path, cfg
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_lines_with_positions = ( path, cfg ) ->
+# @walk_lines_with_positions = ( path, cfg ) ->
   H.types.validate.guy_fs_walk_lines_cfg ( cfg = { defaults.guy_fs_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
   { chunk_size
@@ -60,32 +72,49 @@ defaults =
     trim      } = cfg
   #.........................................................................................................
   count         = 0
-  for line from @_walk_lines path, chunk_size
+  for d from @_walk_lines_with_positions path, chunk_size
     count++
     if encoding?
-      line  = line.toString encoding
-      yield if trim then line.trimEnd() else line
+      d.line  = d.line.toString encoding
+      d.line  = d.line.trimEnd() if trim
+      d.nl    = d.nl.toString encoding
+      yield d
     else
-      yield line
-  yield ( if encoding? then '' else Buffer.from '' ) if count is 0
+      yield d
+  if count is 0
+    line  = if encoding? then empty_string else empty_buffer
+    nl    = if encoding? then empty_string else empty_buffer
+    yield { lnr: 1, line, nl, }
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@_walk_lines = ( path, chunk_size ) ->
+@_walk_lines_with_positions = ( path, chunk_size ) ->
   FS            = require 'node:fs'
   fd            = FS.openSync path
-  cache         = []
   byte_idx      = 0
-  cr            = 0x0d
-  lf            = 0x0a
   prv_was_cr    = false
-  is_lf         = false
   is_cr         = false
+  is_lf         = false
+  #.........................................................................................................
+  lnr           = 0
+  line          = null
+  line_cache    = []
+  nl_cache      = []
   #.........................................................................................................
   flush = ->
-    yield cache[ 0 ]          if cache.length is 1
-    yield Buffer.concat cache if cache.length > 1
-    cache.length = 0
+    return if ( line_cache.length is 0 ) and ( nl_cache.length is 0 )
+    switch line_cache.length
+      when 0 then line  = empty_buffer
+      when 1 then line  = line_cache[ 0 ]
+      else        line  = Buffer.concat line_cache
+    switch nl_cache.length
+      when 0 then nl    = empty_buffer
+      when 1 then nl    = nl_cache[ 0 ]
+      else        nl    = Buffer.concat nl_cache
+    lnr++
+    yield { lnr, line, nl, }
+    line_cache.length = 0
+    nl_cache.length   = 0
     return null
   #.........................................................................................................
   walk_lines = ( buffer ) ->
@@ -95,28 +124,42 @@ defaults =
       #.....................................................................................................
       if next_idx_cr is -1
         if next_idx_lf is -1
-          cache.push buffer
+          line_cache.push buffer
           break
         next_idx    = next_idx_lf
         prv_was_cr  = is_cr
-        is_lf       = true
         is_cr       = false
+        is_lf       = true
       else
         if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
           next_idx    = next_idx_cr
           prv_was_cr  = is_cr
-          is_lf       = false
           is_cr       = true
+          is_lf       = false
         else
           next_idx    = next_idx_lf
           prv_was_cr  = is_cr
-          is_lf       = true
           is_cr       = false
+          is_lf       = true
+      #.....................................................................................................
+      if is_cr        then  nl_cache.push cr_buffer
+      else if is_lf   then  nl_cache.push lf_buffer
       #.....................................................................................................
       # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
-      unless prv_was_cr and is_lf
-        cache.push buffer.subarray 0, next_idx
+      console.log '^324^', is_cr, is_lf, prv_was_cr, nl_cache
+      if prv_was_cr and is_lf
+        console.log '^32-1^', 'prv_was_cr and is_lf', '---------->', is_cr, is_lf, nl_cache
         yield from flush()
+      else if is_cr
+        line_cache.push buffer.subarray 0, next_idx
+        console.log '^32-2^', 'is_cr', '---------->', is_cr, is_lf, nl_cache
+      else if is_lf
+        line_cache.push buffer.subarray 0, next_idx
+        console.log '^32-3^', 'is_lf', '---------->', is_cr, is_lf, nl_cache
+        yield from flush()
+      else
+        line_cache.push buffer.subarray 0, next_idx
+        console.log '^32-4^', 'no nl', '---------->', is_cr, is_lf, nl_cache
       buffer = buffer.subarray next_idx + 1 # i.e. nl_length
     return null
   #.........................................................................................................
