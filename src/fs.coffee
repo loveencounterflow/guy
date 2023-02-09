@@ -10,10 +10,10 @@ rpr                       = ( require 'util' ).inspect
 ### Constants: ###
 cr                        = 0x0d
 lf                        = 0x0a
-empty_string              = ''
-empty_buffer              = Buffer.from empty_string
-cr_buffer                 = Buffer.from [ cr, ]
-lf_buffer                 = Buffer.from [ lf, ]
+C_empty_string            = ''
+C_empty_buffer            = Buffer.from C_empty_string
+C_cr_buffer               = Buffer.from [ cr, ]
+C_lf_buffer               = Buffer.from [ lf, ]
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_buffer_chr', ( x ) ->
@@ -82,8 +82,8 @@ defaults =
     else
       yield d
   if count is 0
-    line  = if encoding? then empty_string else empty_buffer
-    nl    = if encoding? then empty_string else empty_buffer
+    line  = if encoding? then C_empty_string else C_empty_buffer
+    nl    = if encoding? then C_empty_string else C_empty_buffer
     yield { lnr: 1, line, nl, }
   return null
 
@@ -104,11 +104,11 @@ defaults =
   flush = ->
     return if ( line_cache.length is 0 ) and ( nl_cache.length is 0 )
     switch line_cache.length
-      when 0 then line  = empty_buffer
+      when 0 then line  = C_empty_buffer
       when 1 then line  = line_cache[ 0 ]
       else        line  = Buffer.concat line_cache
     switch nl_cache.length
-      when 0 then nl    = empty_buffer
+      when 0 then nl    = C_empty_buffer
       when 1 then nl    = nl_cache[ 0 ]
       else        nl    = Buffer.concat nl_cache
     lnr++
