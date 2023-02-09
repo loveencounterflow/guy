@@ -116,34 +116,8 @@ defaults =
     line_cache.length = 0
     nl_cache.length   = 0
     return null
-  #.........................................................................................................
-  walk_lines = ( buffer ) ->
-    loop
-      next_idx_cr = buffer.indexOf cr
-      next_idx_lf = buffer.indexOf lf
-      #.....................................................................................................
-      if next_idx_cr is -1
-        if next_idx_lf is -1
-          line_cache.push buffer
-          break
-        next_idx    = next_idx_lf
-        prv_was_cr  = is_cr
-        is_cr       = false
-        is_lf       = true
-      else
-        if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
-          next_idx    = next_idx_cr
-          prv_was_cr  = is_cr
-          is_cr       = true
-          is_lf       = false
-        else
-          next_idx    = next_idx_lf
-          prv_was_cr  = is_cr
-          is_cr       = false
-          is_lf       = true
-      #.....................................................................................................
-      if is_cr        then  nl_cache.push cr_buffer
-      else if is_lf   then  nl_cache.push lf_buffer
+
+    xxxxxxxxx = ->
       #.....................................................................................................
       # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
       console.log '^324^', is_cr, is_lf, prv_was_cr, nl_cache
@@ -160,7 +134,6 @@ defaults =
       else
         line_cache.push buffer.subarray 0, next_idx
         console.log '^32-4^', 'no nl', '---------->', is_cr, is_lf, nl_cache
-      buffer = buffer.subarray next_idx + 1 # i.e. nl_length
     return null
   #.........................................................................................................
   loop
@@ -175,8 +148,38 @@ defaults =
   yield from flush()
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+### TAINT add may_have_cr, may_have_lf as optimization to forego repeated unnecessary lookups ###
+@_walk_lines_get_next_line_part = ( buffer, first_idx, may_have_cr = true, may_have_lf = true ) ->
+  material    = null
+  eol         = null
+  next_idx_cr = -1
+  next_idx_lf = -1
+  next_idx_cr = buffer.indexOf cr, first_idx if may_have_cr
+  next_idx_lf = buffer.indexOf lf, first_idx if may_have_lf
+  next_idx    = buffer.length
+  #.........................................................................................................
+  if next_idx_cr is -1
+    if next_idx_lf is -1
+      return { material: buffer, eol, next_idx, } if first_idx is 0
+    else
+      next_idx    = next_idx_lf # + 1
+      eol         = C_lf_buffer
+  #.........................................................................................................
+  else if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
+    next_idx    = next_idx_cr # + 1
+    eol         = C_cr_buffer
+  #.........................................................................................................
+  else
+    next_idx    = next_idx_lf # + 1
+    eol         = C_lf_buffer
+  #.........................................................................................................
+  material    = buffer.subarray first_idx, next_idx # - 1
+  return { material, eol, next_idx: next_idx + 1, }
 
 
+#===========================================================================================================
+#
 #-----------------------------------------------------------------------------------------------------------
 @walk_circular_lines = ( path, cfg ) ->
   H.types.validate.guy_walk_circular_lines_cfg ( cfg = { defaults.guy_walk_circular_lines_cfg..., cfg..., } )
