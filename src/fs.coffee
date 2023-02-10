@@ -8,12 +8,12 @@ platform                  = ( require 'os' ).platform()
 rpr                       = ( require 'util' ).inspect
 #-----------------------------------------------------------------------------------------------------------
 ### Constants: ###
-cr                        = 0x0d
-lf                        = 0x0a
-C_empty_string            = ''
-C_empty_buffer            = Buffer.from C_empty_string
-C_cr_buffer               = Buffer.from [ cr, ]
-C_lf_buffer               = Buffer.from [ lf, ]
+C_cr                      = @_C_cr            = 0x0d
+C_lf                      = @_C_lf            = 0x0a
+C_empty_string            = @_C_empty_string  = ''
+C_empty_buffer            = @_C_empty_buffer  = Buffer.from C_empty_string
+C_cr_buffer               = @_C_cr_buffer     = Buffer.from [ C_cr, ]
+C_lf_buffer               = @_C_lf_buffer     = Buffer.from [ C_lf, ]
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_buffer_chr', ( x ) ->
@@ -164,8 +164,8 @@ defaults =
   eol         = C_empty_buffer
   next_idx_cr = -1
   next_idx_lf = -1
-  next_idx_cr = buffer.indexOf cr, first_idx if may_have_cr
-  next_idx_lf = buffer.indexOf lf, first_idx if may_have_lf
+  next_idx_cr = buffer.indexOf C_cr, first_idx if may_have_cr
+  next_idx_lf = buffer.indexOf C_lf, first_idx if may_have_lf
   next_idx    = buffer.length
   #.........................................................................................................
   if next_idx_cr is -1
