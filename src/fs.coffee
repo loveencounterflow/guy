@@ -116,25 +116,6 @@ defaults =
     line_cache.length = 0
     nl_cache.length   = 0
     return null
-
-    xxxxxxxxx = ->
-      #.....................................................................................................
-      # console.log '^54-3^', next_idx, { is_cr, is_lf, prv_was_cr, }, ( prv_was_cr and is_lf ), [ ( buffer.subarray next_idx - 1, next_idx ).toString(), ( buffer.subarray next_idx, next_idx + 1 ).toString(), ( buffer.subarray 0, next_idx ).toString(), ]
-      console.log '^324^', is_cr, is_lf, prv_was_cr, nl_cache
-      if prv_was_cr and is_lf
-        console.log '^32-1^', 'prv_was_cr and is_lf', '---------->', is_cr, is_lf, nl_cache
-        yield from flush()
-      else if is_cr
-        line_cache.push buffer.subarray 0, next_idx
-        console.log '^32-2^', 'is_cr', '---------->', is_cr, is_lf, nl_cache
-      else if is_lf
-        line_cache.push buffer.subarray 0, next_idx
-        console.log '^32-3^', 'is_lf', '---------->', is_cr, is_lf, nl_cache
-        yield from flush()
-      else
-        line_cache.push buffer.subarray 0, next_idx
-        console.log '^32-4^', 'no nl', '---------->', is_cr, is_lf, nl_cache
-    return null
   #.........................................................................................................
   loop
     buffer      = Buffer.alloc chunk_size
@@ -150,7 +131,7 @@ defaults =
 
 #-----------------------------------------------------------------------------------------------------------
 ### TAINT add may_have_cr, may_have_lf as optimization to forego repeated unnecessary lookups ###
-@_walk_lines_get_next_line_part = ( buffer, first_idx, may_have_cr = true, may_have_lf = true ) ->
+@_walk_lines__advance = ( buffer, first_idx, may_have_cr = true, may_have_lf = true ) ->
   material    = null
   eol         = null
   next_idx_cr = -1
@@ -163,18 +144,18 @@ defaults =
     if next_idx_lf is -1
       return { material: buffer, eol, next_idx, } if first_idx is 0
     else
-      next_idx    = next_idx_lf # + 1
+      next_idx    = next_idx_lf
       eol         = C_lf_buffer
   #.........................................................................................................
   else if ( next_idx_lf is -1 ) or ( next_idx_cr < next_idx_lf )
-    next_idx    = next_idx_cr # + 1
+    next_idx    = next_idx_cr
     eol         = C_cr_buffer
   #.........................................................................................................
   else
-    next_idx    = next_idx_lf # + 1
+    next_idx    = next_idx_lf
     eol         = C_lf_buffer
   #.........................................................................................................
-  material    = buffer.subarray first_idx, next_idx # - 1
+  material = buffer.subarray first_idx, next_idx
   return { material, eol, next_idx: next_idx + 1, }
 
 
