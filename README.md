@@ -19,7 +19,7 @@
     - [`GUY.nowait`: De-Asyncify JS Async Functions](#guynowait-de-asyncify-js-async-functions)
     - [`GUY.process`: Process-Related Utilities](#guyprocess-process-related-utilities)
     - [`GUY.lft`: Freezing Objects](#guylft-freezing-objects)
-    - [`GUY.fs.walk_lines()` and `GUY.str.walk_lines()`](#guyfswalk_lines-and-guystrwalk_lines)
+    - [`GUY.fs.walk_lines()`, `GUY.str.walk_lines()` and `GUY.fs.walk_buffers()`](#guyfswalk_lines-guystrwalk_lines-and-guyfswalk_buffers)
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
       - [`GUY.trm`](#guytrm)
@@ -395,7 +395,7 @@ is implemented in, `guy-nowait`has been removed from this release.
 and re-assign a copy of a frozen object. See [the
 documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 
-### `GUY.fs.walk_lines()` and `GUY.str.walk_lines()`
+### `GUY.fs.walk_lines()`, `GUY.str.walk_lines()` and `GUY.fs.walk_buffers()`
 
 * **`GUY.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
@@ -437,6 +437,17 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   to the method (as in, `walk_lines path, { trim: false, }`). With `GUY.fs.walk_lines()`, trimming is only
   available if lines are decoded, so when one calls `walk_lines path, { trim: false, encoding: null, }` to
   get buffers, those will not be trimmed.
+
+* **`GUY.fs.walk_buffers = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over buffers
+  representing the file contents, the invariant being that the concatenation of the buffers compares equal
+  to reading the entire file in a single go:
+
+  ```coffee
+  ( Buffer.compare ( Buffer.concat [ ( GUY.fs.walk_buffers path )..., ] ), ( FS.readFileSync path ) ) == 0
+  ```
+
+  Where deemed necessary, `cfg.chunk_size` can be set to an arbitrary integer greater than 0 (default: 16
+  KiB).
 
 ### `GUY.fs`: File-Related Stuff
 
