@@ -105,46 +105,98 @@ defaults =
     yield { lnr: 1, line, nl, }
   return null
 
+# #-----------------------------------------------------------------------------------------------------------
+# @_walk_lines_with_positions = ( path, chunk_size ) ->
+#   FS            = require 'node:fs'
+#   fd            = FS.openSync path
+#   byte_idx      = 0
+#   prv_was_cr    = false
+#   is_cr         = false
+#   is_lf         = false
+#   #.........................................................................................................
+#   lnr           = 0
+#   line          = null
+#   line_cache    = []
+#   nl_cache      = []
+#   #.........................................................................................................
+#   flush = ->
+#     return if ( line_cache.length is 0 ) and ( nl_cache.length is 0 )
+#     switch line_cache.length
+#       when 0 then line  = C_empty_buffer
+#       when 1 then line  = line_cache[ 0 ]
+#       else        line  = Buffer.concat line_cache
+#     switch nl_cache.length
+#       when 0 then nl    = C_empty_buffer
+#       when 1 then nl    = nl_cache[ 0 ]
+#       else        nl    = Buffer.concat nl_cache
+#     lnr++
+#     yield { lnr, line, nl, }
+#     line_cache.length = 0
+#     nl_cache.length   = 0
+#     return null
+#   #.........................................................................................................
+#   loop
+#     buffer      = Buffer.alloc chunk_size
+#     byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
+#     break if byte_count is 0
+#     byte_idx   += byte_count
+#     buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
+#     first_idx   = 0
+#     last_idx    = buffer.length - 1
+#     loop
+#       break if first_idx > last_idx
+#       d         = @_walk_lines__advance buffer, first_idx
+#       line_cache.push d.material if d.material? and d.material.length  > 0
+#       nl_cache.push   d.eol      if d.eol?      and d.eol.length       > 0
+#       is_cr     = d.eol is C_cr_buffer
+#       is_lf     = d.eol is C_lf_buffer
+#       first_idx = d.next_idx
+
+
+#     yield from walk_lines buffer
+#   #.........................................................................................................
+#   yield from flush()
+#   return null
+
 #-----------------------------------------------------------------------------------------------------------
-@_walk_lines_with_positions = ( path, chunk_size ) ->
-  FS            = require 'node:fs'
-  fd            = FS.openSync path
-  byte_idx      = 0
-  prv_was_cr    = false
-  is_cr         = false
-  is_lf         = false
+@_walk_lines_with_positions = ( path, chunk_size = 16 * 1024 ) ->
+  line_cache  = []
+  eol_cache   = []
+  lnr         = 0
   #.........................................................................................................
-  lnr           = 0
-  line          = null
-  line_cache    = []
-  nl_cache      = []
-  #.........................................................................................................
-  flush = ->
-    return if ( line_cache.length is 0 ) and ( nl_cache.length is 0 )
-    switch line_cache.length
-      when 0 then line  = C_empty_buffer
-      when 1 then line  = line_cache[ 0 ]
-      else        line  = Buffer.concat line_cache
-    switch nl_cache.length
-      when 0 then nl    = C_empty_buffer
-      when 1 then nl    = nl_cache[ 0 ]
-      else        nl    = Buffer.concat nl_cache
-    lnr++
-    yield { lnr, line, nl, }
+  flush = ( material = null, eol = null ) ->
+    # return null if ( line_cache.length is 0 ) and ( eol_cache.length is 0 )
+    line              = Buffer.concat if material? then [ line_cache...,  material, ] else line_cache
+    eol               = Buffer.concat if eol?      then [ eol_cache...,   eol,      ] else eol_cache
     line_cache.length = 0
-    nl_cache.length   = 0
-    return null
+    eol_cache.length  = 0
+    lnr++
+    yield { lnr, line, eol, }
   #.........................................................................................................
-  loop
-    buffer      = Buffer.alloc chunk_size
-    byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
-    break if byte_count is 0
-    byte_idx   += byte_count
-    buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
-    # console.log '^54-4^', rpr buffer.toString()
-    yield from walk_lines buffer
+  for buffer from @walk_buffers path, { chunk_size, }
+    for { material, eol, } from @_walk_lines__walk_advancements buffer
+      switch eol
+        when C_cr_buffer
+          if ( eol_cache.length is 1 ) and ( eol_cache[ 0 ] is C_cr_buffer )
+            yield from flush()
+          line_cache.push material if material.length  > 0
+          eol_cache.push eol
+        when C_lf_buffer
+          yield from flush material, eol
+        when C_empty_buffer
+          line_cache.push material if material.length  > 0
+        else throw new Error "^636456^ internal error"
   #.........................................................................................................
-  yield from flush()
+  d = null
+  for d from flush()
+    ### NOTE yield copy because we must ensure no changes made to original object ###
+    yield { d..., }
+  ### TAINT somehow a buffer equal to but not identical to C_cr_buffer sneaks in here ###
+  # if d? and d.eol is C_cr_buffer
+  if d? and ( Buffer.compare C_cr_buffer, d.eol ) is 0
+    lnr++
+    yield { lnr, line: C_empty_buffer, eol: C_empty_buffer, }
+  #.........................................................................................................
   return null
 
 #-----------------------------------------------------------------------------------------------------------
