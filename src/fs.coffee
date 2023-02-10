@@ -23,14 +23,15 @@ H.types.declare 'guy_buffer_chr', ( x ) ->
   return false
 
 #-----------------------------------------------------------------------------------------------------------
+H.types.declare 'guy_fs_walk_buffers_cfg', tests:
+  "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
+
+#-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_fs_walk_lines_cfg', tests:
   "@isa.object x":                                                    ( x ) -> @isa.object x
   "@isa_optional.nonempty_text x.encoding":                           ( x ) -> @isa_optional.nonempty_text x.encoding
   "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
-  "@isa.buffer x.newline and ( Buffer.from '\n' ).equals x.newline":  \
-    ( x ) -> ( @isa.buffer x.newline ) and ( Buffer.from '\n' ).equals x.newline
   "@isa.boolean x.trim":                                              ( x ) -> @isa.boolean x.trim
-  # "@isa.guy_buffer_chr x.newline":                                    ( x ) -> @isa.guy_buffer_chr x.newline
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_walk_circular_lines_cfg', tests:
@@ -48,7 +49,6 @@ H.types.declare 'guy_get_content_hash_cfg', tests:
 defaults =
   guy_fs_walk_lines_cfg:
     encoding:       'utf-8'
-    newline:        Buffer.from '\n'
     chunk_size:     16 * 1024
     trim:           true
   guy_walk_circular_lines_cfg:
@@ -64,7 +64,6 @@ defaults =
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines_with_positions = ( path, cfg ) ->
-# @walk_lines_with_positions = ( path, cfg ) ->
   H.types.validate.guy_fs_walk_lines_cfg ( cfg = { defaults.guy_fs_walk_lines_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
   { chunk_size
