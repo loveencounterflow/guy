@@ -148,6 +148,14 @@ defaults =
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+@_walk_lines__walk_advancements = ( buffer, may_have_cr = true, may_have_lf = true ) ->
+  first_idx   = 0
+  last_idx    = buffer.length - 1
+  loop
+    break if first_idx > last_idx
+    yield d = @_walk_lines__advance buffer, first_idx, may_have_cr, may_have_lf
+    first_idx = d.next_idx
+  return null
 ### TAINT add may_have_cr, may_have_lf as optimization to forego repeated unnecessary lookups ###
 @_walk_lines__advance = ( buffer, first_idx, may_have_cr = true, may_have_lf = true ) ->
   material    = null
