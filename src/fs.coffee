@@ -133,7 +133,7 @@ defaults =
 ### TAINT add may_have_cr, may_have_lf as optimization to forego repeated unnecessary lookups ###
 @_walk_lines__advance = ( buffer, first_idx, may_have_cr = true, may_have_lf = true ) ->
   material    = null
-  eol         = null
+  eol         = C_empty_buffer
   next_idx_cr = -1
   next_idx_lf = -1
   next_idx_cr = buffer.indexOf cr, first_idx if may_have_cr
