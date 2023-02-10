@@ -47,6 +47,8 @@ H.types.declare 'guy_get_content_hash_cfg', tests:
 
 #-----------------------------------------------------------------------------------------------------------
 defaults =
+  guy_fs_walk_buffers_cfg:
+    chunk_size:     16 * 1024
   guy_fs_walk_lines_cfg:
     encoding:       'utf-8'
     chunk_size:     16 * 1024
@@ -58,6 +60,23 @@ defaults =
   guy_get_content_hash_cfg:
     length:         17
     fallback:       misfit
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_buffers = ( path, cfg ) ->
+  H.types.validate.guy_fs_walk_buffers_cfg ( cfg = { defaults.guy_fs_walk_buffers_cfg..., cfg..., } )
+  H.types.validate.nonempty_text path
+  { chunk_size } = cfg
+  FS            = require 'node:fs'
+  fd            = FS.openSync path
+  byte_idx      = 0
+  loop
+    buffer      = Buffer.alloc chunk_size
+    byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
+    break if byte_count is 0
+    byte_idx   += byte_count
+    buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
+    yield buffer
+  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines = ( path, cfg ) -> yield line for { line, } from @walk_lines_with_positions path, cfg
