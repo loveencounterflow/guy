@@ -187,13 +187,9 @@ defaults =
           line_cache.push material if material.length  > 0
         else throw new Error "^636456^ internal error"
   #.........................................................................................................
-  d = null
-  for d from flush()
-    ### NOTE yield copy because we must ensure no changes made to original object ###
-    yield { d..., }
-  ### TAINT somehow a buffer equal to but not identical to C_cr_buffer sneaks in here ###
-  # if d? and d.eol is C_cr_buffer
-  if d? and ( Buffer.compare C_cr_buffer, d.eol ) is 0
+  has_extra_cr = ( eol_cache.length > 0 ) and ( ( eol_cache.at -1 ) is C_cr_buffer )
+  yield from flush()
+  if has_extra_cr
     lnr++
     yield { lnr, line: C_empty_buffer, eol: C_empty_buffer, }
   #.........................................................................................................
