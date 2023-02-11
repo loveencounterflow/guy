@@ -95,7 +95,7 @@ defaults =
     if encoding?
       d.line  = d.line.toString encoding
       d.line  = d.line.trimEnd() if trim
-      d.nl    = d.nl.toString encoding
+      d.eol   = d.eol.toString encoding
       yield d
     else
       yield d
