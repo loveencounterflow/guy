@@ -118,10 +118,10 @@ defaults =
   #.........................................................................................................
   for buffer from @walk_buffers path, { chunk_size, }
     for { material, eol, } from @_walk_lines__walk_advancements buffer
+      if ( eol_cache.length > 0 ) and not ( ( ( eol_cache.at -1 ) is C_cr_buffer ) and eol is C_lf_buffer )
+        yield from flush()
       switch eol
         when C_cr_buffer
-          if ( eol_cache.length is 1 ) and ( eol_cache[ 0 ] is C_cr_buffer )
-            yield from flush()
           line_cache.push material if material.length  > 0
           eol_cache.push eol
         when C_lf_buffer
