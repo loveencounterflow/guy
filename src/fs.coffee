@@ -99,64 +99,7 @@ defaults =
       yield d
     else
       yield d
-  if count is 0
-    line  = if encoding? then C_empty_string else C_empty_buffer
-    nl    = if encoding? then C_empty_string else C_empty_buffer
-    yield { lnr: 1, line, nl, }
   return null
-
-# #-----------------------------------------------------------------------------------------------------------
-# @_walk_lines_with_positions = ( path, chunk_size ) ->
-#   FS            = require 'node:fs'
-#   fd            = FS.openSync path
-#   byte_idx      = 0
-#   prv_was_cr    = false
-#   is_cr         = false
-#   is_lf         = false
-#   #.........................................................................................................
-#   lnr           = 0
-#   line          = null
-#   line_cache    = []
-#   nl_cache      = []
-#   #.........................................................................................................
-#   flush = ->
-#     return if ( line_cache.length is 0 ) and ( nl_cache.length is 0 )
-#     switch line_cache.length
-#       when 0 then line  = C_empty_buffer
-#       when 1 then line  = line_cache[ 0 ]
-#       else        line  = Buffer.concat line_cache
-#     switch nl_cache.length
-#       when 0 then nl    = C_empty_buffer
-#       when 1 then nl    = nl_cache[ 0 ]
-#       else        nl    = Buffer.concat nl_cache
-#     lnr++
-#     yield { lnr, line, nl, }
-#     line_cache.length = 0
-#     nl_cache.length   = 0
-#     return null
-#   #.........................................................................................................
-#   loop
-#     buffer      = Buffer.alloc chunk_size
-#     byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
-#     break if byte_count is 0
-#     byte_idx   += byte_count
-#     buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
-#     first_idx   = 0
-#     last_idx    = buffer.length - 1
-#     loop
-#       break if first_idx > last_idx
-#       d         = @_walk_lines__advance buffer, first_idx
-#       line_cache.push d.material if d.material? and d.material.length  > 0
-#       nl_cache.push   d.eol      if d.eol?      and d.eol.length       > 0
-#       is_cr     = d.eol is C_cr_buffer
-#       is_lf     = d.eol is C_lf_buffer
-#       first_idx = d.next_idx
-
-
-#     yield from walk_lines buffer
-#   #.........................................................................................................
-#   yield from flush()
-#   return null
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_lines_with_positions = ( path, chunk_size = 16 * 1024 ) ->
