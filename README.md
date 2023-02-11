@@ -416,8 +416,14 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   In other words, the lines iterated over by `GUY.fs.walk_lines()` are the same lines as would be obtained
   by splitting the file content using `String::split()`, meaning that
     * newline characters right before the end-of-file (EOF) will generate an additional, empty line (because
-      `( '\n' ).split '\n'` gives `[ '', '', ]`)
+      `( '\n' ).split /\r\n|\r|\n/` gives `[ '', '', ]`)
     * an empty file will generate a single empty string (because `( '' ).split '\n'` gives `[ '', ]`)
+    * observe that the line counts reported by the Posix tool `wc` when used with the `--lines` option will
+      often disagree with those obtained with `GUY.fs.walk_lines()` (or wplitting with `/\r\n|\r|\n/`).
+      However, this should not be a cause for concern because a file containing the text `1\n2\n3` will be
+      reported as having 2 lines by `wc`, and one will be hard pressed to find people who'd defend that
+      design decision, or a text editor which will not show digits `1` to `3` on three separate lines
+      numbered 1, 2, and 3.
 
 * The newline character sequences recognized by `GUY.fs.walk_lines()` are
   * `\r` = U+000d Carriage Return (CR) (ancient Macs)
