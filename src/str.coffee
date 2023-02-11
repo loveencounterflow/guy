@@ -34,7 +34,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   { trim }  = cfg
   #.........................................................................................................
   if text is ''
-    yield { lnr: 1, line: '', nl: '', }
+    yield { lnr: 1, line: '', eol: '', }
     return null
   #.........................................................................................................
   lnr           = 0
@@ -45,18 +45,18 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
     idx = pattern.lastIndex
     break if pattern.lastIndex > last_position
     break unless ( match = text.match pattern )?
-    [ linenl, line, nl, ] = match
+    [ linenl, line, eol, ] = match
     lnr++
     if trim
       line  = match[ 1 ].trimEnd()
-      yield { lnr, line, nl, }
+      yield { lnr, line, eol, }
     else
       line  = match[ 1 ]
-      yield { lnr, line, nl, }
+      yield { lnr, line, eol, }
   #.........................................................................................................
   if ( text.match /(\r|\n)$/ )?
     lnr++
-    yield { lnr, line: '', nl: '', }
+    yield { lnr, line: '', eol: '', }
   #.........................................................................................................
   return null
 
