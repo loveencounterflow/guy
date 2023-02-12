@@ -79,7 +79,10 @@ defaults =
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@walk_lines = ( path, cfg ) -> yield line for { line, } from @walk_lines_with_positions path, cfg
+@walk_lines = ( path, cfg ) ->
+  for { line, } from @walk_lines_with_positions path, cfg
+    yield line
+  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines_with_positions = ( path, cfg ) ->
