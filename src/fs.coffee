@@ -79,9 +79,9 @@ defaults =
     buffer      = Buffer.alloc chunk_size
     byte_count  = FS.readSync fd, buffer, 0, chunk_size, byte_idx
     break if byte_count is 0
-    byte_idx   += byte_count
     buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
     yield { buffer, byte_idx, }
+    byte_idx   += byte_count
   return null
 
 #-----------------------------------------------------------------------------------------------------------
