@@ -63,6 +63,12 @@ defaults =
 
 #-----------------------------------------------------------------------------------------------------------
 @walk_buffers = ( path, cfg ) ->
+  for { buffer, } from @walk_buffers_with_positions path, cfg
+    yield buffer
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+@walk_buffers_with_positions = ( path, cfg ) ->
   H.types.validate.guy_fs_walk_buffers_cfg ( cfg = { defaults.guy_fs_walk_buffers_cfg..., cfg..., } )
   H.types.validate.nonempty_text path
   { chunk_size } = cfg
@@ -75,7 +81,7 @@ defaults =
     break if byte_count is 0
     byte_idx   += byte_count
     buffer      = buffer.subarray 0, byte_count if byte_count < chunk_size
-    yield buffer
+    yield { buffer, byte_idx, }
   return null
 
 #-----------------------------------------------------------------------------------------------------------
