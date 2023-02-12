@@ -6,6 +6,7 @@ H                         = require './_helpers'
 misfit                    = Symbol 'misfit'
 platform                  = ( require 'os' ).platform()
 rpr                       = ( require 'util' ).inspect
+debug                     = console.log
 #-----------------------------------------------------------------------------------------------------------
 ### Constants: ###
 C_cr                      = @_C_cr            = 0x0d
