@@ -116,24 +116,24 @@ defaults =
   line_cache        = []
   eol_cache         = []
   lnr               = 0
-  offset_bytes      = null
-  material_byte_idx = null
+  # offset_bytes      = null
   #.........................................................................................................
   flush = ( material = null, eol = null ) ->
     # return null if ( line_cache.length is 0 ) and ( eol_cache.length is 0 )
-    byte_idx          = x_file_byte_idx + offset_bytes
+    # byte_idx          = file_byte_idx + offset_bytes
     line              = Buffer.concat if material? then [ line_cache...,  material, ] else line_cache
     eol               = Buffer.concat if eol?      then [ eol_cache...,   eol,      ] else eol_cache
     line_cache.length = 0
     eol_cache.length  = 0
     lnr++
+    # yield { byte_idx, lnr, line, eol, }
     yield { lnr, line, eol, }
   #.........................................................................................................
-  for { buffer, byte_idx: x_file_byte_idx, } from @walk_buffers_with_positions path, { chunk_size, }
+  for { buffer, byte_idx: file_byte_idx, } from @walk_buffers_with_positions path, { chunk_size, }
     # debug '^_walk_lines_with_positions@23-4^', byte_idx, ( rpr buffer.toString() )
-    offset_bytes = 0
+    # offset_bytes = 0
     for { material, eol, } from @_walk_lines__walk_advancements buffer
-      debug '^_walk_lines_with_positions@23-4^', { x_file_byte_idx, offset_bytes, }, ( rpr material.toString() ), ( rpr eol.toString() )
+      # debug '^_walk_lines_with_positions@23-4^', { file_byte_idx, offset_bytes, }, ( rpr material.toString() ), ( rpr eol.toString() )
       if ( eol_cache.length > 0 ) and not ( ( ( eol_cache.at -1 ) is C_cr_buffer ) and eol is C_lf_buffer )
         yield from flush()
       switch eol
@@ -145,7 +145,7 @@ defaults =
         when C_empty_buffer
           line_cache.push material if material.length  > 0
         else throw new Error "^636456^ internal error"
-      offset_bytes += material.length + eol.length
+      # offset_bytes += material.length + eol.length
   #.........................................................................................................
   has_extra_cr = ( eol_cache.length > 0 ) and ( ( eol_cache.at -1 ) is C_cr_buffer )
   yield from flush()
