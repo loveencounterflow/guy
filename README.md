@@ -455,8 +455,7 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   Where deemed necessary, `cfg.chunk_size` can be set to an arbitrary integer greater than 0 (default: 16
   KiB).
 
-* **`GUY.fs.walk_lines_with_positions = ( path, cfg ) ->`** and <br> **`GUY.fs.walk_buffers_with_positions =
-  ( path, cfg ) ->`**—Same as `GUY.fs.walk_lines()` `GUY.fs.walk_buffers()`, respectively, but yields
+* **`GUY.fs.walk_lines_with_positions = ( path, cfg ) ->`**—Same as `GUY.fs.walk_lines()`, but yields
   objects of the shape `{ lnr, line, eol, }` where `lnr` is the 1-based line number, `line` is the (by
   default, when not requesting buffers) trimmed 'material' of the line (identical to what the `walk_lines()`
   methods yield), and `eol` represents the bytes or characters that were recognized as the line ending.
@@ -466,6 +465,10 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   complete with positions indicated by line numbers, line-local or file-global [UTF-16 code unit
   indexes](https://mathiasbynens.be/notes/javascript-encoding), code point indexes or byte offsets, as seen
   appropriate.
+
+* **`GUY.fs.walk_buffers_with_positions = ( path, cfg ) ->`**—Same as `GUY.fs.walk_buffers()`, but yields
+  objects of the shape `{ buffer, byte_idx, }` where `byte_idx` is the 0-based byte index into the
+  respective file.
 
 ### `GUY.fs`: File-Related Stuff
 
