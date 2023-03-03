@@ -400,8 +400,7 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
 * **`GUY.fs.walk_lines = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over file
   lines. This is the most hassle-free approach to synchronously obtain lines of text files in NodeJS that
   I'm aware of, yet. The optional `cfg` argument may be an object with a single property `decode`; when set
-  to `false`, `walk_lines()` will iterate over buffers instead of strings. Observe that currently the
-  newline character is always assumed to be `\n` (i.e. U+00a0).
+  to `false`, `walk_lines()` will iterate over buffers instead of strings.
 
   **Behavior regarding terminal newline characters**: The following invariant shall hold:
 
