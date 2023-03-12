@@ -33,6 +33,8 @@ H.types.declare 'guy_fs_walk_lines_cfg', tests:
   "@isa_optional.nonempty_text x.encoding":                           ( x ) -> @isa_optional.nonempty_text x.encoding
   "@isa.positive_integer x.chunk_size":                               ( x ) -> @isa.positive_integer x.chunk_size
   "@isa.boolean x.trim":                                              ( x ) -> @isa.boolean x.trim
+  "@isa.text x.prepend":                                              ( x ) -> @isa.text x.prepend
+  "@isa.text x.append":                                               ( x ) -> @isa.text x.append
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_walk_circular_lines_cfg', tests:
@@ -54,6 +56,8 @@ defaults =
     encoding:       'utf-8'
     chunk_size:     16 * 1024
     trim:           true
+    prepend:        ''
+    append:         ''
   guy_walk_circular_lines_cfg:
     decode:         true
     loop_count:     1
@@ -105,6 +109,8 @@ defaults =
     if encoding?
       d.line  = d.line.toString encoding
       d.line  = d.line.trimEnd() if trim
+      d.line  = cfg.prepend + d.line      unless cfg.prepend  is ''
+      d.line  = d.line      + cfg.append  unless cfg.append   is ''
       d.eol   = d.eol.toString encoding
       yield d
     else

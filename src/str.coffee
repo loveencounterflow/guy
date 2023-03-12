@@ -9,11 +9,15 @@ H                         = require './_helpers'
 H.types.declare 'guy_str_walk_lines_cfg', tests:
   "@isa.object x":          ( x ) -> @isa.object x
   "@isa.boolean x.trim":    ( x ) -> @isa.boolean x.trim
+  "@isa.text x.prepend":    ( x ) -> @isa.text x.prepend
+  "@isa.text x.append":     ( x ) -> @isa.text x.append
 
 #-----------------------------------------------------------------------------------------------------------
 defaults =
   guy_str_walk_lines_cfg:
-    trim: true
+    trim:           true
+    prepend:        ''
+    append:         ''
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -34,7 +38,9 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
 #-----------------------------------------------------------------------------------------------------------
 @walk_lines_with_positions = ( text, cfg ) ->
   H.types.validate.guy_str_walk_lines_cfg ( cfg = { defaults.guy_str_walk_lines_cfg..., cfg..., } )
-  { trim }  = cfg
+  { trim
+    prepend
+    append  }  = cfg
   #.........................................................................................................
   if text is ''
     yield { lnr: 1, line: '', eol: '', }
@@ -50,12 +56,11 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
     break unless ( match = text.match pattern )?
     [ linenl, line, eol, ] = match
     lnr++
-    if trim
-      line  = match[ 1 ].trimEnd()
-      yield { lnr, line, eol, }
-    else
-      line  = match[ 1 ]
-      yield { lnr, line, eol, }
+    line  = match[ 1 ]
+    line  = line.trimEnd() if trim
+    line  = prepend + line  unless prepend  is ''
+    line  = line  + append  unless append   is ''
+    yield { lnr, line, eol, }
   #.........................................................................................................
   if ( text.match /(\r|\n)$/ )?
     lnr++

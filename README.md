@@ -443,6 +443,10 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   available if lines are decoded, so when one calls `walk_lines path, { trim: false, encoding: null, }` to
   get buffers, those will not be trimmed.
 
+* both `GUY.str.walk_lines()` and `GUY.fs.walk_lines()` accept configuration settings `prepend` and `append`
+  which allow to prefix and suffix each line with a given string. Appending will happen after whitespace
+  trimming, where applicable.
+
 * **`GUY.fs.walk_buffers = ( path, cfg ) ->`**—Given a `path`, return a *synchronous* iterator over buffers
   representing the file contents, the invariant being that the concatenation of the buffers compares equal
   to reading the entire file in a single go:
