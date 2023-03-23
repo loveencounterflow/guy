@@ -21,16 +21,18 @@ H.types.declare 'guy_props_keys_cfg', tests:
   "@isa.boolean x.allow_any":                                         ( x ) -> @isa.boolean x.allow_any
   "@isa.boolean x.symbols":                                           ( x ) -> @isa.boolean x.symbols
   "@isa.boolean x.hidden":                                            ( x ) -> @isa.boolean x.hidden
+  "@isa.boolean x.depth_first":                                       ( x ) -> @isa.boolean x.depth_first
   "@isa.boolean x.builtins":                                          ( x ) -> @isa.boolean x.builtins
   "@isa.boolean x.builtins implies x.hidden":                         ( x ) ->
     return ( not x.builtins ) or ( x.hidden )
 #...........................................................................................................
 H.types.defaults.guy_props_keys_cfg =
-  allow_any:  true
-  symbols:    false
-  builtins:   false
-  hidden:     false
-  depth:      null
+  allow_any:    true
+  symbols:      false
+  builtins:     false
+  hidden:       false
+  depth:        null
+  depth_first:  false
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_crossmerge_cfg', tests:
@@ -41,14 +43,15 @@ H.types.declare 'guy_props_crossmerge_cfg', tests:
 #...........................................................................................................
 ### TAINT code duplication ###
 H.types.defaults.guy_props_crossmerge_cfg =
-  allow_any:  true
-  symbols:    false
-  builtins:   false
-  hidden:     false
-  depth:      null
-  keys:       null
-  values:     null
-  fallback:   @_misfit
+  allow_any:    true
+  symbols:      false
+  builtins:     false
+  hidden:       false
+  depth:        null
+  depth_first:  false
+  keys:         null
+  values:       null
+  fallback:     @_misfit
 
 #-----------------------------------------------------------------------------------------------------------
 H.types.declare 'guy_props_tree_cfg', tests:
@@ -63,6 +66,7 @@ H.types.defaults.guy_props_tree_cfg =
   builtins:     false
   hidden:       false
   depth:        null
+  depth_first:  null
   evaluate:     null
   sep:          null
 
@@ -296,15 +300,26 @@ get = ( target, key, fallback ) ->
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keys = ( owner, cfg ) ->
   seen = new Set()
-  for { key, } from @_walk_keyowners owner, cfg
-    continue if seen.has key
-    seen.add key
-    yield key
+  if cfg.depth_first
+    cache = new Map()
+    for { key, owner, } from @_walk_keyowners owner, cfg
+      unless ( collector = cache.get owner )?
+        cache.set owner, collector = []
+      collector.push key
+    for owner in [ cache.keys()..., ].reverse()
+      for key in cache.get owner
+        continue if seen.has key
+        seen.add key
+        yield key
+  else
+    for { key, } from @_walk_keyowners owner, cfg
+      continue if seen.has key
+      seen.add key
+      yield key
   return null
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keyowners = ( owner, cfg, current_depth = 0 ) ->
-  # urge '^3354^', owner
   return null if cfg.depth? and current_depth > cfg.depth
   return null if ( not cfg.builtins ) and builtins.has owner
   try

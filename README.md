@@ -137,6 +137,7 @@ size_of = ( x, fallback = misfit ) ->
 * `GUY.props.keys()` works for all JS values, including `null` and `undefined` when `{ allow_any: true, }`
   is set (the default)
 * `GUY.props.keys()` can retrieve hidden (i.e. non-enumerable) keys with `{ hidden: true, }`
+* `GUY.props.keys()` can walk in depth-first order by setting `{ depth_first: true, }`
 * `GUY.props.keys()` can retrieve builtins with `{ builtins: true, }`; observe that since builtins are
   always hidden, `{ builtins: true, hidden: false, }` makes no sense and causes a validation error.
 
