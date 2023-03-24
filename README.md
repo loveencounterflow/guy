@@ -173,7 +173,7 @@ lst = [ 'x', ]
 #### `GUY.props.get_prototype_chain()`
 
 `GUY.props.get_prototype_chain x`: given an object `x`, returns the instance, its prototype, and the
-transitive prototypes of the prototype.
+transitive prototypes of the prototype. The method will return an empty list for `null` and `undefined`
 
 #### `GUY.props.tree()`
 

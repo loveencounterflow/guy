@@ -319,16 +319,13 @@ get = ( target, key, fallback ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@get_prototype_chain = ( owner ) ->
-  R = new Set()
-  R.add owner for { owner, } from @_walk_keyowners owner,
-    allow_any:    true
-    symbols:      true
-    builtins:     true
-    hidden:       true
-    depth:        null
-    depth_first:  false
-  return [ R..., ]
+@get_prototype_chain = ( x ) ->
+  return [] unless x?
+  R = [ x, ]
+  loop
+    break unless ( x = Object.getPrototypeOf x )?
+    R.push x
+  return R
 
 #-----------------------------------------------------------------------------------------------------------
 @_walk_keyowners = ( owner, cfg, current_depth = 0 ) ->
