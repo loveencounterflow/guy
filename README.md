@@ -12,6 +12,7 @@
   - [Modules](#modules)
     - [`GUY.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
       - [`GUY.props.keys()`](#guypropskeys)
+      - [`GUY.props.get_prototype_chain()`](#guypropsget_prototype_chain)
       - [`GUY.props.tree()`](#guypropstree)
       - [Class for Strict Ownership](#class-for-strict-ownership)
         - [Special Keys](#special-keys)
