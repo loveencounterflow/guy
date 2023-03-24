@@ -321,7 +321,13 @@ get = ( target, key, fallback ) ->
 #-----------------------------------------------------------------------------------------------------------
 @get_prototype_chain = ( owner ) ->
   R = new Set()
-  R.add owner for { owner, } from @_walk_keyowners owner, @_get_keys_cfg()
+  R.add owner for { owner, } from @_walk_keyowners owner,
+    allow_any:    true
+    symbols:      true
+    builtins:     true
+    hidden:       true
+    depth:        null
+    depth_first:  false
   return [ R..., ]
 
 #-----------------------------------------------------------------------------------------------------------
