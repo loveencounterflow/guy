@@ -170,6 +170,11 @@ lst = [ 'x', ]
 # 'propertyIsEnumerable', 'valueOf', '__proto__', 'toLocaleString' ]
 ```
 
+#### `GUY.props.get_prototype_chain()`
+
+`GUY.props.get_prototype_chain x`: given an object `x`, returns the instance, its prototype, and the
+transitive prototypes of the prototype.
+
 #### `GUY.props.tree()`
 
 `GUY.props.tree()` is the logical dual to `GUY.props.keys()`: instead of descending into the prototype

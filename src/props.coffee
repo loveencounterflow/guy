@@ -319,6 +319,12 @@ get = ( target, key, fallback ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+@get_prototype_chain = ( owner ) ->
+  R = new Set()
+  R.add owner for { owner, } from @_walk_keyowners owner, @_get_keys_cfg()
+  return [ R..., ]
+
+#-----------------------------------------------------------------------------------------------------------
 @_walk_keyowners = ( owner, cfg, current_depth = 0 ) ->
   return null if cfg.depth? and current_depth > cfg.depth
   return null if ( not cfg.builtins ) and builtins.has owner
