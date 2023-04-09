@@ -566,7 +566,7 @@ Examples:
 'if (x > 0) { return true; } if (x < 0) { return false; } return null;'
 ```
 
-## `GUY.trm`
+### `GUY.trm`
 
 * Preview version, expect changes
 * colorize terminal output
@@ -584,7 +584,7 @@ Examples:
   (chalk)[https://raw.githubusercontent.com/chalk/ansi-regex/main/index.js] to strip ANSI codes from a given
   string
 
-## `GUY.sets`
+### `GUY.sets`
 
 Operations on sets, copied / modelled on [*JavaScript for impatient programmers (ES2022 edition): Missing
 Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-operations)
@@ -594,7 +594,7 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
 * **`subtract:  ( a, b ) ->`**—return the set of elements of set `a` except for those that are also in set
   `b`
 
-## `GUY.str`
+### `GUY.str`
 
 * **`escape_for_regex: ( text ) ->`**—escape `text` so it can safely be used as a regex, with all
   meta-characters properly escaped.
@@ -614,7 +614,7 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
   * All other words will have "s" added to the end (eg. days).
   * In case `words` ands in an uppercase letter, the suffix will be uppercase, too.
 
-## `GUY.samesame`
+### `GUY.samesame`
 
 Contains two methods, `equals()` and `deep_copy()`, that are thought to be among the best and fastest
 implementations for the purposes of deep equality checking and deep copying.
@@ -635,7 +635,7 @@ See also
     the code added to `rfdc` to enable copying of RegExes.
 
 
-## `GUY.rnd`
+### `GUY.rnd`
 
 * **`@_shuffle = ( list, ratio, rnd, random_integer ) ->`**
 * **`@get_rnd = ( seed = 1, delta = 1 ) ->`**
@@ -646,7 +646,7 @@ See also
 * **`@random_number = ( min = 0, max = 1 ) ->`**
 * **`@shuffle = ( list, ratio = 1 ) ->`**
 
-## `GUY.temp`
+### `GUY.temp`
 
 > This submodule needs peer-dependencies, install them with
 >
@@ -715,7 +715,7 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
 `GUY.process.on_exit()`, as in `GUY.process.on_exit -> warn "removing #{path}"; rm()`
 
 
-## `GUY.datetime`
+### `GUY.datetime`
 
 > This submodule needs peer-dependencies, install them with
 >
