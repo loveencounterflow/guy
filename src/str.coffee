@@ -68,6 +68,20 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expression
   #.........................................................................................................
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+@pluralize = ( word ) ->
+  ### thx to https://github.com/sindresorhus/plur/blob/main/index.js ###
+  H.types.validate.text word
+  return '' if word is ''
+  R         = word
+  R         = R.replace /(?:s|x|z|ch|sh)$/i, '$&e'
+  R         = R.replace /([^aeiou])y$/i,     '$1ie'
+  R        += 's'
+  if ( to_upper = ( /\p{Lu}$/u ).test word )
+    R = R.replace /i?e?s$/i, ( match ) => match.toUpperCase()
+  return R
+
+
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------

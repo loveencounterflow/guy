@@ -604,7 +604,16 @@ Set operations*](https://exploringjs.com/impatient-js/ch_sets.html#missing-set-o
   that can be used to mark string literals as SQL which can then be properly treated by text editors that
   support nested languages.
 
-#### `GUY.samesame`
+* **`pluralize: ( word ) ->`**—assuming that `word` spells out an English word in the singular, return a
+  tentative pluralized version of the same. This is an adaption of Sindre Sorhus's
+  [`plur`](https://github.com/sindresorhus/plur), modernized and minus the list of exceptions; it follows
+  these rules:
+  * Words ending in s, x, z, ch, sh will be pluralized with -es (eg. foxes).
+  * Words ending in y that are preceded by a consonant will be pluralized by replacing y with -ies (eg.
+    puppies).
+  * All other words will have "s" added to the end (eg. days).
+  * In case `words` ands in an uppercase letter, the suffix will be uppercase, too.
+
 ## `GUY.samesame`
 
 Contains two methods, `equals()` and `deep_copy()`, that are thought to be among the best and fastest
