@@ -23,11 +23,14 @@ path_exists = ( path ) ->
 class @Watcher
 
   #---------------------------------------------------------------------------------------------------------
-  constructor: ->
-    @_watcher = new FSWatcher
+  constructor: ( cfg = null ) ->
+    ### TAINT use InterType ###
+    defaults  =
       recursive:        true
       persistent:       true
       awaitWriteFinish: { stabilityThreshold: 100, }
+    cfg       = { defaults...,  cfg..., }
+    @_watcher = new FSWatcher cfg
     @_attach_handlers()
     return undefined
 
