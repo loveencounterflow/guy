@@ -7,7 +7,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [🛠 A Guy of Many Trades 🛠](#%F0%9F%9B%A0-a-guy-of-many-trades-%F0%9F%9B%A0)
+- [🛠 A Guy of Many Trades 🛠](#-a-guy-of-many-trades-)
   - [Structure](#structure)
   - [Modules](#modules)
     - [`GUY.props`: Common Operations on Object Properties](#guyprops-common-operations-on-object-properties)
@@ -24,6 +24,7 @@
     - [`GUY.fs`: File-Related Stuff](#guyfs-file-related-stuff)
     - [`GUY.src`: JS Source Code Analysis](#guysrc-js-source-code-analysis)
     - [`GUY.trm`](#guytrm)
+    - [`GUY.watch`](#guywatch)
     - [`GUY.sets`](#guysets)
     - [`GUY.str`](#guystr)
     - [`GUY.samesame`](#guysamesame)
@@ -583,6 +584,36 @@ Examples:
 * `GUY.trm.strip_ansi: ( text ) ->` uses RegEx from
   (chalk)[https://raw.githubusercontent.com/chalk/ansi-regex/main/index.js] to strip ANSI codes from a given
   string
+
+### `GUY.watch`
+
+* Preview version, expect changes
+* watch file system changes
+* uses 'best' NodeJS file system watcher, so far tried
+  * [sane](https://github.com/amasad/sane)
+    * does it use polling on Linux? not clear
+  * [NSFW](https://github.com/Axosoft/nsfw)
+    * horrible API
+    * native executable with all the pros and cons that entails
+  * [FB](https://facebook.github.io/watchman/)
+    * insanely complex
+  * [Chokidar](https://github.com/paulmillr/chokidar)
+* settled on Chokidar but might change in the future
+* provides two classes `GUY.watch.Watcher`, `GUY.watch.Reporting_watcher`
+  * the latter mainly for demo / testing, just logs (most) events to console
+* derive your class from `GUY.watch.Watcher`, declare any event handlers:
+  * `on_add:            ( path          ) -> ...`
+  * `on_change:         ( path          ) -> ...`
+  * `on_unlink:         ( path          ) -> ...`
+  * `on_add_folder:     ( path          ) -> ...`
+  * `on_unlink_folder:  ( path          ) -> ...`
+  * `on_all:            ( key, path, d  ) -> ...`
+  * `on_error:          ( error         ) -> ...`
+  * `on_ready:                            -> ...`
+* instantiate as `w = new My_watcher()`,
+* then call `w.add_path()` with glob any number of times to start watching for events on matched paths
+* call `await w.stop()` to stop watching (and exit the event loop, allowing NodeJS to terminate gracefully)
+
 
 ### `GUY.sets`
 
