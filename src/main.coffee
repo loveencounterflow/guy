@@ -25,6 +25,7 @@ class Guy
     props.def_oneoff @, 'samesame', { enumerable: true, }, -> require './samesame'
     props.def_oneoff @, 'rnd',      { enumerable: true, }, -> require './rnd'
     props.def_oneoff @, 'datetime', { enumerable: true, }, -> require './datetime'
+    props.def_oneoff @, 'watch',    { enumerable: true, }, -> require './watch'
     return undefined
 
   #---------------------------------------------------------------------------------------------------------
