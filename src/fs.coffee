@@ -101,7 +101,9 @@ defaults =
   H.types.validate.nonempty_text path
   { chunk_size
     encoding
-    trim      } = cfg
+    trim
+    prepend
+    append    } = cfg
   #.........................................................................................................
   count         = 0
   for d from @_walk_lines_with_positions path, chunk_size
@@ -109,8 +111,8 @@ defaults =
     if encoding?
       d.line  = d.line.toString encoding
       d.line  = d.line.trimEnd() if trim
-      d.line  = cfg.prepend + d.line      unless cfg.prepend  is ''
-      d.line  = d.line      + cfg.append  unless cfg.append   is ''
+      d.line  = prepend + d.line  unless prepend  is ''
+      d.line  = d.line  + append  unless append   is ''
       d.eol   = d.eol.toString encoding
       yield d
     else
