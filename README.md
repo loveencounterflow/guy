@@ -949,6 +949,19 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
   characters
 * **[–]** possible / useful to implement `step` / `walk` / `run` API for `fs.walk_lines()`,
   `str.walk_lines()`?
+* **[–]** all modules that have 3rd-party dependencies should go into separate packages so it becomes
+  possible to add a minimal version of `guy` to a project **without incurring any transitive dependencies**.
+  The repsective code should go into separate projects that depend on `guy` (`guy-src`, `guy-temp`,
+  `guy-watch`, `guy-datetime`)
+  * **[–]** The modules in question with their respective dependencies are:
+    * **[–]** **`src`** (`acorn`, `acorn-loose`, `acorn-walk`, `astring`)
+    * **[–]** **`temp`** (`tmp`)
+    * **[–]** **`watch`** (`chokidar`)
+    * **[–]** **`datetime`** (`dayjs`)
+  * **[–]** `intertype-legacy` to be replaced by a few (?) custom helpers (?) (or by an updated version?
+    currently `intertype` depends only on `webguy`)
+  * **[–]** `letsfreezethat` is only used once in `main` to represent submodule `lft`, therefore can be
+    dispensed with
 
 ## Is Done
 
