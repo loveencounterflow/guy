@@ -498,6 +498,53 @@ documentation](https://github.com/loveencounterflow/letsfreezethat) for details.
   hexadecimal `sha1` hash digest for its contents. On Linux, this uses `sha1sum`, and `shasum` on all 
   other systems.
 
+* **`GUY.fs.get_descriptor = ( path ) ->`**—Given a `path`, return an object with a succinct description of
+  the file system object that is pointed to by the `path`, if any. This method should only throw an error in
+  case of insufficient privileges to access a given file system object; it does not error just because a
+  given path does not point to anything in the file system.
+
+  Given some files like these:
+
+  ```
+  lrwxrwxrwx 1  7 alice alice 2024-10-23 12:54 isa-nowhere-symlink -> nowhere
+  lrwxrwxrwx 1 20 alice alice 2024-10-23 12:53 isa-circular-symlink -> isa-circular-symlink
+  lrwxrwxrwx 1  8 alice alice 2024-10-23 12:52 isa-file-symlink -> isa-file
+  lrwxrwxrwx 1 10 alice alice 2024-10-23 12:52 isa-folder-symlink -> isa-folder
+  .rw-rw-r-- 1  0 alice alice 2024-10-23 12:51 isa-file
+  drwxrwxr-x 2  - alice alice 2024-10-23 12:51 isa-folder/
+  ```
+
+  Running `get_descriptor path` aginst these files, we'll get a descriptor even when there's no
+  corresponding file, when a symlink doesn't point to anything, and when a symlink points to itself,
+  resulting in a nonsensical loop:
+
+  ```coffee
+  get_descriptor 'isa-nosuch'           # { type: null,     link: false, is_loop: false }
+  get_descriptor 'isa-nowhere-symlink'  # { type: 'link',   link: true,  is_loop: false }
+  get_descriptor 'isa-circular-symlink' # { type: 'link',   link: true,  is_loop: true  }
+  get_descriptor 'isa-file-symlink'     # { type: 'file',   link: true,  is_loop: false }
+  get_descriptor 'isa-folder-symlink'   # { type: 'folder', link: true,  is_loop: false }
+  get_descriptor 'isa-file'             # { type: 'file',   link: false, is_loop: false }
+  get_descriptor 'isa-folder'           # { type: 'folder', link: false, is_loop: false }
+  ```
+
+  The rules for the properties `type`, `link`, `is_loop` are as follows:
+
+  * `type` is `null` exactly when a path has no corresponding file system object, otherwise, it is one of
+    `'link'`, `'file'`, `'folder'`, `'block'`, `'character'`, `'fifo'`, or `'socket'`;
+  * the `type` indicated is the type of the *target* of a symlink if that symlink does have a target;
+    otherwise, it is the type of the file system object itself;
+  * `link` is `true` if the `stat` object returned by the `node:fs` `lstatSync()` method indicates a symlink,
+    and `false` otherwise
+  * these rules entail that only circular and dangling symlinks have both `type: 'link'` and `link: true`;
+    one can distinguish circular symlinks by property `is_loop`, which is only `true` in this case and
+    `false` in all others.
+
+
+
+
+
+
 ### `GUY.src`: JS Source Code Analysis
 
 > This submodule needs peer-dependencies, install them with
