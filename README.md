@@ -31,6 +31,7 @@
     - [`GUY.rnd`](#guyrnd)
     - [`GUY.temp`](#guytemp)
     - [`GUY.datetime`](#guydatetime)
+    - [`GUY.fmt`](#guyfmt)
   - [To Do](#to-do)
   - [Is Done](#is-done)
 
@@ -814,6 +815,90 @@ indicated by `path`. One way to ensure such a temporary directory will in fact b
 * **`@parse = ( srts ) ->`**
 * **`@format = ( srts, P... ) ->`**
 * **`@isots_from_srts = ( srts ) ->`**
+
+### `GUY.fmt`
+
+* `GUY.fmt` provides a subset of the formatting facilities of [Python's
+  f-strings]()https://docs.python.org/3/library/string.html#formatspec in NodeJS
+* two functions, `GUY.fmt.format()` and `GUY.fmt.new_formatter()`
+* `GUY.fmt.format fmt, x` returns a string that contains a textual representation of `x` according to the
+  format specified by `fmt`
+* `GUY.fmt.new_formatter fmt` returns a function that accepts a single argument `x` and will return the same
+  textual representation that calling `GUY.fmt.format fmt, x` would return; preferred when the same
+  formatting is to applied to many values
+
+Examples:
+
+```coffee
+T?.eq ( format '*<+20,.5g', '11456.15454'  ), '+11,456*************'
+T?.eq ( format '*<+20,.5g', 11456.15454    ), '+11,456*************'
+#.........................................................................................................
+T?.eq ( format ' > 15,.2f',  1             ), '           1.00'
+T?.eq ( format ' > 15,.2f',  12            ), '          12.00'
+T?.eq ( format ' > 15,.2f',  123           ), '         123.00'
+T?.eq ( format ' > 15,.2f',  1234          ), '       1,234.00'
+T?.eq ( format ' > 15,.2f',  -11456.15454  ), '     -11,456.15'
+T?.eq ( format ' > 15,.2f',  53443.32455   ), '      53,443.32'
+T?.eq ( format ' > 15,.2f',  885673.367553 ), '     885,673.37'
+T?.eq ( format ' > 15s',     'helo'        ), '           helo'
+#.........................................................................................................
+f152f = new_formatter ' > 15,.2f'
+f15s  = new_formatter ' > 15s'
+T?.eq ( f152f 1             ), '           1.00'
+T?.eq ( f152f 12            ), '          12.00'
+T?.eq ( f152f 123           ), '         123.00'
+T?.eq ( f152f 1234          ), '       1,234.00'
+T?.eq ( f152f -11456.15454  ), '     -11,456.15'
+T?.eq ( f152f 53443.32455   ), '      53,443.32'
+T?.eq ( f152f 885673.367553 ), '     885,673.37'
+T?.eq ( f15s 'helo'         ), '           helo'
+# T?.eq ( GUY.str.escape_for_regex_class '^-[]/'                ), '\\^\\-[\\]\\/'
+#.........................................................................................................
+T?.eq ( format '*<+20,.5g', 11456.15454           ), '+11,456*************'
+T?.eq ( format '*^+20,.5g', 11456.15454           ), '******+11,456*******'
+T?.eq ( format '*>+20,.5g', 11456.15454           ), '*************+11,456'
+#.........................................................................................................
+T?.eq ( format '_> 20.2e', 1234.56789             ), '____________ 1.23e+3'
+T?.eq ( format '_> 20.2f', 1234.56789             ), '____________ 1234.57'
+T?.eq ( format '_> 20.2g', 1234.56789             ), '_____________ 1.2e+3'
+#.......................................................................................................
+T?.eq ( format '_> 20.2e', 123456789.123456789    ), '____________ 1.23e+8'
+T?.eq ( format '_> 20.2f', 123456789.123456789    ), '_______ 123456789.12'
+T?.eq ( format '_> 20.2g', 123456789.123456789    ), '_____________ 1.2e+8'
+#.........................................................................................................
+T?.eq ( format '_> 20.5e', 1234.56789             ), '_________ 1.23457e+3'
+T?.eq ( format '_> 20.5f', 1234.56789             ), '_________ 1234.56789'
+T?.eq ( format '_> 20.5g', 1234.56789             ), '_____________ 1234.6'
+#.......................................................................................................
+T?.eq ( format '_> 20.5e', 123456789.123456789    ), '_________ 1.23457e+8'
+T?.eq ( format '_> 20.5f', 123456789.123456789    ), '____ 123456789.12346'
+T?.eq ( format '_> 20.5g', 123456789.123456789    ), '__________ 1.2346e+8'
+#.........................................................................................................
+T?.eq ( format '.2f',      3.14159       ), '3.14'
+T?.eq ( format '>10s',     "test"        ), '      test'
+T?.eq ( format '<10s',     "test"        ), 'test      '
+T?.eq ( format '^10s',     "test"        ), '   test   '
+T?.eq ( format '>10.3f',   1.23456       ), '     1.235'
+T?.eq ( format '^10s',     "hi"          ), '    hi    '
+T?.eq ( format ' >10s',    "test"        ), '      test'
+T?.eq ( format ' <10s',    "test"        ), 'test      '
+T?.eq ( format ' ^10s',    "test"        ), '   test   '
+T?.eq ( format ' >10.3f',  1.23456       ), '     1.235'
+T?.eq ( format ' ^10s',    "hi"          ), '    hi    '
+T?.eq ( format '04d',      42            ), '0042'
+T?.eq ( format '+d',       42            ), '+42'
+T?.eq ( format '-d',       -42           ), '-42'
+T?.eq ( format 'x',        255           ), 'ff'
+T?.eq ( format '#x',       255           ), '0xff'
+T?.eq ( format '#o',       8             ), '0o10'
+T?.eq ( format '#b',       5             ), '0b101'
+T?.eq ( format 'e',        12345.6789    ), '1.234568e+4'
+T?.eq ( format ',.2f',     1234567.891   ), '1,234,567.89'
+T?.eq ( format '%',        0.85          ), '85.000000%'
+T?.eq ( format '.1%',      0.85          ), '85.0%'
+T?.eq ( format '.0%',      0.12345       ), '12%'
+T?.eq ( format '.0%',      0.125         ), '13%'
+```
 
 
 ## To Do
