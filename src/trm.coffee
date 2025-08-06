@@ -4,7 +4,7 @@
 ############################################################################################################
 H                         = require './_helpers'
 C                         = require './_temporary_colors'
-C._temoprary_compile_colors @
+C._temporary_compile_colors @
 σ_guy                     = Symbol 'GUY'
 globalThis[ σ_guy ]      ?= {}
 globalThis[ σ_guy ].t0   ?= Date.now()

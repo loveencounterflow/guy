@@ -85,7 +85,7 @@ L = @
 
 
 #-----------------------------------------------------------------------------------------------------------
-@_temoprary_compile_colors = ( target ) ->
+@_temporary_compile_colors = ( target ) ->
   effect_names =
     blink:        1
     bold:         1
